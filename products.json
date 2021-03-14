@@ -1,0 +1,194 @@
+[
+  {
+    "Id": "6a52bd42-d19e-4572-9295-28e01e7e7417",
+    "Category": "Car",
+    "Name": "Koch Chemie ReactiveWheelCleaner",
+    "Description": "\u0421\u0440\u0435\u0434\u0441\u0442\u0432\u043E \u0434\u043B\u044F \u0447\u0438\u0441\u0442\u043A\u0438 \u043A\u043E\u043B\u0451\u0441\u043D\u044B\u0445 \u0434\u0438\u0441\u043A\u043E\u0432",
+    "Sources": [
+      {
+        "AgentId": "amazon.de",
+        "AgentArgument": "B0047AKFDG"
+      }
+    ],
+    "Lowest": null,
+    "Recent": []
+  },
+  {
+    "Id": "5486193d-b417-4936-b71c-be250317dc81",
+    "Category": "Household",
+    "Name": "IROBOT Roomba i7\u002B (i7558)",
+    "Description": null,
+    "Sources": [
+      {
+        "AgentId": "tweakers.net",
+        "AgentArgument": "1617418/irobot-roomba-i7\u002B-zilver-zwart.html"
+      },
+      {
+        "AgentId": "tweakers.net",
+        "AgentArgument": "1274693/irobot-roomba-i7\u002B-zwart.html"
+      }
+    ],
+    "Lowest": {
+      "AgentId": "tweakers.net",
+      "Price": 699,
+      "FoundDate": "2020-12-01T17:11:31.9448022+01:00"
+    },
+    "Recent": [
+      {
+        "AgentId": "tweakers.net",
+        "Price": 759,
+        "FoundDate": "2021-03-03T23:04:47.2305019+01:00"
+      },
+      {
+        "AgentId": "tweakers.net",
+        "Price": 759,
+        "FoundDate": "2021-03-03T23:04:47.23052+01:00"
+      }
+    ]
+  },
+  {
+    "Id": "9ea2448b-736c-4d24-8634-8bfc978866f4",
+    "Category": "Photo",
+    "Name": "Sony 10-18mm/4 (SEL1018.AE)",
+    "Description": null,
+    "Sources": [
+      {
+        "AgentId": "amazon.de",
+        "AgentArgument": "B009AU9CQO"
+      },
+      {
+        "AgentId": "tweakers.net",
+        "AgentArgument": "324102/sony-10-18mm-f-40-oss.html"
+      },
+      {
+        "AgentId": "hafo.nl",
+        "AgentArgument": "sony-sel-10-18-nex"
+      }
+    ],
+    "Lowest": {
+      "AgentId": "amazon.de",
+      "Price": 649.0,
+      "FoundDate": "2021-03-10T23:00:16.5794827+01:00"
+    },
+    "Recent": [
+      {
+        "AgentId": "amazon.de",
+        "Price": 649.0,
+        "FoundDate": "2021-03-10T23:00:16.5794827+01:00"
+      },
+      {
+        "AgentId": "tweakers.net",
+        "Price": 659.91,
+        "FoundDate": "2021-03-10T23:00:16.5795001+01:00"
+      },
+      {
+        "AgentId": "hafo.nl",
+        "Price": 729.00,
+        "FoundDate": "2021-03-10T23:00:16.5795017+01:00"
+      }
+    ]
+  },
+  {
+    "Id": "e10533c4-8e07-443c-b751-52020da1e7ee",
+    "Category": "Gaming",
+    "Name": "Xbox Elite 2 Controller",
+    "Description": null,
+    "Sources": [
+      {
+        "AgentId": "tweakers.net",
+        "AgentArgument": "1432208/microsoft-xbox-elite-wireless-controller-series-2-zwart.html"
+      },
+      {
+        "AgentId": "amazon.de",
+        "AgentArgument": "B07SR4R8K1"
+      },
+      {
+        "AgentId": "amazon.nl",
+        "AgentArgument": "B07SR4R8K1"
+      }
+    ],
+    "Lowest": {
+      "AgentId": "amazon.de",
+      "Price": 161.0,
+      "FoundDate": "2020-12-22T20:24:56.1124541+01:00"
+    },
+    "Recent": [
+      {
+        "AgentId": "tweakers.net",
+        "Price": 165.75,
+        "FoundDate": "2021-03-03T23:04:54.4071042+01:00"
+      },
+      {
+        "AgentId": "amazon.nl",
+        "Price": 165.75,
+        "FoundDate": "2021-03-03T23:04:54.4071159+01:00"
+      }
+    ]
+  },
+  {
+    "Id": "1b60bf08-2d90-4f85-99ce-3d26d19bb696",
+    "Category": "Lego",
+    "Name": "Lego Mindstorms EV3 31313",
+    "Description": null,
+    "Sources": [
+      {
+        "AgentId": "bol.com",
+        "AgentArgument": "lego-mindstorms-ev3-31313/1004004013515960"
+      },
+      {
+        "AgentId": "amazon.de",
+        "AgentArgument": "B00BMKLVJ6"
+      }
+    ],
+    "Lowest": {
+      "AgentId": "bol.com",
+      "Price": 399.00,
+      "FoundDate": "2020-12-22T21:18:41.3607072+01:00"
+    },
+    "Recent": [
+      {
+        "AgentId": "bol.com",
+        "Price": 399.95,
+        "FoundDate": "2021-03-03T23:04:56.5196012+01:00"
+      },
+      {
+        "AgentId": "amazon.de",
+        "Price": 419.0,
+        "FoundDate": "2021-03-03T23:04:56.5196116+01:00"
+      }
+    ]
+  },
+  {
+    "Id": "ba55c3e7-10f1-47c9-8c0e-41dd7c4834f8",
+    "Category": "Car",
+    "Name": "Viofo A129 Duo Pro Dashcam",
+    "Description": null,
+    "Sources": [
+      {
+        "AgentId": "tweakers.net",
+        "AgentArgument": "1496006/viofo-a129-duo-pro-dashcam.html"
+      },
+      {
+        "AgentId": "viofo.nl",
+        "AgentArgument": "viofo-a129-duo-pro-dashcam"
+      }
+    ],
+    "Lowest": {
+      "AgentId": "tweakers.net",
+      "Price": 178.95,
+      "FoundDate": "2021-03-14T08:55:51.7376057+01:00"
+    },
+    "Recent": [
+      {
+        "AgentId": "tweakers.net",
+        "Price": 178.95,
+        "FoundDate": "2021-03-14T08:55:51.7376057+01:00"
+      },
+      {
+        "AgentId": "viofo.nl",
+        "Price": 179.95,
+        "FoundDate": "2021-03-14T08:55:51.7376268+01:00"
+      }
+    ]
+  }
+]

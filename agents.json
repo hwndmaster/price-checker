@@ -1,0 +1,38 @@
+[
+  {
+    "Id": "amazon.de",
+    "Url": "https://www.amazon.de/gp/product/{0}?psc=1",
+    "PricePattern": "\u0022attach-base-product-price\u0022\\svalue=\u0022(?\u003Cprice\u003E[\\d\\.]\u002B)\u0022",
+    "DecimalDelimiter": "."
+  },
+  {
+    "Id": "amazon.nl",
+    "Url": "https://www.amazon.nl/dp/product/{0}?psc=1",
+    "PricePattern": "priceBlockBuyingPriceString\u0022\u003E\u20AC\\s(?\u003Cprice\u003E[\\d,]\u002B)\u003C",
+    "DecimalDelimiter": ","
+  },
+  {
+    "Id": "bol.com",
+    "Url": "https://www.bol.com/nl/p/{0}",
+    "PricePattern": "\u0022price\u0022:\u0022(?\u003Cprice\u003E[\\d\\,]\u002B)\u0022",
+    "DecimalDelimiter": ","
+  },
+  {
+    "Id": "tweakers.net",
+    "Url": "https://tweakers.net/pricewatch/{0}",
+    "PricePattern": "\u0022lowPrice\u0022:(?\u003Cprice\u003E[\\d\\.]\u002B),",
+    "DecimalDelimiter": "."
+  },
+  {
+    "Id": "hafo.nl",
+    "Url": "https://www.hafo.nl/product/{0}",
+    "PricePattern": "\u0022price\u0022:\u0022(?\u003Cprice\u003E[\\d\\.]\u002B)\u0022",
+    "DecimalDelimiter": "."
+  },
+  {
+    "Id": "viofo.nl",
+    "Url": "https://www.viofo.nl/en/collections/viofo-dashcams/products/{0}",
+    "PricePattern": "\u0022og:price:amount\u0022 content=\u0022(?\u003Cprice\u003E[\\d,]\u002B)\u0022\u003E",
+    "DecimalDelimiter": ","
+  }
+]

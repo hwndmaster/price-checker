@@ -1,0 +1,43 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net5.0-windows</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <RootNamespace>Genius.PriceChecker.UI</RootNamespace>
+    <AssemblyName>PriceChecker</AssemblyName>
+    <OutputPath>..\build\</OutputPath>
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Resource Include="Assets\Logo.ico" />
+    <Resource Include="Assets\Plus16.png" />
+    <Resource Include="Assets\Trash16.png" />
+    <Resource Include="Assets\Warning16.png" />
+    <Resource Include="Assets\Web16.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\PriceChecker.Core\PriceChecker.Core.csproj" />
+    <ProjectReference Include="..\PriceChecker.Infrastructure\PriceChecker.Infrastructure.csproj" />
+    <ProjectReference Include="..\PriceChecker.UI.Forms\PriceChecker.UI.Forms.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="Hardcodet.NotifyIcon.Wpf">
+      <HintPath>..\libs\Hardcodet.NotifyIcon.Wpf.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Humanizer.Core" Version="2.8.26" />
+    <PackageReference Include="MahApps.Metro" Version="2.4.4" />
+    <PackageReference Include="MahApps.Metro.IconPacks.Unicons" Version="4.8.0" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="5.0.1" />
+    <PackageReference Include="Microsoft.Extensions.Logging" Version="5.0.0" />
+    <!--
+      TODO: Switch back to the nuget reference when it become available with support of net5.0
+      <PackageReference Include="Hardcodet.NotifyIcon.Wpf" Version="1.1.0" /> -->
+  </ItemGroup>
+</Project>
