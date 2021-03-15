@@ -87,6 +87,11 @@ namespace Genius.PriceChecker.UI.Forms.Behaviors
                 return;
             }
 
+            if (property.Attributes.OfType<IconSourceAttribute>().FirstOrDefault() is IconSourceAttribute iconAttr)
+            {
+                e.Column = WpfHelpers.CreateColumnWithImage(property.Name, iconAttr.IconPropertyPath, fixedSize: iconAttr.FixedSize, imageIsPath: true);
+            }
+
             if (!AssociatedObject.IsReadOnly && !e.Column.IsReadOnly)
             {
                 SetupColumnCombobox(e, property);

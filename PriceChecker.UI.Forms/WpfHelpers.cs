@@ -92,7 +92,7 @@ namespace Genius.PriceChecker.UI.Forms
             return column;
         }
 
-        public static DataGridTemplateColumn CreateColumnWithImage(string valuePath, string imageName, string imageTooltip, string imageVisibilityFlagPath)
+        public static DataGridTemplateColumn CreateColumnWithImage(string valuePath, string imageName, string imageTooltip = null, string imageVisibilityFlagPath = null, double? fixedSize = null, bool imageIsPath = false)
         {
             var bindToValue = new Binding(valuePath);
             var column = new DataGridTemplateColumn {
@@ -104,15 +104,30 @@ namespace Genius.PriceChecker.UI.Forms
             stackPanelFactory.SetValue(StackPanel.OrientationProperty, Orientation.Horizontal);
 
             var imageFactory = new FrameworkElementFactory(typeof(Image));
-            imageFactory.SetValue(Image.SourceProperty, (BitmapImage)Application.Current.FindResource(imageName));
-            imageFactory.SetValue(Image.ToolTipProperty, imageTooltip);
-            imageFactory.SetValue(Image.VisibilityProperty, new Binding(imageVisibilityFlagPath) { Converter = new BooleanToVisibilityConverter() });
-            imageFactory.SetValue(Image.MarginProperty, new Thickness(5, 0, 0, 0));
+
+            if (imageIsPath)
+                imageFactory.SetBinding(Image.SourceProperty, new Binding(imageName));
+            else
+                imageFactory.SetValue(Image.SourceProperty, (BitmapImage)Application.Current.FindResource(imageName));
+
+            if (imageTooltip != null)
+                imageFactory.SetValue(Image.ToolTipProperty, imageTooltip);
+
+            if (imageVisibilityFlagPath != null)
+                imageFactory.SetValue(Image.VisibilityProperty, new Binding(imageVisibilityFlagPath) { Converter = new BooleanToVisibilityConverter() });
+
+            if (fixedSize != null)
+            {
+                imageFactory.SetValue(Image.HeightProperty, fixedSize.Value);
+                imageFactory.SetValue(Image.WidthProperty, fixedSize.Value);
+            }
 
             var textFactory = new FrameworkElementFactory(typeof(TextBlock));
             textFactory.SetBinding(TextBlock.TextProperty, bindToValue);
-            stackPanelFactory.AppendChild(textFactory);
+            textFactory.SetValue(Image.MarginProperty, new Thickness(5, 0, 0, 0));
+
             stackPanelFactory.AppendChild(imageFactory);
+            stackPanelFactory.AppendChild(textFactory);
 
             column.CellTemplate = new DataTemplate { VisualTree = stackPanelFactory };
 

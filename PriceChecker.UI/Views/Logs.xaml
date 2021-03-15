@@ -21,6 +21,17 @@
             <i:Interaction.Behaviors>
                 <behaviors:DataGridAutomatedBehavior />
             </i:Interaction.Behaviors>
+            <DataGrid.RowStyle>
+                <Style TargetType="{x:Type DataGridRow}" BasedOn="{StaticResource MahApps.Styles.DataGridRow}">
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding IsSeverityCritical, Mode=OneWay}" Value="True">
+                            <Setter Property="Background" Value="#FF9B9B" />
+                            <Setter Property="Foreground" Value="DarkRed" />
+                            <Setter Property="FontWeight" Value="Bold" />
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </DataGrid.RowStyle>
         </DataGrid>
     </Grid>
 </UserControl>

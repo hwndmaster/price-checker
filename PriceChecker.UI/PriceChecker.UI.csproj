@@ -12,10 +12,7 @@
 
   <ItemGroup>
     <Resource Include="Assets\Logo.ico" />
-    <Resource Include="Assets\Plus16.png" />
-    <Resource Include="Assets\Trash16.png" />
-    <Resource Include="Assets\Warning16.png" />
-    <Resource Include="Assets\Web16.png" />
+    <Resource Include="Assets\*.png" />
   </ItemGroup>
 
   <ItemGroup>

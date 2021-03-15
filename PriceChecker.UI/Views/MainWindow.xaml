@@ -14,7 +14,8 @@
         </mah:FlyoutsControl>
     </mah:MetroWindow.Flyouts>
     <Grid>
-        <TabControl SelectedIndex="{Binding SelectedTabIndex}">
+        <TabControl SelectedIndex="{Binding SelectedTabIndex}"
+                    mah:TabControlHelper.Underlined="TabItems">
             <TabItem Header="Tracker">
                 <uc:Tracker DataContext="{Binding Path=Tabs[0]}" />
             </TabItem>
