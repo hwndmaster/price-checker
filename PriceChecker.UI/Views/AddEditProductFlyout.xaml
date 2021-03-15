@@ -18,7 +18,8 @@
         </DockPanel>
         <DockPanel>
             <Label>Product category:</Label>
-            <TextBox Text="{Binding Category}" />
+            <ComboBox Text="{Binding Category}" IsEditable="True"
+                      ItemsSource="{Binding Categories}" />
         </DockPanel>
         <DockPanel>
             <Label>Product description:</Label>

@@ -35,6 +35,7 @@ namespace Genius.PriceChecker.UI.ViewModels
             _ui = ui;
 
             RefreshAgents();
+            RefreshCategories();
 
             if (_product != null)
             {
@@ -61,6 +62,9 @@ namespace Genius.PriceChecker.UI.ViewModels
 
             eventBus.Subscribe<AgentsUpdatedEvent, AgentDeletedEvent>(() => {
                 RefreshAgents();
+            });
+            eventBus.Subscribe<ProductUpdatedEvent, ProductAddedEvent>(() => {
+                RefreshCategories();
             });
 
             PropertiesAreInitialized = true;
@@ -110,6 +114,11 @@ namespace Genius.PriceChecker.UI.ViewModels
             Agents = _agentRepo.GetAll().Select(x => x.Id).ToList();
         }
 
+        private void RefreshCategories()
+        {
+            Categories.ReplaceItems(_productRepo.GetAll().Select(x => x.Category).Distinct());
+        }
+
         private void ResetForm()
         {
             Name = _product.Name;
@@ -125,6 +134,7 @@ namespace Genius.PriceChecker.UI.ViewModels
         public IReadOnlyCollection<string> Agents { get; private set; }
 
         public ObservableCollection<TrackerProductSourceViewModel> Sources { get; } = new ObservableCollection<TrackerProductSourceViewModel>();
+        public ObservableCollection<string> Categories { get; } = new ObservableCollection<string>();
 
         [Browsable(true)]
         public string Name
