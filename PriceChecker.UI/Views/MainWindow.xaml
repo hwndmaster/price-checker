@@ -26,8 +26,24 @@
                 <uc:Settings DataContext="{Binding Path=Tabs[2]}" />
             </TabItem>
             <TabItem Header="Logs">
+                <TabItem.Resources>
+                    <SolidColorBrush x:Key="MahApps.Brushes.Gray" Color="{Binding ElementName=LogsTabColorizationHelper, Path=Foreground.Color}" />
+                </TabItem.Resources>
                 <uc:Logs DataContext="{Binding Path=Tabs[3]}" />
             </TabItem>
         </TabControl>
+
+        <Control Name="LogsTabColorizationHelper" Visibility="Collapsed">
+            <Control.Style>
+                <Style TargetType="Control">
+                    <Setter Property="Foreground" Value="{StaticResource MahApps.Brushes.Gray}" />
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding Tabs[3].HasNewErrors}" Value="True">
+                            <Setter Property="Foreground" Value="Red" />
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </Control.Style>
+        </Control>
     </Grid>
 </mah:MetroWindow>

@@ -11,7 +11,7 @@ namespace Genius.PriceChecker.UI.ViewModels
             SettingsViewModel settings,
             LogsViewModel logs)
         {
-            Tabs = new List<ViewModelBase> {
+            Tabs = new() {
                 tracker,
                 agents,
                 settings,
@@ -19,13 +19,14 @@ namespace Genius.PriceChecker.UI.ViewModels
             };
         }
 
-        public List<ViewModelBase> Tabs { get; }
+        public List<ITabViewModel> Tabs { get; }
 
         public int SelectedTabIndex
         {
             get => GetOrDefault<int>();
             set => RaiseAndSetIfChanged(value, (@old, @new) => {
                 Tabs[@old].Deactivated.Execute(null);
+                Tabs[@new].Activated.Execute(null);
             });
         }
     }

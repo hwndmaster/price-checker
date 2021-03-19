@@ -8,7 +8,7 @@ using Genius.PriceChecker.UI.Helpers;
 
 namespace Genius.PriceChecker.UI.ViewModels
 {
-    public class AgentsViewModel : ViewModelBase<AgentsViewModel>, IHasDirtyFlag
+    public class AgentsViewModel : TabViewModelBase<AgentsViewModel>, IHasDirtyFlag
     {
         private readonly IAgentRepository _agentRepo;
         private readonly IViewModelFactory _vmFactory;

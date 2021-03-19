@@ -14,7 +14,7 @@ using Genius.PriceChecker.UI.Forms.Helpers;
 
 namespace Genius.PriceChecker.UI.Forms.ViewModels
 {
-    public abstract class ViewModelBase : INotifyPropertyChanged, INotifyDataErrorInfo
+  public abstract class ViewModelBase : INotifyPropertyChanged, INotifyDataErrorInfo
     {
         protected readonly ConcurrentDictionary<string, object> _propertyBag = new();
         private readonly Dictionary<string, List<ValidationRule>> _validationRules = new();
@@ -153,10 +153,6 @@ namespace Genius.PriceChecker.UI.Forms.ViewModels
 
         public event PropertyChangedEventHandler PropertyChanged;
         public event EventHandler<DataErrorsChangedEventArgs> ErrorsChanged;
-        [Browsable(false)]
-        public IActionCommand Activated { get; } = new ActionCommand();
-        [Browsable(false)]
-        public IActionCommand Deactivated { get; } = new ActionCommand();
 
         public virtual bool HasErrors => _errors.Any();
     }
