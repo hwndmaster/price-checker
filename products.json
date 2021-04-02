@@ -10,8 +10,18 @@
         "AgentArgument": "B0047AKFDG"
       }
     ],
-    "Lowest": null,
-    "Recent": []
+    "Lowest": {
+      "AgentId": "amazon.de_alt",
+      "Price": 22.90,
+      "FoundDate": "2021-04-02T17:35:46.1935778+02:00"
+    },
+    "Recent": [
+      {
+        "AgentId": "amazon.de_alt",
+        "Price": 22.90,
+        "FoundDate": "2021-04-02T17:35:46.1935778+02:00"
+      }
+    ]
   },
   {
     "Id": "5486193d-b417-4936-b71c-be250317dc81",

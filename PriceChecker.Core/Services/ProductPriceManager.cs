@@ -95,8 +95,6 @@ namespace Genius.PriceChecker.Core.Services
                 product.Lowest = product.Recent.First(x => x.Price == minPrice);
 
                 _productRepo.Store(product);
-
-                _eventBus.Publish(new ProductScannedEvent(product, lowestPriceUpdated));
             }
 
             _eventBus.Publish(new ProductScannedEvent(product, lowestPriceUpdated));

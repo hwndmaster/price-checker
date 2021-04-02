@@ -40,7 +40,8 @@ namespace Genius.PriceChecker.UI.ViewModels
                     return;
 
                 Agents.Remove(selectedAgent);
-                agentRepo.Delete(selectedAgent.Id);
+                if (!string.IsNullOrEmpty(selectedAgent.Id))
+                    agentRepo.Delete(selectedAgent.Id);
             });
 
             CommitAgentsCommand = new ActionCommand(_ => CommitAgents(), _ => IsDirty && !HasErrors);

@@ -37,7 +37,7 @@ namespace Genius.PriceChecker.Core.Repositories
 
         public IEnumerable<Agent> GetAll()
         {
-            return _agents;
+            return _agents.OrderBy(x => x.Id);
         }
 
         public Agent FindById(string agentId)

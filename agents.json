@@ -38,7 +38,7 @@
   {
     "Id": "amazon.de_alt",
     "Url": "https://www.amazon.de/gp/product/{0}?psc=1",
-    "PricePattern": "\u0022priceblock_ourprice\u0022[^\u003E]\u002B\u003E[$\u20AC]([\\d\\.]\u002B)\u003C",
-    "DecimalDelimiter": "."
+    "PricePattern": "\u0022priceblock_ourprice\u0022[^\u003E]\u002B\u003E[$\u20AC]*(?\u003Cprice\u003E[\\d\\,]\u002B)[\\s$\u20AC]*\u003C",
+    "DecimalDelimiter": ","
   }
 ]
