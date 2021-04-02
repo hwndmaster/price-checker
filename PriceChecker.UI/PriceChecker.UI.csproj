@@ -29,11 +29,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Humanizer.Core" Version="2.8.26" />
-    <PackageReference Include="MahApps.Metro" Version="2.4.4" />
-    <PackageReference Include="MahApps.Metro.IconPacks.Unicons" Version="4.8.0" />
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="5.0.1" />
-    <PackageReference Include="Microsoft.Extensions.Logging" Version="5.0.0" />
+    <PackageReference Include="Humanizer.Core" />
+    <PackageReference Include="MahApps.Metro" />
+    <PackageReference Include="MahApps.Metro.IconPacks.Unicons" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" />
+    <PackageReference Include="Microsoft.Extensions.Logging" />
     <!--
       TODO: Switch back to the nuget reference when it become available with support of net5.0
       <PackageReference Include="Hardcodet.NotifyIcon.Wpf" Version="1.1.0" /> -->
