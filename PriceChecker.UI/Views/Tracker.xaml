@@ -5,7 +5,7 @@
         xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:mah="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
-        xmlns:behaviors="clr-namespace:Genius.PriceChecker.UI.Forms.Behaviors;assembly=PriceChecker.UI.Forms"
+        xmlns:autogrid="clr-namespace:Genius.PriceChecker.UI.Forms.AutoGrid;assembly=PriceChecker.UI.Forms"
         xmlns:vm="clr-namespace:Genius.PriceChecker.UI.ViewModels"
         xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
         mc:Ignorable="d">
@@ -39,7 +39,7 @@
                     Command="{Binding DeleteProductCommand}" />
         </StackPanel>
         <DataGrid Grid.Row="1" Margin="10"
-                  behaviors:DataGridAutomated.ItemsSource="{Binding Products}"
+                  autogrid:Properties.ItemsSource="{Binding Products}"
                   IsReadOnly="True">
             <DataGrid.InputBindings>
                 <MouseBinding
@@ -66,7 +66,7 @@
                 </GroupStyle>
             </DataGrid.GroupStyle>
             <i:Interaction.Behaviors>
-                <behaviors:DataGridAutomatedBehavior />
+                <autogrid:AttachingBehavior />
             </i:Interaction.Behaviors>
         </DataGrid>
     </Grid>

@@ -1,9 +1,9 @@
 using System;
 using System.Linq.Expressions;
 
-namespace Genius.PriceChecker.UI.Forms.Helpers
+namespace Genius.PriceChecker.Infrastructure
 {
-    internal static class ExpressionHelpers
+    public static class ExpressionHelpers
     {
         public static string GetPropertyName<TContainer, TProp>(Expression<Func<TContainer, TProp>> propertyLambda)
         {

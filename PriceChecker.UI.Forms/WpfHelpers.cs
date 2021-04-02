@@ -4,7 +4,6 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Markup;
-using System.Windows.Media.Imaging;
 using MahApps.Metro.Controls;
 
 namespace Genius.PriceChecker.UI.Forms
@@ -92,46 +91,24 @@ namespace Genius.PriceChecker.UI.Forms
             return column;
         }
 
-        public static DataGridTemplateColumn CreateColumnWithImage(string valuePath, string imageName, string imageTooltip = null, string imageVisibilityFlagPath = null, double? fixedSize = null, bool imageIsPath = false)
+        public static Style EnsureDefaultCellStyle(DataGridColumn column)
         {
-            var bindToValue = new Binding(valuePath);
-            var column = new DataGridTemplateColumn {
-                Header = valuePath,
-                SortMemberPath = valuePath
-            };
-
-            var stackPanelFactory = new FrameworkElementFactory(typeof(StackPanel));
-            stackPanelFactory.SetValue(StackPanel.OrientationProperty, Orientation.Horizontal);
-
-            var imageFactory = new FrameworkElementFactory(typeof(Image));
-
-            if (imageIsPath)
-                imageFactory.SetBinding(Image.SourceProperty, new Binding(imageName));
-            else
-                imageFactory.SetValue(Image.SourceProperty, (BitmapImage)Application.Current.FindResource(imageName));
-
-            if (imageTooltip != null)
-                imageFactory.SetValue(Image.ToolTipProperty, imageTooltip);
-
-            if (imageVisibilityFlagPath != null)
-                imageFactory.SetValue(Image.VisibilityProperty, new Binding(imageVisibilityFlagPath) { Converter = new BooleanToVisibilityConverter() });
-
-            if (fixedSize != null)
+            if (column.CellStyle == null)
             {
-                imageFactory.SetValue(Image.HeightProperty, fixedSize.Value);
-                imageFactory.SetValue(Image.WidthProperty, fixedSize.Value);
+                column.CellStyle = new Style {
+                    TargetType = typeof(DataGridCell),
+                    BasedOn = (Style) Application.Current.FindResource("MahApps.Styles.DataGridCell")
+                };
             }
 
-            var textFactory = new FrameworkElementFactory(typeof(TextBlock));
-            textFactory.SetBinding(TextBlock.TextProperty, bindToValue);
-            textFactory.SetValue(Image.MarginProperty, new Thickness(5, 0, 0, 0));
+            return column.CellStyle;
+        }
 
-            stackPanelFactory.AppendChild(imageFactory);
-            stackPanelFactory.AppendChild(textFactory);
+        public static void SetCellHorizontalAlignment(DataGridColumn column, HorizontalAlignment alignment)
+        {
+            EnsureDefaultCellStyle(column);
 
-            column.CellTemplate = new DataTemplate { VisualTree = stackPanelFactory };
-
-            return column;
+            column.CellStyle.Setters.Add(new Setter(DataGridCell.HorizontalAlignmentProperty, alignment));
         }
     }
 }

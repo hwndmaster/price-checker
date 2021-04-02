@@ -10,6 +10,6 @@ namespace Genius.PriceChecker.UI.Forms.Attributes
             OnlyBrowsable = onlyBrowsable;
         }
 
-        public bool OnlyBrowsable { get; set; }
+        public bool OnlyBrowsable { get; }
     }
 }

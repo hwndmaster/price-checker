@@ -10,6 +10,6 @@ namespace Genius.PriceChecker.UI.Forms.Attributes
             Name = name;
         }
 
-        public string Name { get; set; }
+        public string Name { get; }
     }
 }

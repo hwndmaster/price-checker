@@ -13,7 +13,7 @@ namespace Genius.PriceChecker.UI.ValueConverters
             {
                 return null;
             }
-            return dt.Humanize();
+            return dt.Humanize(false);
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

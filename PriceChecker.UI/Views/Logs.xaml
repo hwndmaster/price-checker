@@ -4,7 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
-        xmlns:behaviors="clr-namespace:Genius.PriceChecker.UI.Forms.Behaviors;assembly=PriceChecker.UI.Forms"
+        xmlns:autogrid="clr-namespace:Genius.PriceChecker.UI.Forms.AutoGrid;assembly=PriceChecker.UI.Forms"
         mc:Ignorable="d">
     <Grid>
         <Grid.RowDefinitions>
@@ -19,7 +19,7 @@
                   ItemsSource="{Binding Path=LogItems}"
                   IsReadOnly="True">
             <i:Interaction.Behaviors>
-                <behaviors:DataGridAutomatedBehavior />
+                <autogrid:AttachingBehavior />
             </i:Interaction.Behaviors>
             <DataGrid.RowStyle>
                 <Style TargetType="{x:Type DataGridRow}" BasedOn="{StaticResource MahApps.Styles.DataGridRow}">

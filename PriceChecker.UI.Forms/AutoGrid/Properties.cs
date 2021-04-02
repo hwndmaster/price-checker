@@ -5,14 +5,14 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using Genius.PriceChecker.UI.Forms.Attributes;
 
-namespace Genius.PriceChecker.UI.Forms.Behaviors
+namespace Genius.PriceChecker.UI.Forms.AutoGrid
 {
-    public static class DataGridAutomated
+    public static class Properties
     {
         public static readonly DependencyProperty ItemsSourceProperty = DependencyProperty.RegisterAttached(
             "ItemsSource",
             typeof(IEnumerable),
-            typeof(DataGridAutomated),
+            typeof(Properties),
             new PropertyMetadata(ItemsSourceChanged)
         );
 

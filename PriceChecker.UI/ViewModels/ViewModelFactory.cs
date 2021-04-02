@@ -1,5 +1,6 @@
 using Genius.PriceChecker.Core.Models;
 using Genius.PriceChecker.Core.Repositories;
+using Genius.PriceChecker.Core.Services;
 using Genius.PriceChecker.Infrastructure.Events;
 using Genius.PriceChecker.UI.Helpers;
 
@@ -15,16 +16,19 @@ namespace Genius.PriceChecker.UI.ViewModels
     {
         private readonly IAgentRepository _agentRepo;
         private readonly IProductRepository _productRepo;
+        private readonly IProductStatusProvider _statusProvider;
         private readonly IEventBus _eventBus;
         private readonly IUserInteraction _ui;
 
         public ViewModelFactory(IEventBus eventBus,
             IAgentRepository agentRepo, IProductRepository productRepo,
+            IProductStatusProvider statusProvider,
             IUserInteraction ui)
         {
             _eventBus = eventBus;
             _agentRepo = agentRepo;
             _productRepo = productRepo;
+            _statusProvider = statusProvider;
             _ui = ui;
         }
 
@@ -35,7 +39,8 @@ namespace Genius.PriceChecker.UI.ViewModels
 
         public TrackerProductViewModel CreateTrackerProduct(Product product)
         {
-            return new TrackerProductViewModel(product, _eventBus, _agentRepo, _productRepo, _ui);
+            return new TrackerProductViewModel(product, _eventBus, _agentRepo,
+                _productRepo, _statusProvider, _ui);
         }
     }
 }

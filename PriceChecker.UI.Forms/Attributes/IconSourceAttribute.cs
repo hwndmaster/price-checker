@@ -15,7 +15,14 @@ namespace Genius.PriceChecker.UI.Forms.Attributes
             FixedSize = fixedSize;
         }
 
-        public string IconPropertyPath { get; set; }
-        public double? FixedSize { get; set; }
+        public IconSourceAttribute(string iconPropertyPath, double fixedSize, bool hideText)
+            : this (iconPropertyPath, fixedSize)
+        {
+            HideText = hideText;
+        }
+
+        public string IconPropertyPath { get; }
+        public double? FixedSize { get; }
+        public bool HideText { get; } = false;
     }
 }

@@ -3,6 +3,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows.Input;
 using Genius.PriceChecker.Core.Messages;
+using Genius.PriceChecker.Core.Models;
 using Genius.PriceChecker.Core.Repositories;
 using Genius.PriceChecker.Core.Services;
 using Genius.PriceChecker.Infrastructure.Events;
@@ -32,13 +33,11 @@ namespace Genius.PriceChecker.UI.ViewModels
 
             RefreshAllCommand = new ActionCommand(_ => {
                 IsAddEditProductVisible = false;
-                foreach (var product in Products)
-                    _productMng.EnqueueScan(product.Id);
+                EnqueueScan(Products);
             });
             RefreshSelectedCommand = new ActionCommand(_ => {
                 IsAddEditProductVisible = false;
-                foreach (var product in Products.Where(x => x.IsSelected))
-                    _productMng.EnqueueScan(product.Id);
+                EnqueueScan(Products.Where(x => x.IsSelected));
             });
             OpenAddProductFlyoutCommand = new ActionCommand(o => {
                 IsAddEditProductVisible = !IsAddEditProductVisible;
@@ -75,7 +74,10 @@ namespace Genius.PriceChecker.UI.ViewModels
             });
 
             _eventBus.Subscribe<ProductScannedEvent>((@event) => {
-                Products.First(x => x.Id == @event.Product.Id).Reconcile();
+                Products.First(x => x.Id == @event.Product.Id).Reconcile(@event.LowestPriceUpdated);
+            });
+            _eventBus.Subscribe<ProductScanFailedEvent>((@event) => {
+                Products.First(x => x.Id == @event.Product.Id).SetFailed(@event.ErrorMessage);
             });
 
             Deactivated.Executed += (_, __) => {
@@ -90,6 +92,17 @@ namespace Genius.PriceChecker.UI.ViewModels
             ReloadList();
 
             PropertiesAreInitialized = true;
+        }
+
+        private void EnqueueScan(IEnumerable<TrackerProductViewModel> products)
+        {
+            foreach (var product in products)
+            {
+                if (product.Status == ProductScanStatus.Scanning)
+                    continue;
+                _productMng.EnqueueScan(product.Id);
+                product.Status = ProductScanStatus.Scanning;
+            }
         }
 
         private void ReloadList()

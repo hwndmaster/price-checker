@@ -7,6 +7,7 @@ using Microsoft.Extensions.Logging;
 using Genius.PriceChecker.Core.Messages;
 using Genius.PriceChecker.Core.Repositories;
 using Genius.PriceChecker.Core.Models;
+using System.IO;
 
 namespace Genius.PriceChecker.Core.Services
 {
@@ -74,7 +75,8 @@ namespace Genius.PriceChecker.Core.Services
             var match = re.Match(content);
             if (!match.Success)
             {
-                _logger.LogError($"Cannot match the price from the given content. Url = '{url}'");
+                await File.WriteAllTextAsync("content.log", content);
+                _logger.LogError($"Cannot match price from the given content. File = 'content.log', Url = '{url}'");
                 return null;
             }
 

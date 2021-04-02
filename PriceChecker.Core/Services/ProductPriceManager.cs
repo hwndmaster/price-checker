@@ -41,14 +41,6 @@ namespace Genius.PriceChecker.Core.Services
 
         public void EnqueueScan(Guid productId)
         {
-            /*
-            TODO: Check if the product is already in the queue
-            if (_taskScheduler.Any(x => x.Id == productId))
-            {
-                _logger.LogInformation($"Product with ID '{productId}' is already in the queue.");
-                return;
-            }*/
-
             var product = _productRepo.FindById(productId);
             if (product == null)
             {
@@ -58,20 +50,26 @@ namespace Genius.PriceChecker.Core.Services
 
             Task.Factory.StartNew(async() =>
             {
-                var hasChanges = await ScanForPricesAsync(product, true);
-                if (hasChanges)
+                try
                 {
-                    _eventBus.Publish(new ProductScannedEvent(product));
+                    await ScanForPricesAsync(product, true);
+                }
+                catch (Exception ex)
+                {
+                    _eventBus.Publish(new ProductScanFailedEvent(product, ex.Message));
+                    throw;
                 }
             }, CancellationToken.None, TaskCreationOptions.None, _taskScheduler);
         }
 
-        public async Task<bool> ScanForPricesAsync(Product product, bool ignoreRecentDate = false)
+        private async Task ScanForPricesAsync(Product product, bool ignoreRecentDate = false)
         {
             if (IsTooRecent(product))
             {
                 _logger.LogTrace($"Price scanning '{product.Name}' cancelled due to recent results");
-                return false;
+                //_eventBus.Publish(new ProductScanFailedEvent(product, "Scan cancelled due to recent results"));
+                _eventBus.Publish(new ProductScannedEvent(product, false));
+                return;
             }
 
             _logger.LogTrace($"Processing '{product.Name}'");
@@ -79,27 +77,29 @@ namespace Genius.PriceChecker.Core.Services
             if (!results.Any())
             {
                 _logger.LogWarning($"Price scanning for '{product.Name}' failed or no results retrieved");
-                return false;
+                _eventBus.Publish(new ProductScanFailedEvent(product, "Scan failed or no results retrieved"));
+                return;
             }
 
             product.Recent = LogAndConvert(product, results);
 
+            var lowestPriceUpdated = false;
             var minPrice = product.Recent.Min(x => x.Price);
             if (product.Lowest == null || product.Lowest.Price >= minPrice)
             {
-                /*
-                TODO: Notify user when a lower price has caught after recent price scan
                 if (product.Lowest != null && product.Lowest.Price > minPrice)
                 {
-                    _logger.LogWarning($"Price for '{product.Name}' has dropped lower than before! New price is {minPrice} EUR on '{product.Lowest.AgentId}' (was {product.Lowest.Price} EUR)");
-                }*/
+                    lowestPriceUpdated = true;
+                    //_logger.LogWarning($"Price for '{product.Name}' has dropped lower than before! New price is {minPrice} EUR on '{product.Lowest.AgentId}' (was {product.Lowest.Price} EUR)");
+                }
                 product.Lowest = product.Recent.First(x => x.Price == minPrice);
 
                 _productRepo.Store(product);
-                return true;
+
+                _eventBus.Publish(new ProductScannedEvent(product, lowestPriceUpdated));
             }
 
-            return false;
+            _eventBus.Publish(new ProductScannedEvent(product, lowestPriceUpdated));
         }
 
         private bool IsTooRecent(Product product)

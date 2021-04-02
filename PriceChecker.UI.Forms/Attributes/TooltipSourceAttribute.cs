@@ -3,13 +3,13 @@ using System;
 namespace Genius.PriceChecker.UI.Forms.Attributes
 {
     [AttributeUsage(AttributeTargets.Property, AllowMultiple = false)]
-    public sealed class DisplayIndexAttribute : Attribute
+    public sealed class TooltipSourceAttribute : Attribute
     {
-        public DisplayIndexAttribute(int index)
+        public TooltipSourceAttribute(string path)
         {
-            Index = index;
+            Path = path;
         }
 
-        public int Index { get; }
+        public string Path { get; }
     }
 }

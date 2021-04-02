@@ -4,9 +4,12 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using System.Windows;
+using System.Windows.Media.Imaging;
 using Genius.PriceChecker.Core.Messages;
 using Genius.PriceChecker.Core.Models;
 using Genius.PriceChecker.Core.Repositories;
+using Genius.PriceChecker.Core.Services;
 using Genius.PriceChecker.Infrastructure.Events;
 using Genius.PriceChecker.UI.Forms;
 using Genius.PriceChecker.UI.Forms.Attributes;
@@ -21,16 +24,18 @@ namespace Genius.PriceChecker.UI.ViewModels
     {
         private readonly IAgentRepository _agentRepo;
         private readonly IProductRepository _productRepo;
+        private readonly IProductStatusProvider _statusProvider;
         private readonly IUserInteraction _ui;
 
         private Product _product;
 
         public TrackerProductViewModel(Product product, IEventBus eventBus,
             IAgentRepository agentRepo, IProductRepository productRepo,
-            IUserInteraction ui)
+            IProductStatusProvider statusProvider, IUserInteraction ui)
         {
             _agentRepo = agentRepo;
             _productRepo = productRepo;
+            _statusProvider = statusProvider;
             _product = product;
             _ui = ui;
 
@@ -40,7 +45,7 @@ namespace Genius.PriceChecker.UI.ViewModels
             if (_product != null)
             {
                 ResetForm();
-                Reconcile();
+                Reconcile(false);
             }
 
             CommitProductCommand = new ActionCommand(_ => CommitProduct());
@@ -70,15 +75,24 @@ namespace Genius.PriceChecker.UI.ViewModels
             PropertiesAreInitialized = true;
         }
 
-        public void Reconcile()
+        public void Reconcile(bool lowestPriceUpdated)
         {
             LowestPrice = _product.Lowest?.Price;
             LowestFoundOn = _product.Lowest?.FoundDate;
+            Status = lowestPriceUpdated
+                ? ProductScanStatus.ScannedNewLowest
+                : _statusProvider.DetermineStatus(_product);
 
             if (_product.Recent.Any())
             {
                 LastUpdated = _product.Recent.Max(x => x.FoundDate);
             }
+        }
+
+        public void SetFailed(string errorMessage)
+        {
+            Status = ProductScanStatus.Failed;
+            StatusText = errorMessage;
         }
 
         private void CommitProduct()
@@ -137,6 +151,44 @@ namespace Genius.PriceChecker.UI.ViewModels
         public ObservableCollection<string> Categories { get; } = new ObservableCollection<string>();
 
         [Browsable(true)]
+        [IconSource(nameof(StatusIcon), fixedSize: 16d, hideText: true)]
+        [TooltipSource(nameof(StatusText))]
+        [Style(HorizontalAlignment = HorizontalAlignment.Right)]
+        public ProductScanStatus Status
+        {
+            get => GetOrDefault<ProductScanStatus>();
+            set => RaiseAndSetIfChanged(value, (@old, @new) => {
+                OnPropertyChanged(nameof(StatusIcon));
+            });
+        }
+
+        public BitmapImage StatusIcon
+        {
+            get
+            {
+                var icon = Status switch
+                {
+                    ProductScanStatus.NotScanned => "Unknown16",
+                    ProductScanStatus.Scanning => "Loading32",
+                    ProductScanStatus.ScannedOk => "DonePink16",
+                    ProductScanStatus.ScannedNewLowest => "Dance32",
+                    ProductScanStatus.Outdated => "Outdated16",
+                    ProductScanStatus.Failed => "Error16",
+                    {} => null
+                };
+                if (icon == null)
+                    return null;
+                return (BitmapImage)App.Current.FindResource(icon);
+            }
+        }
+
+        public string StatusText
+        {
+            get => GetOrDefault<string>();
+            set => RaiseAndSetIfChanged(value);
+        }
+
+        [Browsable(true)]
         public string Name
         {
             get => GetOrDefault<string>();
@@ -158,6 +210,7 @@ namespace Genius.PriceChecker.UI.ViewModels
 
         [Browsable(true)]
         [DisplayFormat(DataFormatString = "€ #,##0.00")]
+        [Style(HorizontalAlignment = HorizontalAlignment.Right)]
         public decimal? LowestPrice
         {
             get => GetOrDefault<decimal?>();

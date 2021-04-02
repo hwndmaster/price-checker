@@ -34,5 +34,11 @@
     "Url": "https://www.viofo.nl/en/collections/viofo-dashcams/products/{0}",
     "PricePattern": "\u0022og:price:amount\u0022 content=\u0022(?\u003Cprice\u003E[\\d,]\u002B)\u0022\u003E",
     "DecimalDelimiter": ","
+  },
+  {
+    "Id": "amazon.de_alt",
+    "Url": "https://www.amazon.de/gp/product/{0}?psc=1",
+    "PricePattern": "\u0022priceblock_ourprice\u0022[^\u003E]\u002B\u003E[$\u20AC]([\\d\\.]\u002B)\u003C",
+    "DecimalDelimiter": "."
   }
 ]

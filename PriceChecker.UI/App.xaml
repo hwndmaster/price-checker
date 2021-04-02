@@ -16,12 +16,20 @@
                 <ResourceDictionary Source="NotifyIconResources.xaml" />
             </ResourceDictionary.MergedDictionaries>
 
+            <!-- Images -->
             <BitmapImage x:Key="Alert32" UriSource="pack://application:,,,/Assets/Alert32.png" />
+            <BitmapImage x:Key="DonePink16" UriSource="pack://application:,,,/Assets/DonePink16.png" />
             <BitmapImage x:Key="Error16" UriSource="pack://application:,,,/Assets/Error16.png" />
+            <BitmapImage x:Key="Outdated16" UriSource="pack://application:,,,/Assets/Outdated16.png" />
             <BitmapImage x:Key="Plus16" UriSource="pack://application:,,,/Assets/Plus16.png" />
             <BitmapImage x:Key="Trash16" UriSource="pack://application:,,,/Assets/Trash16.png" />
+            <BitmapImage x:Key="Unknown16" UriSource="pack://application:,,,/Assets/Unknown16.png" />
             <BitmapImage x:Key="Warning16" UriSource="pack://application:,,,/Assets/Warning16.png" />
             <BitmapImage x:Key="Web16" UriSource="pack://application:,,,/Assets/Web16.png" />
+
+            <!-- Animated images -->
+            <BitmapImage x:Key="Dance32" UriSource="pack://application:,,,/Assets/Dance32.gif" />
+            <BitmapImage x:Key="Loading32" UriSource="pack://application:,,,/Assets/Loading32.gif" />
 
             <Style x:Key="FormPanelCaption" TargetType="{x:Type Label}">
                 <Setter Property="Width" Value="140" />

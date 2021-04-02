@@ -9,12 +9,12 @@ using System.Linq.Expressions;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Windows.Controls;
+using Genius.PriceChecker.Infrastructure;
 using Genius.PriceChecker.UI.Forms.Attributes;
-using Genius.PriceChecker.UI.Forms.Helpers;
 
 namespace Genius.PriceChecker.UI.Forms.ViewModels
 {
-  public abstract class ViewModelBase : INotifyPropertyChanged, INotifyDataErrorInfo
+    public abstract class ViewModelBase : INotifyPropertyChanged, INotifyDataErrorInfo
     {
         protected readonly ConcurrentDictionary<string, object> _propertyBag = new();
         private readonly Dictionary<string, List<ValidationRule>> _validationRules = new();
