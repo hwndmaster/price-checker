@@ -7,24 +7,27 @@
     <PackageReference Update="Microsoft.Extensions.Logging" Version="5.0.0" />
     <PackageReference Update="Microsoft.Extensions.Logging.Abstractions" Version="5.0.0" />
 
-    <!-- Automated Testing components -->
-    <PackageReference Update="Microsoft.NET.Test.Sdk" Version="16.8.3" />
-    <PackageReference Update="xunit" Version="2.4.1" />
-    <PackageReference Update="xunit.runner.visualstudio" Version="2.4.3">
+    <!-- Misc -->
+    <PackageReference Update="Humanizer.Core" Version="2.8.26" />
+    <PackageReference Update="MahApps.Metro" Version="2.4.4" />
+    <PackageReference Update="MahApps.Metro.IconPacks.Unicons" Version="4.8.0" />
+    <PackageReference Update="WpfAnimatedGif" Version="2.0.0" />
+  </ItemGroup>
+
+  <!-- Automated Testing components -->
+  <ItemGroup Condition="$(ProjectName.EndsWith('.Tests'))">
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.8.3" />
+    <PackageReference Include="xunit" Version="2.4.1" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.4.3">
         <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         <PrivateAssets>all</PrivateAssets>
     </PackageReference>
-    <PackageReference Update="coverlet.collector" Version="3.0.1">
+    <PackageReference Include="coverlet.collector" Version="3.0.1">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
 
-    <!-- Misc -->
-    <PackageReference Update="AutoFixture" Version="4.16.0" />
-    <PackageReference Update="Humanizer.Core" Version="2.8.26" />
-    <PackageReference Update="MahApps.Metro" Version="2.4.4" />
-    <PackageReference Update="MahApps.Metro.IconPacks.Unicons" Version="4.8.0" />
-    <PackageReference Update="Moq" Version="4.16.1" />
-    <PackageReference Update="WpfAnimatedGif" Version="2.0.0" />
+    <PackageReference Include="AutoFixture" Version="4.16.0" />
+    <PackageReference Include="Moq" Version="4.16.1" />
   </ItemGroup>
 </Project>
