@@ -13,7 +13,7 @@ using Genius.PriceChecker.UI.Helpers;
 
 namespace Genius.PriceChecker.UI.ViewModels
 {
-    public class TrackerViewModel : TabViewModelBase<TrackerViewModel>
+    public class TrackerViewModel : TabViewModelBase
     {
         private readonly IEventBus _eventBus;
         private readonly IProductRepository _productRepo;

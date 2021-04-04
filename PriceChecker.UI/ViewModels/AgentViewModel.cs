@@ -8,7 +8,7 @@ using Genius.PriceChecker.UI.Validation;
 
 namespace Genius.PriceChecker.UI.ViewModels
 {
-    public class AgentViewModel : ViewModelBase<AgentViewModel>, IHasDirtyFlag, ISelectable
+    public class AgentViewModel : ViewModelBase, IHasDirtyFlag, ISelectable
     {
         private readonly AgentsViewModel _owner;
         private readonly Agent _agent;
@@ -43,6 +43,8 @@ namespace Genius.PriceChecker.UI.ViewModels
             Url = _agent?.Url;
             PricePattern = _agent?.PricePattern;
             DecimalDelimiter = _agent?.DecimalDelimiter ?? '.';
+
+            IsDirty = false;
         }
 
         [Browsable(false)]

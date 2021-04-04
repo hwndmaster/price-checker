@@ -6,7 +6,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Genius.PriceChecker.UI.ViewModels
 {
-  public class LogItemViewModel : ViewModelBase<LogItemViewModel>
+  public class LogItemViewModel : ViewModelBase
     {
         [IconSource(nameof(SeverityIcon), 16d)]
         public LogLevel Severity { get; set; }

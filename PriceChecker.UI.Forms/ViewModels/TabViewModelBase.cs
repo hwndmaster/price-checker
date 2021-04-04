@@ -8,7 +8,7 @@ namespace Genius.PriceChecker.UI.Forms.ViewModels
         IActionCommand Deactivated { get; }
     }
 
-    public abstract class TabViewModelBase<TViewModel> : ViewModelBase<TViewModel>, ITabViewModel
+    public abstract class TabViewModelBase : ViewModelBase, ITabViewModel
     {
         [Browsable(false)]
         public IActionCommand Activated { get; } = new ActionCommand();

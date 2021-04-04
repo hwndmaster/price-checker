@@ -9,7 +9,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Genius.PriceChecker.UI.ViewModels
 {
-  public class LogsViewModel : TabViewModelBase<LogsViewModel>
+  public class LogsViewModel : TabViewModelBase
     {
         public LogsViewModel(IEventBus eventBus)
         {

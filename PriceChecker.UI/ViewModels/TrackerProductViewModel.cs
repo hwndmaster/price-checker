@@ -20,7 +20,7 @@ using Genius.PriceChecker.UI.ValueConverters;
 namespace Genius.PriceChecker.UI.ViewModels
 {
     [ShowOnlyBrowsable(true)]
-    public class TrackerProductViewModel : ViewModelBase<TrackerProductViewModel>, ISelectable
+    public class TrackerProductViewModel : ViewModelBase, ISelectable
     {
         private readonly IAgentRepository _agentRepo;
         private readonly IProductRepository _productRepo;

@@ -5,16 +5,14 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Globalization;
 using System.Linq;
-using System.Linq.Expressions;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Windows.Controls;
-using Genius.PriceChecker.Infrastructure;
 using Genius.PriceChecker.UI.Forms.Attributes;
 
 namespace Genius.PriceChecker.UI.Forms.ViewModels
 {
-    public abstract class ViewModelBase : INotifyPropertyChanged, INotifyDataErrorInfo
+  public abstract class ViewModelBase : INotifyPropertyChanged, INotifyDataErrorInfo
     {
         protected readonly ConcurrentDictionary<string, object> _propertyBag = new();
         private readonly Dictionary<string, List<ValidationRule>> _validationRules = new();
@@ -34,6 +32,11 @@ namespace Genius.PriceChecker.UI.Forms.ViewModels
                 _errors.TryGetValue(propertyName, out List<string> errors) ?
                 errors :
                 new List<string>();
+        }
+
+        internal bool TryGetPropertyValue(string propertyName, out object value)
+        {
+            return _propertyBag.TryGetValue(propertyName, out value);
         }
 
         protected T GetOrDefault<T>(T defaultValue = default(T), [CallerMemberName] string name = null)
@@ -155,24 +158,5 @@ namespace Genius.PriceChecker.UI.Forms.ViewModels
         public event EventHandler<DataErrorsChangedEventArgs> ErrorsChanged;
 
         public virtual bool HasErrors => _errors.Any();
-    }
-
-    public abstract class ViewModelBase<TViewModel> : ViewModelBase
-    {
-        public void WhenChanged<TProperty>(Expression<Func<TViewModel, TProperty>> propertyAccessor, Action<TProperty> handler)
-        {
-            var propName = ExpressionHelpers.GetPropertyName(propertyAccessor);
-
-            PropertyChanged += (_, args) =>
-            {
-                if (args.PropertyName != propName)
-                    return;
-
-                if (!_propertyBag.TryGetValue(propName, out var value))
-                    return;
-
-                handler((TProperty) value);
-            };
-        }
     }
 }

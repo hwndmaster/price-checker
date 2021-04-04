@@ -8,7 +8,7 @@ using Genius.PriceChecker.UI.Helpers;
 
 namespace Genius.PriceChecker.UI.ViewModels
 {
-    public class AgentsViewModel : TabViewModelBase<AgentsViewModel>, IHasDirtyFlag
+    public class AgentsViewModel : TabViewModelBase, IHasDirtyFlag
     {
         private readonly IAgentRepository _agentRepo;
         private readonly IViewModelFactory _vmFactory;
@@ -44,14 +44,16 @@ namespace Genius.PriceChecker.UI.ViewModels
                     agentRepo.Delete(selectedAgent.Id);
             });
 
-            CommitAgentsCommand = new ActionCommand(_ => CommitAgents(), _ => IsDirty && !HasErrors);
+            CommitAgentsCommand = new ActionCommand(_ => CommitAgents(),
+                _ => IsDirty && !HasErrors);
 
             ResetChangesCommand = new ActionCommand(_ => {
                 foreach (var agent in Agents)
                 {
                     agent.ResetForm();
                 }
-            });
+                IsDirty = false;
+            }, _ => IsDirty);
 
             PropertiesAreInitialized = true;
         }

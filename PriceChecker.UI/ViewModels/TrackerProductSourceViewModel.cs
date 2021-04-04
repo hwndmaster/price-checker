@@ -5,7 +5,7 @@ using Genius.PriceChecker.UI.Forms.ViewModels;
 
 namespace Genius.PriceChecker.UI.ViewModels
 {
-  public class TrackerProductSourceViewModel : ViewModelBase<TrackerProductSourceViewModel>
+  public class TrackerProductSourceViewModel : ViewModelBase
     {
         public TrackerProductSourceViewModel(ProductSource productSource)
         {

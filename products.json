@@ -195,5 +195,51 @@
         "FoundDate": "2021-04-02T16:09:07.1561304+02:00"
       }
     ]
+  },
+  {
+    "Id": "ff4f7e22-303a-4ea3-ae54-bfafc29da3cc",
+    "Category": "",
+    "Name": "Ring Indoor Cam",
+    "Description": null,
+    "Sources": [
+      {
+        "AgentId": "amazon.de_alt",
+        "AgentArgument": "B07Q4XK79L"
+      },
+      {
+        "AgentId": "amazon.nl",
+        "AgentArgument": "B07Q4XK79L"
+      },
+      {
+        "AgentId": "tweakers.net",
+        "AgentArgument": "1281223/ring-stick-up-cam-elite-wired-zwart.html"
+      },
+      {
+        "AgentId": "bol.com",
+        "AgentArgument": "ring-indoor-cam-beveiligingscamera-wit/9200000128101795"
+      }
+    ],
+    "Lowest": {
+      "AgentId": "amazon.nl",
+      "Price": 59.00,
+      "FoundDate": "2021-04-02T21:06:43.2140423+02:00"
+    },
+    "Recent": [
+      {
+        "AgentId": "amazon.nl",
+        "Price": 59.00,
+        "FoundDate": "2021-04-02T21:06:43.2140423+02:00"
+      },
+      {
+        "AgentId": "tweakers.net",
+        "Price": 146.19,
+        "FoundDate": "2021-04-02T21:06:43.214047+02:00"
+      },
+      {
+        "AgentId": "bol.com",
+        "Price": 59.00,
+        "FoundDate": "2021-04-02T21:06:43.2140474+02:00"
+      }
+    ]
   }
 ]
