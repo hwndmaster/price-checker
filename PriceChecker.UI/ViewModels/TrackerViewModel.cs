@@ -8,6 +8,7 @@ using Genius.PriceChecker.Core.Repositories;
 using Genius.PriceChecker.Core.Services;
 using Genius.PriceChecker.Infrastructure.Events;
 using Genius.PriceChecker.UI.Forms;
+using Genius.PriceChecker.UI.Forms.Attributes;
 using Genius.PriceChecker.UI.Forms.ViewModels;
 using Genius.PriceChecker.UI.Helpers;
 
@@ -116,11 +117,12 @@ namespace Genius.PriceChecker.UI.ViewModels
 
         public ObservableCollection<TrackerProductViewModel> Products { get; } = new ObservableCollection<TrackerProductViewModel>();
 
-        public ICommand RefreshAllCommand { get; }
-        public ICommand RefreshSelectedCommand { get; }
-        public ICommand OpenAddProductFlyoutCommand { get; }
-        public ICommand OpenEditProductFlyoutCommand { get; }
-        public ICommand DeleteProductCommand { get; }
+        [FilterContext]
+        public string Filter
+        {
+            get => GetOrDefault<string>();
+            set => RaiseAndSetIfChanged(value);
+        }
 
         public bool IsAddEditProductVisible
         {
@@ -133,5 +135,11 @@ namespace Genius.PriceChecker.UI.ViewModels
             get => GetOrDefault<TrackerProductViewModel>();
             set => RaiseAndSetIfChanged(value);
         }
+
+        public ICommand RefreshAllCommand { get; }
+        public ICommand RefreshSelectedCommand { get; }
+        public ICommand OpenAddProductFlyoutCommand { get; }
+        public ICommand OpenEditProductFlyoutCommand { get; }
+        public ICommand DeleteProductCommand { get; }
     }
 }

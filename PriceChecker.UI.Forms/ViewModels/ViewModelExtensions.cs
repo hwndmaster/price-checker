@@ -12,12 +12,17 @@ namespace Genius.PriceChecker.UI.Forms.ViewModels
         {
             var propName = ExpressionHelpers.GetPropertyName(propertyAccessor);
 
+            return WhenChanged(viewModel, propName, handler);
+        }
+
+        public static IDisposable WhenChanged<TProperty>(this ViewModelBase viewModel, string propertyName, Action<TProperty> handler)
+        {
             PropertyChangedEventHandler fn = (_, args) =>
             {
-                if (args.PropertyName != propName)
+                if (args.PropertyName != propertyName)
                     return;
 
-                if (!viewModel.TryGetPropertyValue(propName, out var value))
+                if (!viewModel.TryGetPropertyValue(propertyName, out var value))
                     return;
 
                 handler((TProperty) value);

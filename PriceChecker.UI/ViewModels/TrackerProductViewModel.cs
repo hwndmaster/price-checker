@@ -189,6 +189,7 @@ namespace Genius.PriceChecker.UI.ViewModels
         }
 
         [Browsable(true)]
+        [FilterBy]
         public string Name
         {
             get => GetOrDefault<string>();

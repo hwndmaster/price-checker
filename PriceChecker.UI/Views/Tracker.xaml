@@ -12,9 +12,10 @@
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
-        <StackPanel Grid.Row="0" Margin="10" Orientation="Horizontal">
+        <DockPanel Grid.Row="0" Margin="10">
             <Button Content="Add product" Width="Auto" Padding="5,2"
                     Command="{Binding OpenAddProductFlyoutCommand}" />
             <Button Content="Open details" Width="Auto"
@@ -37,8 +38,11 @@
             <Button Content="Delete" Width="Auto" Margin="10,0,0,0" Padding="5,2"
                     Background="DarkRed"
                     Command="{Binding DeleteProductCommand}" />
-        </StackPanel>
-        <DataGrid Grid.Row="1" Margin="10"
+            <Label Content="Filter:" Margin="100,0,0,0" />
+            <TextBox Text="{Binding Filter}" mah:TextBoxHelper.ClearTextButton="True"
+                     KeyUp="Filter_KeyUp"/>
+        </DockPanel>
+        <DataGrid Grid.Row="2" Margin="10"
                   autogrid:Properties.ItemsSource="{Binding Products}"
                   IsReadOnly="True">
             <DataGrid.InputBindings>
