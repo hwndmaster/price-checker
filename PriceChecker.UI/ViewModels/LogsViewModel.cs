@@ -1,3 +1,4 @@
+using System;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
@@ -13,11 +14,12 @@ namespace Genius.PriceChecker.UI.ViewModels
     {
         public LogsViewModel(IEventBus eventBus)
         {
-            eventBus.Subscribe<LogEvent>(x => {
-                Application.Current.Dispatcher.Invoke(() => {
-                    LogItems.Add(new LogItemViewModel { Severity = x.Severity, Logger = x.Logger, Message = x.Message });
+            eventBus.WhenFired<LogEvent>()
+                .Subscribe(x => {
+                    Application.Current.Dispatcher.Invoke(() => {
+                        LogItems.Add(new LogItemViewModel { Severity = x.Severity, Logger = x.Logger, Message = x.Message });
+                    });
                 });
-            });
 
             CleanLogCommand = new ActionCommand(_ => {
                 LogItems.Clear();
@@ -26,8 +28,8 @@ namespace Genius.PriceChecker.UI.ViewModels
             LogItems.CollectionChanged += (_, args) => {
                 if (HasNewErrors)
                     return;
-                HasNewErrors = args.NewItems.Cast<LogItemViewModel>()
-                    .Any(x => x.Severity >= LogLevel.Error);
+                HasNewErrors = args.NewItems?.Cast<LogItemViewModel>()
+                    .Any(x => x.Severity >= LogLevel.Error) ?? false;
             };
 
             Activated.Executed += (_, __) => {

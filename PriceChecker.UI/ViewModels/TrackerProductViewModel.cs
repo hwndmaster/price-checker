@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using System.Reactive.Linq;
 using System.Windows;
 using System.Windows.Media.Imaging;
 using Genius.PriceChecker.Core.Messages;
@@ -65,12 +66,14 @@ namespace Genius.PriceChecker.UI.ViewModels
                 ResetForm();
             }, _ => _product != null);
 
-            eventBus.Subscribe<AgentsUpdatedEvent, AgentDeletedEvent>(() => {
-                RefreshAgents();
-            });
-            eventBus.Subscribe<ProductUpdatedEvent, ProductAddedEvent>(() => {
-                RefreshCategories();
-            });
+            eventBus.WhenFired<AgentsUpdatedEvent, AgentDeletedEvent>()
+                .Subscribe(_ =>
+                    RefreshAgents()
+                );
+            eventBus.WhenFired<ProductUpdatedEvent, ProductAddedEvent>()
+                .Subscribe(_ =>
+                    RefreshCategories()
+                );
 
             PropertiesAreInitialized = true;
         }

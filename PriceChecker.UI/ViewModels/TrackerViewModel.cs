@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -74,12 +75,14 @@ namespace Genius.PriceChecker.UI.ViewModels
                 _productRepo.Delete(selectedProduct.Id);
             });
 
-            _eventBus.Subscribe<ProductScannedEvent>((@event) => {
-                Products.First(x => x.Id == @event.Product.Id).Reconcile(@event.LowestPriceUpdated);
-            });
-            _eventBus.Subscribe<ProductScanFailedEvent>((@event) => {
-                Products.First(x => x.Id == @event.Product.Id).SetFailed(@event.ErrorMessage);
-            });
+            _eventBus.WhenFired<ProductScannedEvent>()
+                .Subscribe(ev => {
+                    Products.First(x => x.Id == ev.Product.Id).Reconcile(ev.LowestPriceUpdated);
+                });
+            _eventBus.WhenFired<ProductScanFailedEvent>()
+                .Subscribe(ev => {
+                    Products.First(x => x.Id == ev.Product.Id).SetFailed(ev.ErrorMessage);
+                });
 
             Deactivated.Executed += (_, __) => {
                 IsAddEditProductVisible = false;

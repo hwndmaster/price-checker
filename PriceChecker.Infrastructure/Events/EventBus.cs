@@ -1,17 +1,19 @@
 using System;
 using System.Collections.Concurrent;
+using System.Reactive;
+using System.Reactive.Linq;
 
 namespace Genius.PriceChecker.Infrastructure.Events
 {
     public interface IEventBus
     {
         void Publish(IEventMessage @event);
-        IDisposable Subscribe<T>(Action<T> action)
+        IObservable<T> WhenFired<T>()
             where T : IEventMessage;
-        IDisposable Subscribe<T1, T2>(Action action)
+        IObservable<Unit> WhenFired<T1, T2>()
             where T1 : IEventMessage
             where T2 : IEventMessage;
-        IDisposable Subscribe<T1, T2, T3>(Action action)
+        IObservable<Unit> WhenFired<T1, T2, T3>()
             where T1 : IEventMessage
             where T2 : IEventMessage
             where T3 : IEventMessage;
@@ -19,70 +21,45 @@ namespace Genius.PriceChecker.Infrastructure.Events
 
     internal sealed class EventBus : IEventBus
     {
-        private static ConcurrentDictionary<EventSubscription, object> _subscriptions = new ConcurrentDictionary<EventSubscription, object>();
-
-        private event EventHandler<EventPublishedArgs> EventAdded;
+        private event EventHandler<EventPublishedArgs> _eventAdded;
+        private readonly IObservable<EventPublishedArgs> _mainObservable;
 
         public EventBus()
         {
-            EventAdded += (_, args) => {
-                var events = new [] { args.Event };
-                foreach (var @event in events)
-                {
-                    Handle(args.Event);
-                }
-            };
+            _mainObservable = Observable.FromEventPattern<EventPublishedArgs>(
+                x => this._eventAdded += x,
+                x => this._eventAdded -= x)
+                .Select(x => x.EventArgs);
         }
 
         public void Publish(IEventMessage message)
         {
-            EventAdded?.Invoke(this, new EventPublishedArgs(message));
+            _eventAdded?.Invoke(this, new EventPublishedArgs(message));
         }
 
-        public IDisposable Subscribe<T>(Action<T> action)
+        public IObservable<T> WhenFired<T>()
             where T : IEventMessage
         {
-            var subscription = new EventSubscription<T>(this, action);
-            _subscriptions.TryAdd(subscription, null);
-            return subscription;
+            return _mainObservable
+                .Where(x => x.Event is T)
+                .Select(x => (T)x.Event);
         }
 
-        public IDisposable Subscribe<T1, T2>(Action action)
+        public IObservable<Unit> WhenFired<T1, T2>()
             where T1 : IEventMessage
             where T2 : IEventMessage
         {
-            var subscription1 = Subscribe<T1>(x => action());
-            var subscription2 = Subscribe<T2>(x => action());
-
-            return new CompositeDisposable(subscription1, subscription2);
+            return WhenFired<T1>().Select(x => Unit.Default)
+                .Merge(WhenFired<T2>().Select(x => Unit.Default));
         }
 
-        public IDisposable Subscribe<T1, T2, T3>(Action action)
+        public IObservable<Unit> WhenFired<T1, T2, T3>()
             where T1 : IEventMessage
             where T2 : IEventMessage
             where T3 : IEventMessage
         {
-            var subscription1 = Subscribe<T1>(x => action());
-            var subscription2 = Subscribe<T2>(x => action());
-            var subscription3 = Subscribe<T3>(x => action());
-
-            return new CompositeDisposable(subscription1, subscription2, subscription3);
-        }
-
-        public void StopSubscription(EventSubscription subscription)
-        {
-            _subscriptions.TryRemove(subscription, out var _);
-        }
-
-        private void Handle(IEventMessage @event)
-        {
-            foreach (var subscription in _subscriptions)
-            {
-                if (subscription.Key.EventType == @event.GetType())
-                {
-                    subscription.Key.Action(@event);
-                }
-            }
+            return WhenFired<T1, T2>()
+                .Merge(WhenFired<T3>().Select(x => Unit.Default));
         }
     }
 }
