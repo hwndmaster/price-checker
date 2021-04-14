@@ -1,6 +1,7 @@
 <Project>
   <ItemGroup>
     <!-- Microsoft common dependencies -->
+    <PackageReference Update="System.Reactive" Version="5.0.0" />
     <PackageReference Update="Microsoft.Extensions.DependencyInjection" Version="5.0.1" />
     <PackageReference Update="Microsoft.Extensions.DependencyInjection.Abstractions" Version="5.0.0"/>
     <PackageReference Update="Microsoft.Extensions.Configuration.Json" Version="5.0.0" />

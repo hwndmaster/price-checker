@@ -12,14 +12,14 @@
     ],
     "Lowest": {
       "AgentId": "amazon.de_alt",
-      "Price": 22.90,
-      "FoundDate": "2021-04-02T17:35:46.1935778+02:00"
+      "Price": 20.15,
+      "FoundDate": "2021-04-14T15:15:40.7066962+02:00"
     },
     "Recent": [
       {
         "AgentId": "amazon.de_alt",
-        "Price": 22.90,
-        "FoundDate": "2021-04-02T17:35:46.1935778+02:00"
+        "Price": 20.15,
+        "FoundDate": "2021-04-14T15:15:40.7066962+02:00"
       }
     ]
   },
@@ -40,14 +40,14 @@
     ],
     "Lowest": {
       "AgentId": "tweakers.net",
-      "Price": 699,
-      "FoundDate": "2020-12-01T17:11:31.9448022+01:00"
+      "Price": 370,
+      "FoundDate": "2021-04-14T15:15:39.7048672+02:00"
     },
     "Recent": [
       {
         "AgentId": "tweakers.net",
-        "Price": 713.63,
-        "FoundDate": "2021-04-02T16:09:07.9222353+02:00"
+        "Price": 370,
+        "FoundDate": "2021-04-14T15:15:39.7048672+02:00"
       }
     ]
   },
@@ -78,18 +78,18 @@
     "Recent": [
       {
         "AgentId": "amazon.de",
-        "Price": 649.0,
-        "FoundDate": "2021-03-10T23:00:16.5794827+01:00"
+        "Price": 669.99,
+        "FoundDate": "2021-04-04T19:11:30.2513894+02:00"
       },
       {
         "AgentId": "tweakers.net",
-        "Price": 659.91,
-        "FoundDate": "2021-03-10T23:00:16.5795001+01:00"
+        "Price": 699,
+        "FoundDate": "2021-04-04T19:11:30.2513938+02:00"
       },
       {
         "AgentId": "hafo.nl",
         "Price": 729.00,
-        "FoundDate": "2021-03-10T23:00:16.5795017+01:00"
+        "FoundDate": "2021-04-04T19:11:30.2513942+02:00"
       }
     ]
   },
@@ -120,13 +120,13 @@
     "Recent": [
       {
         "AgentId": "tweakers.net",
-        "Price": 165.75,
-        "FoundDate": "2021-03-03T23:04:54.4071042+01:00"
+        "Price": 179.99,
+        "FoundDate": "2021-04-14T15:15:42.178921+02:00"
       },
       {
         "AgentId": "amazon.nl",
-        "Price": 165.75,
-        "FoundDate": "2021-03-03T23:04:54.4071159+01:00"
+        "Price": 179.99,
+        "FoundDate": "2021-04-14T15:15:42.1789256+02:00"
       }
     ]
   },
@@ -148,18 +148,13 @@
     "Lowest": {
       "AgentId": "bol.com",
       "Price": 379.99,
-      "FoundDate": "2021-04-02T16:09:09.906689+02:00"
+      "FoundDate": "2021-04-04T19:11:26.0334447+02:00"
     },
     "Recent": [
       {
-        "AgentId": "bol.com",
-        "Price": 379.99,
-        "FoundDate": "2021-04-02T16:09:09.906689+02:00"
-      },
-      {
         "AgentId": "amazon.de",
         "Price": 429.95,
-        "FoundDate": "2021-04-02T16:09:09.9066939+02:00"
+        "FoundDate": "2021-04-14T15:15:42.0086278+02:00"
       }
     ]
   },
@@ -185,20 +180,15 @@
     },
     "Recent": [
       {
-        "AgentId": "tweakers.net",
-        "Price": 179.95,
-        "FoundDate": "2021-04-02T16:09:07.1561248+02:00"
-      },
-      {
         "AgentId": "viofo.nl",
         "Price": 179.95,
-        "FoundDate": "2021-04-02T16:09:07.1561304+02:00"
+        "FoundDate": "2021-04-14T15:15:40.576213+02:00"
       }
     ]
   },
   {
     "Id": "ff4f7e22-303a-4ea3-ae54-bfafc29da3cc",
-    "Category": "",
+    "Category": "Household",
     "Name": "Ring Indoor Cam",
     "Description": null,
     "Sources": [
@@ -220,25 +210,30 @@
       }
     ],
     "Lowest": {
-      "AgentId": "amazon.nl",
+      "AgentId": "amazon.de_alt",
       "Price": 59.00,
-      "FoundDate": "2021-04-02T21:06:43.2140423+02:00"
+      "FoundDate": "2021-04-14T15:15:43.1725091+02:00"
     },
     "Recent": [
       {
+        "AgentId": "amazon.de_alt",
+        "Price": 59.00,
+        "FoundDate": "2021-04-14T15:15:43.1725091+02:00"
+      },
+      {
         "AgentId": "amazon.nl",
         "Price": 59.00,
-        "FoundDate": "2021-04-02T21:06:43.2140423+02:00"
+        "FoundDate": "2021-04-14T15:15:43.172514+02:00"
       },
       {
         "AgentId": "tweakers.net",
         "Price": 146.19,
-        "FoundDate": "2021-04-02T21:06:43.214047+02:00"
+        "FoundDate": "2021-04-14T15:15:43.1725147+02:00"
       },
       {
         "AgentId": "bol.com",
         "Price": 59.00,
-        "FoundDate": "2021-04-02T21:06:43.2140474+02:00"
+        "FoundDate": "2021-04-14T15:15:43.1725153+02:00"
       }
     ]
   }
