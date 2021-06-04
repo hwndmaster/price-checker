@@ -253,5 +253,80 @@
         "FoundDate": "2021-06-04T15:12:41.2759641+02:00"
       }
     ]
+  },
+  {
+    "Id": "76ed6168-fbae-4fb3-a572-bc70c4d1e567",
+    "Category": "Action cam",
+    "Name": "Garmin VIRB Ultra 30",
+    "Description": null,
+    "Sources": [
+      {
+        "Id": "aa039437-a86f-4cf7-9283-90c63a95e142",
+        "AgentId": "amazon.de",
+        "AgentArgument": "B01K4CYV58"
+      }
+    ],
+    "Lowest": {
+      "ProductSourceId": "aa039437-a86f-4cf7-9283-90c63a95e142",
+      "Price": 389.95,
+      "FoundDate": "2021-06-04T16:23:06.2236865+02:00"
+    },
+    "Recent": [
+      {
+        "ProductSourceId": "aa039437-a86f-4cf7-9283-90c63a95e142",
+        "Price": 389.95,
+        "FoundDate": "2021-06-04T16:23:06.2236865+02:00"
+      }
+    ]
+  },
+  {
+    "Id": "40467c0b-d5ff-45d6-b1b7-30d8ab344dc8",
+    "Category": "Action cam",
+    "Name": "YI 4K \u002B",
+    "Description": null,
+    "Sources": [
+      {
+        "Id": "831217bc-0784-4d57-a6a5-d71bf6b2bd19",
+        "AgentId": "amazon.nl",
+        "AgentArgument": "B06XS5XFSP"
+      }
+    ],
+    "Lowest": {
+      "ProductSourceId": "831217bc-0784-4d57-a6a5-d71bf6b2bd19",
+      "Price": 236.80,
+      "FoundDate": "2021-06-04T16:36:05.7758763+02:00"
+    },
+    "Recent": [
+      {
+        "ProductSourceId": "831217bc-0784-4d57-a6a5-d71bf6b2bd19",
+        "Price": 236.80,
+        "FoundDate": "2021-06-04T16:36:05.7758763+02:00"
+      }
+    ]
+  },
+  {
+    "Id": "9f051b51-640a-4dd5-8a5b-1fb9996e7f91",
+    "Category": "Action cam",
+    "Name": "Xiaomi YI 4K",
+    "Description": null,
+    "Sources": [
+      {
+        "Id": "65f0f16f-a64c-4244-bd3b-ea58c27740ed",
+        "AgentId": "tweakers.net",
+        "AgentArgument": "542421/xiaomi-yi-4k-zwart.html"
+      }
+    ],
+    "Lowest": {
+      "ProductSourceId": "65f0f16f-a64c-4244-bd3b-ea58c27740ed",
+      "Price": 349.99,
+      "FoundDate": "2021-06-04T16:37:52.5368654+02:00"
+    },
+    "Recent": [
+      {
+        "ProductSourceId": "65f0f16f-a64c-4244-bd3b-ea58c27740ed",
+        "Price": 349.99,
+        "FoundDate": "2021-06-04T16:37:52.5368654+02:00"
+      }
+    ]
   }
 ]

@@ -35,9 +35,10 @@ namespace Genius.PriceChecker.Core.Services
         {
             var result = product.Sources.AsParallel().Select(async (productSource) => {
                 return await Seek(productSource.AgentArgument, productSource);
-            }).Where(x => x != null).ToArray();
+            });
 
-            return await Task.WhenAll(result);
+            return await Task.WhenAll(result)
+                .ContinueWith(x => x.Result.Where(x => x != null).ToArray());
         }
 
         private async Task<PriceSeekResult> Seek(string productId, ProductSource productSource)

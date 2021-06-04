@@ -143,7 +143,7 @@ namespace Genius.PriceChecker.UI.ViewModels
 
         private TrackerProductSourceViewModel CreateSourceViewModel(ProductSource productSource)
         {
-            var lastPrice = _product.Recent?.FirstOrDefault(x => x.ProductSourceId == productSource.Id)?.Price;
+            var lastPrice = _product?.Recent?.FirstOrDefault(x => x.ProductSourceId == productSource.Id)?.Price;
             var vm = new TrackerProductSourceViewModel(productSource, lastPrice);
             vm.DeleteCommand.Executed += (_, __) => {
                 Sources.Remove(vm);
