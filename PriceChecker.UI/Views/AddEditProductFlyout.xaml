@@ -26,6 +26,17 @@
             <TextBox Text="{Binding Description}" TextWrapping="Wrap" VerticalScrollBarVisibility="Visible" />
         </DockPanel>
         <StackPanel Orientation="Horizontal">
+            <Label>Commands:</Label>
+            <Button Command="{Binding DropPricesCommand}" BorderThickness="0"
+                    Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}"
+                    Padding="-4">
+                <StackPanel Orientation="Horizontal">
+                    <Image Source="{StaticResource Trash16}" />
+                    <TextBlock Margin="5,0,0,0">Drop current prices info</TextBlock>
+                </StackPanel>
+            </Button>
+        </StackPanel>
+        <StackPanel Orientation="Horizontal">
             <Label>Sources:</Label>
             <Button Command="{Binding AddSourceCommand}" BorderThickness="0"
                     Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}"

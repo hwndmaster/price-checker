@@ -44,18 +44,18 @@
     "Lowest": {
       "ProductSourceId": "ebeaa98d-aedb-4bb8-b539-1de7e1ee25cc",
       "Price": 658,
-      "FoundDate": "2021-06-04T18:58:05.2649282+02:00"
+      "FoundDate": "2021-06-04T19:19:37.5821656+02:00"
     },
     "Recent": [
       {
-        "ProductSourceId": "ebeaa98d-aedb-4bb8-b539-1de7e1ee25cc",
-        "Price": 658,
-        "FoundDate": "2021-06-04T18:58:05.2649282+02:00"
-      },
-      {
         "ProductSourceId": "4753f887-5b20-41de-a06b-3c159262a273",
         "Price": 749,
-        "FoundDate": "2021-06-04T18:58:05.2649317+02:00"
+        "FoundDate": "2021-06-04T19:19:37.5821601+02:00"
+      },
+      {
+        "ProductSourceId": "ebeaa98d-aedb-4bb8-b539-1de7e1ee25cc",
+        "Price": 658,
+        "FoundDate": "2021-06-04T19:19:37.5821656+02:00"
       }
     ]
   },

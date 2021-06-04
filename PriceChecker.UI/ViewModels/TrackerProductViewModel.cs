@@ -69,11 +69,16 @@ namespace Genius.PriceChecker.UI.ViewModels
                 ResetForm();
             }, _ => _product != null);
 
+            DropPricesCommand = new ActionCommand(_ => {
+                if (!_ui.AskForConfirmation("Are you sure?", "Prices drop confirmation"))
+                    return;
+                _productRepo.DropPrices(_product);
+                Reconcile(true);
+            });
+
             RefreshPriceCommand = new ActionCommand(_ => {
                 if (Status == ProductScanStatus.Scanning)
-                    {
-                        return;
-                    }
+                    return;
                 _productMng.EnqueueScan(product.Id);
                 Status = ProductScanStatus.Scanning;
             });
@@ -97,11 +102,12 @@ namespace Genius.PriceChecker.UI.ViewModels
             var previousLowestPrice = LowestPrice;
             LowestPrice = _product.Lowest?.Price;
             LowestFoundOn = _product.Lowest?.FoundDate;
-            Status = lowestPriceUpdated
+            Status = lowestPriceUpdated && _product.Lowest != null
                 ? ProductScanStatus.ScannedNewLowest
                 : _statusProvider.DetermineStatus(_product);
+            LastUpdated = null;
 
-            if (lowestPriceUpdated && previousLowestPrice.HasValue)
+            if (lowestPriceUpdated && LowestPrice.HasValue && previousLowestPrice.HasValue)
             {
                 var x = 1 - LowestPrice.Value/previousLowestPrice * 100;
                 StatusText = $"The new price is by {x:0}% less than by previous scan";
@@ -121,6 +127,13 @@ namespace Genius.PriceChecker.UI.ViewModels
                     source.LastPrice = pricesDict.ContainsKey(source.Id)
                         ? pricesDict[source.Id]
                         : null;
+                }
+            }
+            else
+            {
+                foreach (var source in Sources)
+                {
+                    source.LastPrice = null;
                 }
             }
         }
@@ -286,6 +299,7 @@ namespace Genius.PriceChecker.UI.ViewModels
         public IActionCommand ShowInBrowserCommand { get; }
         public IActionCommand AddSourceCommand { get; }
         public IActionCommand ResetCommand { get; }
+        public IActionCommand DropPricesCommand { get; }
         [Browsable(true)]
         [Icon("Refresh16")]
         public IActionCommand RefreshPriceCommand { get; }

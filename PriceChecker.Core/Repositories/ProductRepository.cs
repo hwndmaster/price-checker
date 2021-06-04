@@ -1,11 +1,11 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Microsoft.Extensions.Logging;
+using Genius.PriceChecker.Core.Messages;
 using Genius.PriceChecker.Core.Models;
 using Genius.PriceChecker.Core.Services;
 using Genius.PriceChecker.Infrastructure.Events;
-using Genius.PriceChecker.Core.Messages;
+using Microsoft.Extensions.Logging;
 
 namespace Genius.PriceChecker.Core.Repositories
 {
@@ -14,6 +14,7 @@ namespace Genius.PriceChecker.Core.Repositories
         IEnumerable<Product> GetAll();
         Product FindById(Guid productId);
         void Delete(Guid productId);
+        void DropPrices(Product product);
         void Store(Product product);
     }
 
@@ -57,6 +58,13 @@ namespace Genius.PriceChecker.Core.Repositories
             _products.Remove(product);
 
             _persister.Store(FILENAME, _products);
+        }
+
+        public void DropPrices(Product product)
+        {
+            product.Lowest = null;
+            product.Recent = new ProductPrice[0];
+            Store(product);
         }
 
         public void Store(Product product)
