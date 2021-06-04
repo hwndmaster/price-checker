@@ -37,7 +37,6 @@
     <PackageReference Include="ReactiveUI" />
     <PackageReference Include="Humanizer.Core" />
     <PackageReference Include="MahApps.Metro" />
-    <PackageReference Include="MahApps.Metro.IconPacks.Unicons" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" />
     <PackageReference Include="Microsoft.Extensions.Logging" />
     <!--

@@ -24,6 +24,7 @@ namespace Genius.PriceChecker.UI.ViewModels
     public class TrackerProductViewModel : ViewModelBase, ISelectable
     {
         private readonly IAgentRepository _agentRepo;
+        private readonly IProductPriceManager _productMng;
         private readonly IProductRepository _productRepo;
         private readonly IProductStatusProvider _statusProvider;
         private readonly IUserInteraction _ui;
@@ -31,10 +32,12 @@ namespace Genius.PriceChecker.UI.ViewModels
         private Product _product;
 
         public TrackerProductViewModel(Product product, IEventBus eventBus,
-            IAgentRepository agentRepo, IProductRepository productRepo,
-            IProductStatusProvider statusProvider, IUserInteraction ui)
+            IAgentRepository agentRepo, IProductPriceManager productMng,
+            IProductRepository productRepo, IProductStatusProvider statusProvider,
+            IUserInteraction ui)
         {
             _agentRepo = agentRepo;
+            _productMng = productMng;
             _productRepo = productRepo;
             _statusProvider = statusProvider;
             _product = product;
@@ -65,6 +68,15 @@ namespace Genius.PriceChecker.UI.ViewModels
             ResetCommand = new ActionCommand(_ => {
                 ResetForm();
             }, _ => _product != null);
+
+            RefreshPriceCommand = new ActionCommand(_ => {
+                if (Status == ProductScanStatus.Scanning)
+                    {
+                        return;
+                    }
+                _productMng.EnqueueScan(product.Id);
+                Status = ProductScanStatus.Scanning;
+            });
 
             eventBus.WhenFired<AgentsUpdatedEvent, AgentDeletedEvent>()
                 .ObserveOnDispatcher()
@@ -274,5 +286,8 @@ namespace Genius.PriceChecker.UI.ViewModels
         public IActionCommand ShowInBrowserCommand { get; }
         public IActionCommand AddSourceCommand { get; }
         public IActionCommand ResetCommand { get; }
+        [Browsable(true)]
+        [Icon("Refresh16")]
+        public IActionCommand RefreshPriceCommand { get; }
     }
 }

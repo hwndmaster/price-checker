@@ -4,7 +4,6 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows.Input;
 using Genius.PriceChecker.Core.Messages;
-using Genius.PriceChecker.Core.Models;
 using Genius.PriceChecker.Core.Repositories;
 using Genius.PriceChecker.Core.Services;
 using Genius.PriceChecker.Infrastructure.Events;
@@ -19,18 +18,15 @@ namespace Genius.PriceChecker.UI.ViewModels
     {
         private readonly IEventBus _eventBus;
         private readonly IProductRepository _productRepo;
-        private readonly IProductPriceManager _productMng;
         private readonly IViewModelFactory _vmFactory;
 
         public TrackerViewModel(IEventBus eventBus,
             IProductRepository productRepo,
-            IProductPriceManager productMng,
             IViewModelFactory vmFactory,
             IUserInteraction ui)
         {
             _eventBus = eventBus;
             _productRepo = productRepo;
-            _productMng = productMng;
             _vmFactory = vmFactory;
 
             RefreshAllCommand = new ActionCommand(_ => {
@@ -102,10 +98,7 @@ namespace Genius.PriceChecker.UI.ViewModels
         {
             foreach (var product in products)
             {
-                if (product.Status == ProductScanStatus.Scanning)
-                    continue;
-                _productMng.EnqueueScan(product.Id);
-                product.Status = ProductScanStatus.Scanning;
+                product.RefreshPriceCommand.Execute(null);
             }
         }
 

@@ -16,18 +16,21 @@ namespace Genius.PriceChecker.UI.ViewModels
     {
         private readonly IAgentRepository _agentRepo;
         private readonly IProductRepository _productRepo;
+        private readonly IProductPriceManager _productPriceMng;
         private readonly IProductStatusProvider _statusProvider;
         private readonly IEventBus _eventBus;
         private readonly IUserInteraction _ui;
 
         public ViewModelFactory(IEventBus eventBus,
             IAgentRepository agentRepo, IProductRepository productRepo,
+            IProductPriceManager productPriceMng,
             IProductStatusProvider statusProvider,
             IUserInteraction ui)
         {
             _eventBus = eventBus;
             _agentRepo = agentRepo;
             _productRepo = productRepo;
+            _productPriceMng = productPriceMng;
             _statusProvider = statusProvider;
             _ui = ui;
         }
@@ -40,7 +43,7 @@ namespace Genius.PriceChecker.UI.ViewModels
         public TrackerProductViewModel CreateTrackerProduct(Product product)
         {
             return new TrackerProductViewModel(product, _eventBus, _agentRepo,
-                _productRepo, _statusProvider, _ui);
+                _productPriceMng, _productRepo, _statusProvider, _ui);
         }
     }
 }

@@ -14,13 +14,13 @@
     "Lowest": {
       "ProductSourceId": "60b9ceed-b34c-45ad-a142-af0ec5491d91",
       "Price": 22.90,
-      "FoundDate": "2021-06-04T14:56:31.4087291+02:00"
+      "FoundDate": "2021-06-04T18:57:45.5268574+02:00"
     },
     "Recent": [
       {
         "ProductSourceId": "60b9ceed-b34c-45ad-a142-af0ec5491d91",
         "Price": 22.90,
-        "FoundDate": "2021-06-04T14:56:31.4087291+02:00"
+        "FoundDate": "2021-06-04T18:57:45.5268574+02:00"
       }
     ]
   },
@@ -44,18 +44,18 @@
     "Lowest": {
       "ProductSourceId": "ebeaa98d-aedb-4bb8-b539-1de7e1ee25cc",
       "Price": 658,
-      "FoundDate": "2021-06-04T14:56:37.9295596+02:00"
+      "FoundDate": "2021-06-04T18:58:05.2649282+02:00"
     },
     "Recent": [
       {
-        "ProductSourceId": "4753f887-5b20-41de-a06b-3c159262a273",
-        "Price": 759,
-        "FoundDate": "2021-06-04T14:56:37.929556+02:00"
-      },
-      {
         "ProductSourceId": "ebeaa98d-aedb-4bb8-b539-1de7e1ee25cc",
         "Price": 658,
-        "FoundDate": "2021-06-04T14:56:37.9295596+02:00"
+        "FoundDate": "2021-06-04T18:58:05.2649282+02:00"
+      },
+      {
+        "ProductSourceId": "4753f887-5b20-41de-a06b-3c159262a273",
+        "Price": 749,
+        "FoundDate": "2021-06-04T18:58:05.2649317+02:00"
       }
     ]
   },
@@ -84,23 +84,23 @@
     "Lowest": {
       "ProductSourceId": "59b2149f-9148-40eb-88c3-16061247487f",
       "Price": 659.99,
-      "FoundDate": "2021-06-04T15:12:36.3958992+02:00"
+      "FoundDate": "2021-06-04T18:58:16.2131642+02:00"
     },
     "Recent": [
       {
         "ProductSourceId": "59b2149f-9148-40eb-88c3-16061247487f",
         "Price": 659.99,
-        "FoundDate": "2021-06-04T15:12:36.3958992+02:00"
+        "FoundDate": "2021-06-04T18:58:16.2131642+02:00"
       },
       {
         "ProductSourceId": "190b93f8-d428-4b9b-aa70-127c513d352f",
         "Price": 699,
-        "FoundDate": "2021-06-04T15:12:36.395906+02:00"
+        "FoundDate": "2021-06-04T18:58:16.213169+02:00"
       },
       {
         "ProductSourceId": "7abd51a9-7ba1-4b72-9ff3-3fb89fce9045",
         "Price": 729.00,
-        "FoundDate": "2021-06-04T15:12:36.3959068+02:00"
+        "FoundDate": "2021-06-04T18:58:16.2131695+02:00"
       }
     ]
   },
@@ -129,23 +129,23 @@
     "Lowest": {
       "ProductSourceId": "3b27b7fc-369d-4f90-ba4c-f209c1a0153b",
       "Price": 165.95,
-      "FoundDate": "2021-06-04T15:08:31.5775609+02:00"
+      "FoundDate": "2021-06-04T18:58:08.448098+02:00"
     },
     "Recent": [
       {
-        "ProductSourceId": "3b27b7fc-369d-4f90-ba4c-f209c1a0153b",
-        "Price": 165.95,
-        "FoundDate": "2021-06-04T15:08:31.5775609+02:00"
-      },
-      {
         "ProductSourceId": "d786a796-b93c-468b-8fda-a2892d72802a",
         "Price": 169.99,
-        "FoundDate": "2021-06-04T15:08:31.5775683+02:00"
+        "FoundDate": "2021-06-04T18:58:08.4480941+02:00"
       },
       {
         "ProductSourceId": "1778e5f5-b73d-418b-b3b8-06412828f54f",
         "Price": 179.00,
-        "FoundDate": "2021-06-04T15:08:31.577569+02:00"
+        "FoundDate": "2021-06-04T18:58:08.4480977+02:00"
+      },
+      {
+        "ProductSourceId": "3b27b7fc-369d-4f90-ba4c-f209c1a0153b",
+        "Price": 165.95,
+        "FoundDate": "2021-06-04T18:58:08.448098+02:00"
       }
     ]
   },
@@ -204,18 +204,18 @@
     "Lowest": {
       "ProductSourceId": "76ba5029-6cf6-4231-bc99-ca7d65cde50d",
       "Price": 179.95,
-      "FoundDate": "2021-06-04T14:56:30.2823662+02:00"
+      "FoundDate": "2021-06-04T19:00:27.7899023+02:00"
     },
     "Recent": [
       {
         "ProductSourceId": "76ba5029-6cf6-4231-bc99-ca7d65cde50d",
         "Price": 179.95,
-        "FoundDate": "2021-06-04T14:56:30.2823662+02:00"
+        "FoundDate": "2021-06-04T19:00:27.7899023+02:00"
       },
       {
         "ProductSourceId": "62dcd317-1805-4b07-bb30-81045d4a6517",
         "Price": 179.95,
-        "FoundDate": "2021-06-04T14:56:30.2824371+02:00"
+        "FoundDate": "2021-06-04T19:00:27.7899086+02:00"
       }
     ]
   },
@@ -239,18 +239,18 @@
     "Lowest": {
       "ProductSourceId": "ab80a6f9-c175-4c10-8f69-aee23e7efc64",
       "Price": 442.47,
-      "FoundDate": "2021-06-04T15:12:41.2759641+02:00"
+      "FoundDate": "2021-06-04T18:57:59.398364+02:00"
     },
     "Recent": [
       {
         "ProductSourceId": "cbb43572-35b9-4408-9e52-09f934b97336",
         "Price": 589.55,
-        "FoundDate": "2021-06-04T15:12:41.2759594+02:00"
+        "FoundDate": "2021-06-04T18:57:59.3983603+02:00"
       },
       {
         "ProductSourceId": "ab80a6f9-c175-4c10-8f69-aee23e7efc64",
         "Price": 442.47,
-        "FoundDate": "2021-06-04T15:12:41.2759641+02:00"
+        "FoundDate": "2021-06-04T18:57:59.398364+02:00"
       }
     ]
   },
@@ -326,6 +326,106 @@
         "ProductSourceId": "65f0f16f-a64c-4244-bd3b-ea58c27740ed",
         "Price": 349.99,
         "FoundDate": "2021-06-04T16:37:52.5368654+02:00"
+      }
+    ]
+  },
+  {
+    "Id": "e115a648-8c10-42b5-a7d2-d304ee13b65c",
+    "Category": "Action cam",
+    "Name": "GoPro HERO 7 Black",
+    "Description": null,
+    "Sources": [
+      {
+        "Id": "c33f08c8-854e-4a60-8eff-bd900cffe134",
+        "AgentId": "amazon.de",
+        "AgentArgument": "B07GSVDFTQ"
+      }
+    ],
+    "Lowest": {
+      "ProductSourceId": "c33f08c8-854e-4a60-8eff-bd900cffe134",
+      "Price": 279.99,
+      "FoundDate": "2021-06-04T18:18:42.7704614+02:00"
+    },
+    "Recent": [
+      {
+        "ProductSourceId": "c33f08c8-854e-4a60-8eff-bd900cffe134",
+        "Price": 279.99,
+        "FoundDate": "2021-06-04T18:18:42.7704614+02:00"
+      }
+    ]
+  },
+  {
+    "Id": "2a1ee1b8-aab3-4f08-b81f-ab5479e690ee",
+    "Category": "Action cam",
+    "Name": "GoPro HERO 8",
+    "Description": null,
+    "Sources": [
+      {
+        "Id": "64f76755-0839-4c6c-9a7c-e28e4cf1e670",
+        "AgentId": "amazon.de",
+        "AgentArgument": "B07YGSXVB8"
+      }
+    ],
+    "Lowest": {
+      "ProductSourceId": "64f76755-0839-4c6c-9a7c-e28e4cf1e670",
+      "Price": 298.44,
+      "FoundDate": "2021-06-04T18:20:57.556876+02:00"
+    },
+    "Recent": [
+      {
+        "ProductSourceId": "64f76755-0839-4c6c-9a7c-e28e4cf1e670",
+        "Price": 298.44,
+        "FoundDate": "2021-06-04T18:20:57.556876+02:00"
+      }
+    ]
+  },
+  {
+    "Id": "cf9d930f-081e-4d86-b037-8623917619f5",
+    "Category": "Action cam",
+    "Name": "GoPro HERO 9",
+    "Description": null,
+    "Sources": [
+      {
+        "Id": "e4b4c4d2-d318-4304-af16-3b97a18509f7",
+        "AgentId": "amazon.de",
+        "AgentArgument": "B08G2HBBB6"
+      }
+    ],
+    "Lowest": {
+      "ProductSourceId": "e4b4c4d2-d318-4304-af16-3b97a18509f7",
+      "Price": 399.99,
+      "FoundDate": "2021-06-04T18:22:51.7624875+02:00"
+    },
+    "Recent": [
+      {
+        "ProductSourceId": "e4b4c4d2-d318-4304-af16-3b97a18509f7",
+        "Price": 399.99,
+        "FoundDate": "2021-06-04T18:22:51.7624875+02:00"
+      }
+    ]
+  },
+  {
+    "Id": "f7e83340-1fc1-45b5-b6b5-c449c7ddcb0a",
+    "Category": "Action cam",
+    "Name": "DJI Osmo Action",
+    "Description": null,
+    "Sources": [
+      {
+        "Id": "e593c859-0dff-491d-a9ad-1a2f74a7f6f6",
+        "AgentId": "amazon.de",
+        "AgentArgument": "B07RJMK2GV"
+      }
+    ],
+    "Lowest": {
+      "ProductSourceId": "e593c859-0dff-491d-a9ad-1a2f74a7f6f6",
+      "Price": 258.99,
+      "FoundDate": "2021-06-04T18:24:14.2715873+02:00"
+    },
+    "Recent": [
+      {
+        "ProductSourceId": "e593c859-0dff-491d-a9ad-1a2f74a7f6f6",
+        "Price": 258.99,
+        "FoundDate": "2021-06-04T18:24:14.2715873+02:00"
       }
     ]
   }
