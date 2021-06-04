@@ -34,6 +34,7 @@
 
   <ItemGroup>
     <PackageReference Include="System.Reactive" />
+    <PackageReference Include="ReactiveUI" />
     <PackageReference Include="Humanizer.Core" />
     <PackageReference Include="MahApps.Metro" />
     <PackageReference Include="MahApps.Metro.IconPacks.Unicons" />

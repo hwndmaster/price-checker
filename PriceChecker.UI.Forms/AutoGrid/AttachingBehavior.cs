@@ -30,7 +30,8 @@ namespace Genius.PriceChecker.UI.Forms.AutoGrid
                 new ColumnConverterBehavior(),
                 new ColumnFormattingBehavior(),
                 new ColumnTooltipBehavior(),
-                new ColumnStylingBehavior()
+                new ColumnStylingBehavior(),
+                new ColumnHeaderNameBehavior()
             };
         }
 

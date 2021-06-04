@@ -62,7 +62,9 @@ namespace Genius.PriceChecker.Core.Services
             }, CancellationToken.None, TaskCreationOptions.None, _taskScheduler);
         }
 
-        private async Task ScanForPricesAsync(Product product, bool ignoreRecentDate = false)
+        // UNDONE: Temporarily force update
+        //private async Task ScanForPricesAsync(Product product, bool ignoreRecentDate = false)
+        private async Task ScanForPricesAsync(Product product, bool ignoreRecentDate = true)
         {
             if (IsTooRecent(product))
             {
@@ -90,7 +92,6 @@ namespace Genius.PriceChecker.Core.Services
                 if (product.Lowest != null && product.Lowest.Price > minPrice)
                 {
                     lowestPriceUpdated = true;
-                    //_logger.LogWarning($"Price for '{product.Name}' has dropped lower than before! New price is {minPrice} EUR on '{product.Lowest.AgentId}' (was {product.Lowest.Price} EUR)");
                 }
                 product.Lowest = product.Recent.First(x => x.Price == minPrice);
 
@@ -111,11 +112,11 @@ namespace Genius.PriceChecker.Core.Services
 
         private ProductPrice[] LogAndConvert(Product product, IEnumerable<PriceSeekResult> results)
         {
-            var converted = results.Select(x => new ProductPrice()
+            var converted = results.Select(x => new ProductPrice
             {
-                AgentId = x.AgentId,
-                    Price = x.Price,
-                    FoundDate = DateTime.Now
+                ProductSourceId = x.ProductSourceId,
+                Price = x.Price,
+                FoundDate = DateTime.Now
             }).ToArray();
 
             _logger.LogTrace($"Results retrieved for '{product.Name}': {string.Join(", ", converted.ToList())}");

@@ -1,76 +1,56 @@
-using System.Collections.Generic;
+using System.IO;
 using System.Linq;
-using System.Net.Http;
+using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Logging;
 using Genius.PriceChecker.Core.Messages;
-using Genius.PriceChecker.Core.Repositories;
 using Genius.PriceChecker.Core.Models;
-using System.IO;
-using System.Text;
+using Genius.PriceChecker.Core.Repositories;
+using Microsoft.Extensions.Logging;
 
 namespace Genius.PriceChecker.Core.Services
 {
-    public interface IPriceSeeker
+  public interface IPriceSeeker
     {
-        Task<IEnumerable<PriceSeekResult>> SeekAsync(Product product);
+        Task<PriceSeekResult[]> SeekAsync(Product product);
     }
 
     internal sealed class PriceSeeker : IPriceSeeker
     {
-        private readonly IAgentRepository _sourceRepo;
+        private readonly IAgentRepository _agentRepo;
+        private readonly ITrickyHttpClient _trickyHttpClient;
         private readonly ILogger<PriceSeeker> _logger;
 
         private const char DEFAULT_DECIMAL_DELIMITER = '.';
 
-        public PriceSeeker(IAgentRepository sourceRepo, ILogger<PriceSeeker> logger)
+        public PriceSeeker(IAgentRepository agentRepo, ITrickyHttpClient trickyHttpClient,
+            ILogger<PriceSeeker> logger)
         {
-            _sourceRepo = sourceRepo;
+            _agentRepo = agentRepo;
+            _trickyHttpClient = trickyHttpClient;
             _logger = logger;
         }
 
-        public async Task<IEnumerable<PriceSeekResult>> SeekAsync(Product product)
+        public async Task<PriceSeekResult[]> SeekAsync(Product product)
         {
-            var result = new List<PriceSeekResult>();
-            var sources = _sourceRepo.GetAll();
+            var result = product.Sources.AsParallel().Select(async (productSource) => {
+                return await Seek(productSource.AgentArgument, productSource);
+            }).Where(x => x != null).ToArray();
 
-            foreach (var productSource in product.Sources)
-            {
-                var source = sources.FirstOrDefault(x => x.Id == productSource.AgentId);
-                if (source == null)
-                {
-                    _logger.LogError($"Source not found: {productSource.AgentId}");
-                    continue;
-                }
-                var resultPerProductSource = await Seek(productSource.AgentArgument, source);
-                if (resultPerProductSource != null)
-                {
-                    result.Add(resultPerProductSource);
-                }
-            }
-
-            return result;
+            return await Task.WhenAll(result);
         }
 
-        private async Task<PriceSeekResult> Seek(string productId, Agent agent)
+        private async Task<PriceSeekResult> Seek(string productId, ProductSource productSource)
         {
-            var url = string.Format(agent.Url, productId);
-            var httpClient = new HttpClient();
-
-            // Needed for tweakers.net:
-            httpClient.DefaultRequestHeaders.Add("X-Cookies-Accepted", "1");
-            httpClient.DefaultRequestHeaders.Add("accept", "text/html");
-            httpClient.DefaultRequestHeaders.Add("user-agent", "Mozilla/5.0 (compatible; MSIE 10.0; Windows NT 6.2; WOW64; Trident/6.0)");
-
-            var response = await httpClient.GetAsync(url);
-            if (!response.IsSuccessStatusCode)
+            var agent = _agentRepo.FindById(productSource.AgentId);
+            if (agent == null)
             {
-                // Something went wrong
-                _logger.LogError($"Failed to fetch '{url}'. Error Code = {response.StatusCode}");
+                _logger.LogError($"Source not found: {productSource.AgentId}");
                 return null;
             }
-            var content = await response.Content.ReadAsStringAsync();
+
+            var url = string.Format(agent.Url, productId);
+            var content = await _trickyHttpClient.DownloadContent(url);
 
             var re = new Regex(agent.PricePattern);
             var match = re.Match(content);
@@ -92,7 +72,12 @@ namespace Genius.PriceChecker.Core.Services
                 return null;
             }
 
-            return new PriceSeekResult { AgentId = agent.Id, ProductId = productId, Price = price };
+            return new PriceSeekResult {
+                ProductSourceId = productSource.Id,
+                AgentId = agent.Id,
+                ProductId = productId,
+                Price = price
+            };
 
 
             bool TryParsePrice(Match match, out decimal price)

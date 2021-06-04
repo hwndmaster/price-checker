@@ -1,3 +1,4 @@
+using System;
 using System.Diagnostics;
 using System.Linq;
 using System.Windows;
@@ -28,7 +29,7 @@ namespace Genius.PriceChecker.UI.Helpers
         /// <param name="message">A message content.</param>
         void ShowWarning(string message);
 
-        void ShowProductInBrowser(Product product, string agentId);
+        void ShowProductInBrowser(Product product, Guid productSourceId);
     }
 
     public class UserInteraction : IUserInteraction
@@ -56,11 +57,11 @@ namespace Genius.PriceChecker.UI.Helpers
             MessageBox.Show(message, "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
         }
 
-        public void ShowProductInBrowser(Product product, string agentId)
+        public void ShowProductInBrowser(Product product, Guid productSourceId)
         {
-            var argument = product.Sources.First(x => x.AgentId == agentId).AgentArgument;
-            var agentUrl = _agentRepo.FindById(agentId).Url;
-            var url = string.Format(agentUrl, argument);
+            var productSource = product.Sources.First(x => x.Id == productSourceId);
+            var agentUrl = _agentRepo.FindById(productSource.AgentId).Url;
+            var url = string.Format(agentUrl, productSource.AgentArgument);
 
             url = url.Replace("&", "^&");
             Process.Start(new ProcessStartInfo("cmd", $"/c start {url}") { CreateNoWindow = true });

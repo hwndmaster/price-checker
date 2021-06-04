@@ -6,20 +6,21 @@
     "Description": "\u0421\u0440\u0435\u0434\u0441\u0442\u0432\u043E \u0434\u043B\u044F \u0447\u0438\u0441\u0442\u043A\u0438 \u043A\u043E\u043B\u0451\u0441\u043D\u044B\u0445 \u0434\u0438\u0441\u043A\u043E\u0432",
     "Sources": [
       {
+        "Id": "60b9ceed-b34c-45ad-a142-af0ec5491d91",
         "AgentId": "amazon.de_alt",
         "AgentArgument": "B0047AKFDG"
       }
     ],
     "Lowest": {
-      "AgentId": "amazon.de_alt",
-      "Price": 20.15,
-      "FoundDate": "2021-04-14T15:15:40.7066962+02:00"
+      "ProductSourceId": "60b9ceed-b34c-45ad-a142-af0ec5491d91",
+      "Price": 22.90,
+      "FoundDate": "2021-06-04T14:56:31.4087291+02:00"
     },
     "Recent": [
       {
-        "AgentId": "amazon.de_alt",
-        "Price": 20.15,
-        "FoundDate": "2021-04-14T15:15:40.7066962+02:00"
+        "ProductSourceId": "60b9ceed-b34c-45ad-a142-af0ec5491d91",
+        "Price": 22.90,
+        "FoundDate": "2021-06-04T14:56:31.4087291+02:00"
       }
     ]
   },
@@ -30,24 +31,31 @@
     "Description": null,
     "Sources": [
       {
+        "Id": "4753f887-5b20-41de-a06b-3c159262a273",
         "AgentId": "tweakers.net",
         "AgentArgument": "1617418/irobot-roomba-i7\u002B-zilver-zwart.html"
       },
       {
+        "Id": "ebeaa98d-aedb-4bb8-b539-1de7e1ee25cc",
         "AgentId": "tweakers.net",
         "AgentArgument": "1274693/irobot-roomba-i7\u002B-zwart.html"
       }
     ],
     "Lowest": {
-      "AgentId": "tweakers.net",
-      "Price": 370,
-      "FoundDate": "2021-04-14T15:15:39.7048672+02:00"
+      "ProductSourceId": "ebeaa98d-aedb-4bb8-b539-1de7e1ee25cc",
+      "Price": 658,
+      "FoundDate": "2021-06-04T14:56:37.9295596+02:00"
     },
     "Recent": [
       {
-        "AgentId": "tweakers.net",
-        "Price": 370,
-        "FoundDate": "2021-04-14T15:15:39.7048672+02:00"
+        "ProductSourceId": "4753f887-5b20-41de-a06b-3c159262a273",
+        "Price": 759,
+        "FoundDate": "2021-06-04T14:56:37.929556+02:00"
+      },
+      {
+        "ProductSourceId": "ebeaa98d-aedb-4bb8-b539-1de7e1ee25cc",
+        "Price": 658,
+        "FoundDate": "2021-06-04T14:56:37.9295596+02:00"
       }
     ]
   },
@@ -58,38 +66,41 @@
     "Description": null,
     "Sources": [
       {
+        "Id": "59b2149f-9148-40eb-88c3-16061247487f",
         "AgentId": "amazon.de",
         "AgentArgument": "B009AU9CQO"
       },
       {
+        "Id": "190b93f8-d428-4b9b-aa70-127c513d352f",
         "AgentId": "tweakers.net",
         "AgentArgument": "324102/sony-10-18mm-f-40-oss.html"
       },
       {
+        "Id": "7abd51a9-7ba1-4b72-9ff3-3fb89fce9045",
         "AgentId": "hafo.nl",
         "AgentArgument": "sony-sel-10-18-nex"
       }
     ],
     "Lowest": {
-      "AgentId": "amazon.de",
-      "Price": 649.0,
-      "FoundDate": "2021-03-10T23:00:16.5794827+01:00"
+      "ProductSourceId": "59b2149f-9148-40eb-88c3-16061247487f",
+      "Price": 659.99,
+      "FoundDate": "2021-06-04T15:12:36.3958992+02:00"
     },
     "Recent": [
       {
-        "AgentId": "amazon.de",
-        "Price": 669.99,
-        "FoundDate": "2021-04-04T19:11:30.2513894+02:00"
+        "ProductSourceId": "59b2149f-9148-40eb-88c3-16061247487f",
+        "Price": 659.99,
+        "FoundDate": "2021-06-04T15:12:36.3958992+02:00"
       },
       {
-        "AgentId": "tweakers.net",
+        "ProductSourceId": "190b93f8-d428-4b9b-aa70-127c513d352f",
         "Price": 699,
-        "FoundDate": "2021-04-04T19:11:30.2513938+02:00"
+        "FoundDate": "2021-06-04T15:12:36.395906+02:00"
       },
       {
-        "AgentId": "hafo.nl",
+        "ProductSourceId": "7abd51a9-7ba1-4b72-9ff3-3fb89fce9045",
         "Price": 729.00,
-        "FoundDate": "2021-04-04T19:11:30.2513942+02:00"
+        "FoundDate": "2021-06-04T15:12:36.3959068+02:00"
       }
     ]
   },
@@ -100,33 +111,41 @@
     "Description": null,
     "Sources": [
       {
+        "Id": "3b27b7fc-369d-4f90-ba4c-f209c1a0153b",
         "AgentId": "tweakers.net",
         "AgentArgument": "1432208/microsoft-xbox-elite-wireless-controller-series-2-zwart.html"
       },
       {
+        "Id": "d786a796-b93c-468b-8fda-a2892d72802a",
         "AgentId": "amazon.de",
         "AgentArgument": "B07SR4R8K1"
       },
       {
+        "Id": "1778e5f5-b73d-418b-b3b8-06412828f54f",
         "AgentId": "amazon.nl",
         "AgentArgument": "B07SR4R8K1"
       }
     ],
     "Lowest": {
-      "AgentId": "amazon.de",
-      "Price": 161.0,
-      "FoundDate": "2020-12-22T20:24:56.1124541+01:00"
+      "ProductSourceId": "3b27b7fc-369d-4f90-ba4c-f209c1a0153b",
+      "Price": 165.95,
+      "FoundDate": "2021-06-04T15:08:31.5775609+02:00"
     },
     "Recent": [
       {
-        "AgentId": "tweakers.net",
-        "Price": 179.99,
-        "FoundDate": "2021-04-14T15:15:42.178921+02:00"
+        "ProductSourceId": "3b27b7fc-369d-4f90-ba4c-f209c1a0153b",
+        "Price": 165.95,
+        "FoundDate": "2021-06-04T15:08:31.5775609+02:00"
       },
       {
-        "AgentId": "amazon.nl",
-        "Price": 179.99,
-        "FoundDate": "2021-04-14T15:15:42.1789256+02:00"
+        "ProductSourceId": "d786a796-b93c-468b-8fda-a2892d72802a",
+        "Price": 169.99,
+        "FoundDate": "2021-06-04T15:08:31.5775683+02:00"
+      },
+      {
+        "ProductSourceId": "1778e5f5-b73d-418b-b3b8-06412828f54f",
+        "Price": 179.00,
+        "FoundDate": "2021-06-04T15:08:31.577569+02:00"
       }
     ]
   },
@@ -137,24 +156,31 @@
     "Description": null,
     "Sources": [
       {
+        "Id": "5f5a72a4-d6ad-4cab-9fb9-9d5839fa2a03",
         "AgentId": "bol.com",
         "AgentArgument": "lego-mindstorms-ev3-31313/1004004013515960"
       },
       {
+        "Id": "923b83ed-3fcb-43ca-80b0-0e9e717ec9c6",
         "AgentId": "amazon.de",
         "AgentArgument": "B00BMKLVJ6"
       }
     ],
     "Lowest": {
-      "AgentId": "bol.com",
-      "Price": 379.99,
-      "FoundDate": "2021-04-04T19:11:26.0334447+02:00"
+      "ProductSourceId": "923b83ed-3fcb-43ca-80b0-0e9e717ec9c6",
+      "Price": 433.99,
+      "FoundDate": "2021-06-04T15:08:46.1842524+02:00"
     },
     "Recent": [
       {
-        "AgentId": "amazon.de",
-        "Price": 429.95,
-        "FoundDate": "2021-04-14T15:15:42.0086278+02:00"
+        "ProductSourceId": "5f5a72a4-d6ad-4cab-9fb9-9d5839fa2a03",
+        "Price": 449.95,
+        "FoundDate": "2021-06-04T15:08:46.1842485+02:00"
+      },
+      {
+        "ProductSourceId": "923b83ed-3fcb-43ca-80b0-0e9e717ec9c6",
+        "Price": 433.99,
+        "FoundDate": "2021-06-04T15:08:46.1842524+02:00"
       }
     ]
   },
@@ -165,75 +191,66 @@
     "Description": null,
     "Sources": [
       {
+        "Id": "76ba5029-6cf6-4231-bc99-ca7d65cde50d",
         "AgentId": "tweakers.net",
         "AgentArgument": "1496006/viofo-a129-duo-pro-dashcam.html"
       },
       {
+        "Id": "62dcd317-1805-4b07-bb30-81045d4a6517",
         "AgentId": "viofo.nl",
         "AgentArgument": "viofo-a129-duo-pro-dashcam"
       }
     ],
     "Lowest": {
-      "AgentId": "tweakers.net",
-      "Price": 178.95,
-      "FoundDate": "2021-03-14T08:55:51.7376057+01:00"
+      "ProductSourceId": "76ba5029-6cf6-4231-bc99-ca7d65cde50d",
+      "Price": 179.95,
+      "FoundDate": "2021-06-04T14:56:30.2823662+02:00"
     },
     "Recent": [
       {
-        "AgentId": "viofo.nl",
+        "ProductSourceId": "76ba5029-6cf6-4231-bc99-ca7d65cde50d",
         "Price": 179.95,
-        "FoundDate": "2021-04-14T15:15:40.576213+02:00"
+        "FoundDate": "2021-06-04T14:56:30.2823662+02:00"
+      },
+      {
+        "ProductSourceId": "62dcd317-1805-4b07-bb30-81045d4a6517",
+        "Price": 179.95,
+        "FoundDate": "2021-06-04T14:56:30.2824371+02:00"
       }
     ]
   },
   {
-    "Id": "ff4f7e22-303a-4ea3-ae54-bfafc29da3cc",
-    "Category": "Household",
-    "Name": "Ring Indoor Cam",
+    "Id": "fa6bca3a-0e5b-4efd-acc0-b20fc07fd269",
+    "Category": "Action cam",
+    "Name": "Sony FDR-X3000R",
     "Description": null,
     "Sources": [
       {
-        "AgentId": "amazon.de_alt",
-        "AgentArgument": "B07Q4XK79L"
-      },
-      {
-        "AgentId": "amazon.nl",
-        "AgentArgument": "B07Q4XK79L"
-      },
-      {
+        "Id": "cbb43572-35b9-4408-9e52-09f934b97336",
         "AgentId": "tweakers.net",
-        "AgentArgument": "1281223/ring-stick-up-cam-elite-wired-zwart.html"
+        "AgentArgument": "582163/sony-fdr-x3000r-wit.html"
       },
       {
-        "AgentId": "bol.com",
-        "AgentArgument": "ring-indoor-cam-beveiligingscamera-wit/9200000128101795"
+        "Id": "ab80a6f9-c175-4c10-8f69-aee23e7efc64",
+        "AgentId": "amazon.de",
+        "AgentArgument": "B08QDVWY4T"
       }
     ],
     "Lowest": {
-      "AgentId": "amazon.de_alt",
-      "Price": 59.00,
-      "FoundDate": "2021-04-14T15:15:43.1725091+02:00"
+      "ProductSourceId": "ab80a6f9-c175-4c10-8f69-aee23e7efc64",
+      "Price": 442.47,
+      "FoundDate": "2021-06-04T15:12:41.2759641+02:00"
     },
     "Recent": [
       {
-        "AgentId": "amazon.de_alt",
-        "Price": 59.00,
-        "FoundDate": "2021-04-14T15:15:43.1725091+02:00"
+        "ProductSourceId": "cbb43572-35b9-4408-9e52-09f934b97336",
+        "Price": 589.55,
+        "FoundDate": "2021-06-04T15:12:41.2759594+02:00"
       },
       {
-        "AgentId": "amazon.nl",
-        "Price": 59.00,
-        "FoundDate": "2021-04-14T15:15:43.172514+02:00"
-      },
-      {
-        "AgentId": "tweakers.net",
-        "Price": 146.19,
-        "FoundDate": "2021-04-14T15:15:43.1725147+02:00"
-      },
-      {
-        "AgentId": "bol.com",
-        "Price": 59.00,
-        "FoundDate": "2021-04-14T15:15:43.1725153+02:00"
+        "ProductSourceId": "ab80a6f9-c175-4c10-8f69-aee23e7efc64",
+        "Price": 442.47,
+        "FoundDate": "2021-06-04T15:12:41.2759641+02:00"
       }
     ]
   }

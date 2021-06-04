@@ -55,7 +55,7 @@ namespace Genius.PriceChecker.UI.ViewModels
                 if (_product.Lowest == null)
                     return;
 
-                ui.ShowProductInBrowser(_product, _product.Lowest.AgentId);
+                ui.ShowProductInBrowser(_product, _product.Lowest.ProductSourceId);
             });
 
             AddSourceCommand = new ActionCommand(_ => {
@@ -67,10 +67,12 @@ namespace Genius.PriceChecker.UI.ViewModels
             }, _ => _product != null);
 
             eventBus.WhenFired<AgentsUpdatedEvent, AgentDeletedEvent>()
+                .ObserveOnDispatcher()
                 .Subscribe(_ =>
                     RefreshAgents()
                 );
             eventBus.WhenFired<ProductUpdatedEvent, ProductAddedEvent>()
+                .ObserveOnDispatcher()
                 .Subscribe(_ =>
                     RefreshCategories()
                 );
@@ -80,15 +82,34 @@ namespace Genius.PriceChecker.UI.ViewModels
 
         public void Reconcile(bool lowestPriceUpdated)
         {
+            var previousLowestPrice = LowestPrice;
             LowestPrice = _product.Lowest?.Price;
             LowestFoundOn = _product.Lowest?.FoundDate;
             Status = lowestPriceUpdated
                 ? ProductScanStatus.ScannedNewLowest
                 : _statusProvider.DetermineStatus(_product);
 
+            if (lowestPriceUpdated && previousLowestPrice.HasValue)
+            {
+                var x = 1 - LowestPrice.Value/previousLowestPrice * 100;
+                StatusText = $"The new price is by {x:0}% less than by previous scan";
+            }
+            else
+            {
+                StatusText = string.Empty;
+            }
+
             if (_product.Recent.Any())
             {
                 LastUpdated = _product.Recent.Max(x => x.FoundDate);
+
+                var pricesDict = _product.Recent.ToDictionary(x => x.ProductSourceId, x => x.Price);
+                foreach (var source in Sources)
+                {
+                    source.LastPrice = pricesDict.ContainsKey(source.Id)
+                        ? pricesDict[source.Id]
+                        : null;
+                }
             }
         }
 
@@ -112,14 +133,18 @@ namespace Genius.PriceChecker.UI.ViewModels
             _product.Description = Description;
 
             _product.Sources = Sources.Select(x => new ProductSource {
-                AgentId = x.Agent, AgentArgument = x.Argument }).ToArray();
+                Id = x.Id,
+                AgentId = x.Agent,
+                AgentArgument = x.Argument
+                }).ToArray();
 
             _productRepo.Store(_product);
         }
 
         private TrackerProductSourceViewModel CreateSourceViewModel(ProductSource productSource)
         {
-            var vm = new TrackerProductSourceViewModel(productSource);
+            var lastPrice = _product.Recent?.FirstOrDefault(x => x.ProductSourceId == productSource.Id)?.Price;
+            var vm = new TrackerProductSourceViewModel(productSource, lastPrice);
             vm.DeleteCommand.Executed += (_, __) => {
                 Sources.Remove(vm);
             };

@@ -13,6 +13,7 @@
     <PackageReference Update="MahApps.Metro" Version="2.4.4" />
     <PackageReference Update="MahApps.Metro.IconPacks.Unicons" Version="4.8.0" />
     <PackageReference Update="WpfAnimatedGif" Version="2.0.0" />
+    <PackageReference Update="ReactiveUI" Version="13.3.2" />
   </ItemGroup>
 
   <!-- Automated Testing components -->
