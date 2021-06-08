@@ -6,12 +6,13 @@ using Genius.PriceChecker.Core.Models;
 using Genius.PriceChecker.UI.Forms;
 using Genius.PriceChecker.UI.Forms.Attributes;
 using Genius.PriceChecker.UI.Forms.ViewModels;
+using Genius.PriceChecker.UI.Helpers;
 
 namespace Genius.PriceChecker.UI.ViewModels
 {
     public class TrackerProductSourceViewModel : ViewModelBase
     {
-        public TrackerProductSourceViewModel(ProductSource productSource, decimal? lastPrice)
+        public TrackerProductSourceViewModel(IUserInteraction ui, ProductSource productSource, decimal? lastPrice)
         {
             Id = productSource?.Id ?? Guid.NewGuid();
             Agent = productSource?.AgentId;
@@ -19,6 +20,10 @@ namespace Genius.PriceChecker.UI.ViewModels
             LastPrice = lastPrice;
 
             PropertiesAreInitialized = true;
+
+            ShowInBrowserCommand = new ActionCommand(_ => {
+                ui.ShowProductInBrowser(productSource);
+            });
         }
 
         [Browsable(false)]
@@ -48,5 +53,9 @@ namespace Genius.PriceChecker.UI.ViewModels
 
         [Icon("Trash16")]
         public IActionCommand DeleteCommand { get; } = new ActionCommand();
+
+        [Browsable(true)]
+        [Icon("Web16")]
+        public IActionCommand ShowInBrowserCommand { get; }
     }
 }

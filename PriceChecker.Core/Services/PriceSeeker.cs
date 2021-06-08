@@ -23,6 +23,8 @@ namespace Genius.PriceChecker.Core.Services
 
         private const char DEFAULT_DECIMAL_DELIMITER = '.';
 
+        private static object _locker = new();
+
         public PriceSeeker(IAgentRepository agentRepo, ITrickyHttpClient trickyHttpClient,
             ILogger<PriceSeeker> logger)
         {
@@ -34,14 +36,14 @@ namespace Genius.PriceChecker.Core.Services
         public async Task<PriceSeekResult[]> SeekAsync(Product product)
         {
             var result = product.Sources.AsParallel().Select(async (productSource) => {
-                return await Seek(productSource.AgentArgument, productSource);
+                return await Seek(productSource);
             });
 
             return await Task.WhenAll(result)
                 .ContinueWith(x => x.Result?.Where(x => x != null).ToArray() ?? new PriceSeekResult[0]);
         }
 
-        private async Task<PriceSeekResult> Seek(string productId, ProductSource productSource)
+        private async Task<PriceSeekResult> Seek(ProductSource productSource)
         {
             var agent = _agentRepo.FindById(productSource.AgentId);
             if (agent == null)
@@ -50,14 +52,17 @@ namespace Genius.PriceChecker.Core.Services
                 return null;
             }
 
-            var url = string.Format(agent.Url, productId);
+            var url = string.Format(agent.Url, productSource.AgentArgument);
             var content = await _trickyHttpClient.DownloadContent(url);
 
             var re = new Regex(agent.PricePattern);
             var match = re.Match(content);
             if (!match.Success)
             {
-                await File.WriteAllTextAsync("content.log", content, Encoding.UTF8);
+                lock(_locker)
+                {
+                    File.WriteAllText($"dump ({productSource.Id}).log", content, Encoding.UTF8);
+                }
                 _logger.LogError($"Cannot match price from the given content. File = 'content.log', Url = '{url}'");
                 return null;
             }
@@ -69,14 +74,13 @@ namespace Genius.PriceChecker.Core.Services
 
             if (price <= 0.0m)
             {
-                _logger.LogWarning($"Price for product '{productId}' at '{agent.Id}' is invalid: {price}");
+                _logger.LogWarning($"Price for product '{productSource.AgentArgument}' at '{agent.Id}' is invalid: {price}");
                 return null;
             }
 
             return new PriceSeekResult {
                 ProductSourceId = productSource.Id,
                 AgentId = agent.Id,
-                ProductId = productId,
                 Price = price
             };
 

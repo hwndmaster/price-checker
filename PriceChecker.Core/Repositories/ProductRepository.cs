@@ -22,18 +22,24 @@ namespace Genius.PriceChecker.Core.Repositories
     {
         private readonly IEventBus _eventBus;
         private readonly IPersister _persister;
+        private readonly IAgentRepository _agentRepo;
         private readonly ILogger<ProductRepository> _logger;
 
         private const string FILENAME = @".\products.json";
         private readonly List<Product> _products = null;
 
-        public ProductRepository(IEventBus eventBus, IPersister persister, ILogger<ProductRepository> logger)
+        public ProductRepository(IEventBus eventBus, IPersister persister,
+            IAgentRepository agentRepo,
+            ILogger<ProductRepository> logger)
         {
             _eventBus = eventBus;
             _persister = persister;
+            _agentRepo = agentRepo;
             _logger = logger;
 
             _products = _persister.Load<Product>(FILENAME).ToList();
+
+            FillupRelations();
         }
 
         public IEnumerable<Product> GetAll()
@@ -74,11 +80,13 @@ namespace Genius.PriceChecker.Core.Repositories
                 product.Id = Guid.NewGuid();
             }
 
+            FillupRelations(product);
+
             if (!_products.Any(x => x.Id == product.Id))
             {
-                _logger.LogTrace($"New product '{product.Name}' added");
                 _products.Add(product);
 
+                _logger.LogTrace($"New product '{product.Name}' added");
                 _eventBus.Publish(new ProductAddedEvent(product));
             }
             else
@@ -87,6 +95,29 @@ namespace Genius.PriceChecker.Core.Repositories
             }
 
             _persister.Store(FILENAME, _products);
+        }
+
+        private void FillupRelations()
+        {
+            foreach (var product in _products)
+            {
+                FillupRelations(product);
+            }
+        }
+
+        private void FillupRelations(Product product)
+        {
+            var sourcesDict = product.Sources.ToDictionary(x => x.Id);
+
+            foreach (var productSource in product.Sources)
+            {
+                productSource.Product = product;
+                productSource.Agent = _agentRepo.FindById(productSource.AgentId);
+            }
+            foreach (var productPrice in product.Recent)
+            {
+                productPrice.ProductSource = sourcesDict[productPrice.ProductSourceId];
+            }
         }
     }
 }

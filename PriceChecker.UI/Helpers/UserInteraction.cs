@@ -1,6 +1,4 @@
-using System;
 using System.Diagnostics;
-using System.Linq;
 using System.Windows;
 using Genius.PriceChecker.Core.Models;
 using Genius.PriceChecker.Core.Repositories;
@@ -29,7 +27,7 @@ namespace Genius.PriceChecker.UI.Helpers
         /// <param name="message">A message content.</param>
         void ShowWarning(string message);
 
-        void ShowProductInBrowser(Product product, Guid productSourceId);
+        void ShowProductInBrowser(ProductSource productSource);
     }
 
     public class UserInteraction : IUserInteraction
@@ -57,9 +55,11 @@ namespace Genius.PriceChecker.UI.Helpers
             MessageBox.Show(message, "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
         }
 
-        public void ShowProductInBrowser(Product product, Guid productSourceId)
+        public void ShowProductInBrowser(ProductSource productSource)
         {
-            var productSource = product.Sources.First(x => x.Id == productSourceId);
+            if (productSource == null)
+                return;
+
             var agentUrl = _agentRepo.FindById(productSource.AgentId).Url;
             var url = string.Format(agentUrl, productSource.AgentArgument);
 

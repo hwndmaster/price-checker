@@ -1,4 +1,5 @@
 using System;
+using System.Text.Json.Serialization;
 
 namespace Genius.PriceChecker.Core.Models
 {
@@ -7,5 +8,11 @@ namespace Genius.PriceChecker.Core.Models
         public Guid Id { get; set; }
         public string AgentId { get; set; }
         public string AgentArgument { get; set; }
+
+        // Relations:
+        [JsonIgnore]
+        public Product Product { get; internal set; }
+        [JsonIgnore]
+        public Agent Agent { get; internal set; }
     }
 }

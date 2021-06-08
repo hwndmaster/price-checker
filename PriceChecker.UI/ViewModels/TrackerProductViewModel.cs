@@ -54,16 +54,11 @@ namespace Genius.PriceChecker.UI.ViewModels
 
             CommitProductCommand = new ActionCommand(_ => CommitProduct());
 
-            ShowInBrowserCommand = new ActionCommand(_ => {
-                if (_product.Lowest == null)
-                    return;
+            ShowInBrowserCommand = new ActionCommand(_ =>
+                ui.ShowProductInBrowser(_product.Lowest?.ProductSource));
 
-                ui.ShowProductInBrowser(_product, _product.Lowest.ProductSourceId);
-            });
-
-            AddSourceCommand = new ActionCommand(_ => {
-                Sources.Add(CreateSourceViewModel(null));
-            });
+            AddSourceCommand = new ActionCommand(_ =>
+                Sources.Add(CreateSourceViewModel(null)));
 
             ResetCommand = new ActionCommand(_ => {
                 ResetForm();
@@ -81,7 +76,7 @@ namespace Genius.PriceChecker.UI.ViewModels
                     return;
                 _productMng.EnqueueScan(product.Id);
                 Status = ProductScanStatus.Scanning;
-            });
+            }, _ => Status != ProductScanStatus.Scanning);
 
             eventBus.WhenFired<AgentsUpdatedEvent, AgentDeletedEvent>()
                 .ObserveOnDispatcher()
@@ -109,8 +104,8 @@ namespace Genius.PriceChecker.UI.ViewModels
 
             if (lowestPriceUpdated && LowestPrice.HasValue && previousLowestPrice.HasValue)
             {
-                var x = 1 - LowestPrice.Value/previousLowestPrice * 100;
-                StatusText = $"The new price is by {x:0}% less than by previous scan";
+                var x = (1 - LowestPrice.Value/previousLowestPrice) * 100;
+                StatusText = $"The new price is by {x:0}% less than by previous scan ({LowestPrice.Value:#,##0.00} vs {previousLowestPrice.Value:#,##0.00})";
             }
             else
             {
@@ -161,7 +156,7 @@ namespace Genius.PriceChecker.UI.ViewModels
                 Id = x.Id,
                 AgentId = x.Agent,
                 AgentArgument = x.Argument
-                }).ToArray();
+            }).ToArray();
 
             _productRepo.Store(_product);
         }
@@ -169,7 +164,7 @@ namespace Genius.PriceChecker.UI.ViewModels
         private TrackerProductSourceViewModel CreateSourceViewModel(ProductSource productSource)
         {
             var lastPrice = _product?.Recent?.FirstOrDefault(x => x.ProductSourceId == productSource.Id)?.Price;
-            var vm = new TrackerProductSourceViewModel(productSource, lastPrice);
+            var vm = new TrackerProductSourceViewModel(_ui, productSource, lastPrice);
             vm.DeleteCommand.Executed += (_, __) => {
                 Sources.Remove(vm);
             };
