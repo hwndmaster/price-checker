@@ -12,7 +12,7 @@ using Genius.PriceChecker.UI.Forms.Attributes;
 
 namespace Genius.PriceChecker.UI.Forms.ViewModels
 {
-  public abstract class ViewModelBase : INotifyPropertyChanged, INotifyDataErrorInfo
+    public abstract class ViewModelBase : INotifyPropertyChanged, INotifyDataErrorInfo
     {
         protected readonly ConcurrentDictionary<string, object> _propertyBag = new();
         private readonly Dictionary<string, List<ValidationRule>> _validationRules = new();

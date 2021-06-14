@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Text.Json;
 
@@ -10,6 +11,7 @@ namespace Genius.PriceChecker.Core.Services
         void Store<T>(string filePath, IEnumerable<T> data);
     }
 
+    [ExcludeFromCodeCoverage]
     internal sealed class Persister : IPersister
     {
         private readonly JsonSerializerOptions _jsonOptions;

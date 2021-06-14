@@ -27,20 +27,12 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Reference Include="Hardcodet.NotifyIcon.Wpf">
-      <HintPath>..\libs\Hardcodet.NotifyIcon.Wpf.dll</HintPath>
-    </Reference>
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="System.Reactive" />
     <PackageReference Include="ReactiveUI" />
     <PackageReference Include="Humanizer.Core" />
     <PackageReference Include="MahApps.Metro" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" />
     <PackageReference Include="Microsoft.Extensions.Logging" />
-    <!--
-      TODO: Switch back to the nuget reference when it become available with support of net5.0
-      <PackageReference Include="Hardcodet.NotifyIcon.Wpf" Version="1.1.0" /> -->
+    <PackageReference Include="Hardcodet.NotifyIcon.Wpf" Version="1.1.0" />
   </ItemGroup>
 </Project>
