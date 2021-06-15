@@ -66,6 +66,7 @@ namespace Genius.PriceChecker.UI
 
             // Services and Helpers:
             services.AddTransient<IUserInteraction, UserInteraction>();
+            services.AddSingleton<ITrackerScanContext, TrackerScanContext>();
         }
 
         private void Application_DispatcherUnhandledException(object sender, System.Windows.Threading.DispatcherUnhandledExceptionEventArgs e)

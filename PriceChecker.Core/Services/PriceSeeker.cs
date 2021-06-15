@@ -54,6 +54,8 @@ namespace Genius.PriceChecker.Core.Services
 
             var url = string.Format(agent.Url, productSource.AgentArgument);
             var content = await _trickyHttpClient.DownloadContent(url);
+            if (content == null)
+                return null;
 
             var re = new Regex(agent.PricePattern);
             var match = re.Match(content);
@@ -68,9 +70,7 @@ namespace Genius.PriceChecker.Core.Services
             }
 
             if (!TryParsePrice(match, out var price))
-            {
                 return null;
-            }
 
             if (price <= 0.0m)
             {
@@ -89,9 +89,8 @@ namespace Genius.PriceChecker.Core.Services
             {
                 var priceString = match.Groups["price"].Value;
                 if (agent.DecimalDelimiter != DEFAULT_DECIMAL_DELIMITER)
-                {
                     priceString = priceString.Replace(agent.DecimalDelimiter, DEFAULT_DECIMAL_DELIMITER);
-                }
+
                 var priceConverted = decimal.TryParse(priceString, out price);
                 if (!priceConverted)
                 {

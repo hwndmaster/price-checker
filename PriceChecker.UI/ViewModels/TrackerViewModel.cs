@@ -5,7 +5,6 @@ using System.Linq;
 using System.Windows.Input;
 using Genius.PriceChecker.Core.Messages;
 using Genius.PriceChecker.Core.Repositories;
-using Genius.PriceChecker.Core.Services;
 using Genius.PriceChecker.Infrastructure.Events;
 using Genius.PriceChecker.UI.Forms;
 using Genius.PriceChecker.UI.Forms.Attributes;
@@ -14,20 +13,23 @@ using Genius.PriceChecker.UI.Helpers;
 
 namespace Genius.PriceChecker.UI.ViewModels
 {
-    public class TrackerViewModel : TabViewModelBase
+  public class TrackerViewModel : TabViewModelBase
     {
         private readonly IEventBus _eventBus;
         private readonly IProductRepository _productRepo;
         private readonly IViewModelFactory _vmFactory;
+        private readonly ITrackerScanContext _scanContext;
 
         public TrackerViewModel(IEventBus eventBus,
             IProductRepository productRepo,
             IViewModelFactory vmFactory,
-            IUserInteraction ui)
+            IUserInteraction ui,
+            ITrackerScanContext scanContext)
         {
             _eventBus = eventBus;
             _productRepo = productRepo;
             _vmFactory = vmFactory;
+            _scanContext = scanContext;
 
             RefreshAllCommand = new ActionCommand(_ => {
                 IsAddEditProductVisible = false;
@@ -35,7 +37,7 @@ namespace Genius.PriceChecker.UI.ViewModels
             });
             RefreshSelectedCommand = new ActionCommand(_ => {
                 IsAddEditProductVisible = false;
-                EnqueueScan(Products.Where(x => x.IsSelected));
+                EnqueueScan(Products.Where(x => x.IsSelected).ToArray());
             });
             OpenAddProductFlyoutCommand = new ActionCommand(o => {
                 IsAddEditProductVisible = !IsAddEditProductVisible;
@@ -94,8 +96,9 @@ namespace Genius.PriceChecker.UI.ViewModels
             PropertiesAreInitialized = true;
         }
 
-        private void EnqueueScan(IEnumerable<TrackerProductViewModel> products)
+        private void EnqueueScan(ICollection<TrackerProductViewModel> products)
         {
+            _scanContext.NotifyStarted(products.Count);
             foreach (var product in products)
             {
                 product.RefreshPriceCommand.Execute(null);
@@ -105,7 +108,15 @@ namespace Genius.PriceChecker.UI.ViewModels
         private void ReloadList()
         {
             IsAddEditProductVisible = false;
-            var productVms = _productRepo.GetAll().Select(x => _vmFactory.CreateTrackerProduct(x));
+            var productVms = _productRepo.GetAll()
+                .Select(x => _vmFactory.CreateTrackerProduct(x))
+                .ToList();
+            foreach (var productVm in productVms)
+            {
+                productVm.WhenChanged(x => x.Status, status => {
+                    _scanContext.NotifyProgressChange(status);
+                });
+            }
             Products.ReplaceItems(productVms);
         }
 

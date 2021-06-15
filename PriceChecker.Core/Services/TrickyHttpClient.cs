@@ -20,6 +20,7 @@ namespace Genius.PriceChecker.Core.Services
         private static object _locker = new();
 
         private const int DELAY_MS = 500;
+        private const int MAX_REPEATS = 5;
 
         public TrickyHttpClient(ILogger<TrickyHttpClient> logger)
         {
@@ -49,23 +50,36 @@ namespace Genius.PriceChecker.Core.Services
             {
                 AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate
             };
-            var httpClient = new HttpClient(handler);
 
-            // To confuse the hosts
-            httpClient.DefaultRequestHeaders.Add("X-Cookies-Accepted", "1");
-            httpClient.DefaultRequestHeaders.Add("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9");
-            httpClient.DefaultRequestHeaders.Add("Accept-Language", "en-US,en;q=0.9");
-            httpClient.DefaultRequestHeaders.Add("Accept-Encoding", "gzip, deflate");
-            httpClient.DefaultRequestHeaders.Add("User-Agent", CreateRandomUserAgent());
-
-            var response = await httpClient.GetAsync(url);
-            if (!response.IsSuccessStatusCode)
+            for (var irepeat = 1; irepeat <= MAX_REPEATS; irepeat++)
             {
-                // Something went wrong
-                _logger.LogError($"Failed to fetch '{url}'. Error Code = {response.StatusCode}");
-                return null;
+                var httpClient = new HttpClient(handler);
+
+                // To confuse the hosts
+                httpClient.DefaultRequestHeaders.Add("X-Cookies-Accepted", "1");
+                httpClient.DefaultRequestHeaders.Add("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9");
+                httpClient.DefaultRequestHeaders.Add("Accept-Language", "en-US,en;q=0.9");
+                httpClient.DefaultRequestHeaders.Add("Accept-Encoding", "gzip, deflate");
+                httpClient.DefaultRequestHeaders.Add("User-Agent", CreateRandomUserAgent());
+
+                var response = await httpClient.GetAsync(url);
+                if (!response.IsSuccessStatusCode)
+                {
+                    if (response.StatusCode == HttpStatusCode.TooManyRequests)
+                    {
+                        await Task.Delay(DELAY_MS * (irepeat + 1));
+                        continue;
+                    }
+
+                    // Something went wrong
+                    _logger.LogError($"Failed to fetch '{url}'. Error Code = {response.StatusCode}");
+                    return null;
+                }
+
+                return await response.Content.ReadAsStringAsync();
             }
-            return await response.Content.ReadAsStringAsync();
+
+            return null;
         }
 
         private string CreateRandomUserAgent()
