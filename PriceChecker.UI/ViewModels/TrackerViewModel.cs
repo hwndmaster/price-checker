@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Reactive.Linq;
 using System.Windows.Input;
 using Genius.PriceChecker.Core.Messages;
 using Genius.PriceChecker.Core.Repositories;
@@ -44,17 +45,21 @@ namespace Genius.PriceChecker.UI.ViewModels
                 if (IsAddEditProductVisible)
                 {
                     EditingProduct = vmFactory.CreateTrackerProduct(null);
-                    EditingProduct.CommitProductCommand.Executed += (_, __) => {
-                        IsAddEditProductVisible = false;
-                        ReloadList();
-                    };
+                    EditingProduct.CommitProductCommand.Executed
+                        .Take(1)
+                        .Subscribe(_ => {
+                            IsAddEditProductVisible = false;
+                            ReloadList();
+                        });
                 }
             });
             OpenEditProductFlyoutCommand = new ActionCommand(o => {
                 EditingProduct = Products.FirstOrDefault(x => x.IsSelected);
-                EditingProduct.CommitProductCommand.Executed += (_, __) => {
-                    IsAddEditProductVisible = false;
-                };
+                EditingProduct.CommitProductCommand.Executed
+                    .Take(1)
+                    .Subscribe(_ => {
+                        IsAddEditProductVisible = false;
+                    });
                 IsAddEditProductVisible = EditingProduct != null;
             });
 
@@ -82,9 +87,8 @@ namespace Genius.PriceChecker.UI.ViewModels
                     Products.First(x => x.Id == ev.Product.Id).SetFailed(ev.ErrorMessage);
                 });
 
-            Deactivated.Executed += (_, __) => {
-                IsAddEditProductVisible = false;
-            };
+            Deactivated.Executed.Subscribe(_ =>
+                IsAddEditProductVisible = false);
 
             RefreshOptions = new List<DropDownMenuItem> {
                 new DropDownMenuItem("Refresh all", RefreshAllCommand),

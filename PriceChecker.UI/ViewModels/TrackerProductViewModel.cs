@@ -167,9 +167,8 @@ namespace Genius.PriceChecker.UI.ViewModels
                 ? null
                 : _product.Recent.FirstOrDefault(x => x.ProductSourceId == productSource.Id)?.Price;
             var vm = new TrackerProductSourceViewModel(_ui, productSource, lastPrice);
-            vm.DeleteCommand.Executed += (_, __) => {
-                Sources.Remove(vm);
-            };
+            vm.DeleteCommand.Executed.Subscribe(_ =>
+                Sources.Remove(vm));
             return vm;
         }
 
@@ -180,7 +179,8 @@ namespace Genius.PriceChecker.UI.ViewModels
 
         private void RefreshCategories()
         {
-            Categories.ReplaceItems(_productRepo.GetAll().Select(x => x.Category).Distinct());
+            Categories.ReplaceItems(
+                _productRepo.GetAll().Select(x => x.Category).Distinct());
         }
 
         private void ResetForm()
@@ -212,25 +212,7 @@ namespace Genius.PriceChecker.UI.ViewModels
             });
         }
 
-        public BitmapImage StatusIcon
-        {
-            get
-            {
-                var icon = Status switch
-                {
-                    ProductScanStatus.NotScanned => "Unknown16",
-                    ProductScanStatus.Scanning => "Loading32",
-                    ProductScanStatus.ScannedOk => "DonePink16",
-                    ProductScanStatus.ScannedNewLowest => "Dance32",
-                    ProductScanStatus.Outdated => "Outdated16",
-                    ProductScanStatus.Failed => "Error16",
-                    {} => null
-                };
-                if (icon == null)
-                    return null;
-                return (BitmapImage)App.Current.FindResource(icon);
-            }
-        }
+        public BitmapImage StatusIcon => ResourcesHelper.GetStatusIcon(Status);
 
         public string StatusText
         {

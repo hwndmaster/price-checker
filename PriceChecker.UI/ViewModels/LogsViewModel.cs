@@ -32,12 +32,8 @@ namespace Genius.PriceChecker.UI.ViewModels
                     .Any(x => x.Severity >= LogLevel.Error) ?? false;
             };
 
-            Activated.Executed += (_, __) => {
-                HasNewErrors = false;
-            };
-            Deactivated.Executed += (_, __) => {
-                HasNewErrors = false;
-            };
+            Activated.Executed.Subscribe(_ => HasNewErrors = false);
+            Deactivated.Executed.Subscribe(_ => HasNewErrors = false);
         }
 
         public ObservableCollection<LogItemViewModel> LogItems { get; } = new ObservableCollection<LogItemViewModel>();

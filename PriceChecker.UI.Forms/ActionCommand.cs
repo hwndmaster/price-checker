@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Reactive;
+using System.Reactive.Subjects;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
@@ -7,13 +9,14 @@ namespace Genius.PriceChecker.UI.Forms
 {
     public interface IActionCommand : ICommand
     {
-        event EventHandler Executed;
+        IObservable<Unit> Executed { get; }
     }
 
     public class ActionCommand : IActionCommand
     {
         private Func<object, Task> _asyncAction;
         private Predicate<object> _canExecute;
+        private Subject<Unit> _executed = new();
 
         public event EventHandler CanExecuteChanged
         {
@@ -21,7 +24,7 @@ namespace Genius.PriceChecker.UI.Forms
             remove { CommandManager.RequerySuggested -= value; }
         }
 
-        public event EventHandler Executed;
+        public IObservable<Unit> Executed => _executed;
 
         public ActionCommand()
             : this (_ => { }, null)
@@ -69,7 +72,7 @@ namespace Genius.PriceChecker.UI.Forms
             try
             {
                 await _asyncAction.Invoke(parameter);
-                Executed?.Invoke(this, EventArgs.Empty);
+                _executed.OnNext(Unit.Default);
             }
             catch (Exception ex)
             {
