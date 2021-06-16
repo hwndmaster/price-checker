@@ -21,8 +21,12 @@ namespace Genius.PriceChecker.UI
         {
             base.OnStartup(e);
 
+            _notifyIcon = (TaskbarIcon) FindResource("NotifyIcon");
+
             var serviceCollection = new ServiceCollection();
             ConfigureServices(serviceCollection);
+
+            serviceCollection.AddSingleton<INotifyIconViewModel>((NotifyIconViewModel)_notifyIcon.DataContext);
 
             ServiceProvider = serviceCollection.BuildServiceProvider();
 
@@ -31,8 +35,6 @@ namespace Genius.PriceChecker.UI
 
             var mainWindow = ServiceProvider.GetRequiredService<MainWindow>();
             mainWindow.Show();
-
-            _notifyIcon = (TaskbarIcon) FindResource("NotifyIcon");
         }
 
         protected override void OnExit(ExitEventArgs e)

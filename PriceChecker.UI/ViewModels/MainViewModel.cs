@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Windows.Shell;
 using Genius.PriceChecker.UI.Forms.ViewModels;
 using Genius.PriceChecker.UI.Helpers;
+using Hardcodet.Wpf.TaskbarNotification;
 
 namespace Genius.PriceChecker.UI.ViewModels
 {
@@ -13,7 +14,8 @@ namespace Genius.PriceChecker.UI.ViewModels
             AgentsViewModel agents,
             SettingsViewModel settings,
             LogsViewModel logs,
-            ITrackerScanContext scanContext)
+            ITrackerScanContext scanContext,
+            INotifyIconViewModel notifyViewModel)
         {
             Tabs = new() {
                 tracker,
@@ -32,6 +34,20 @@ namespace Genius.PriceChecker.UI.ViewModels
                 {
                     ProgressState = TaskbarItemProgressState.Paused;
                     ProgressValue = args.Progress;
+                }
+                else if (args.Status == Helpers.TrackerScanStatus.Finished)
+                {
+                    var message = scanContext.HasNewLowestPrice
+                            ? "Prices for some products have become even lower! Check it out."
+                            : "Nothing interesting has been caught.";
+                    if (scanContext.HasErrors)
+                    {
+                        message += Environment.NewLine + Environment.NewLine + "NOTE: Some products could not finish scanning properly. Check the logs for details.";
+                    }
+                    notifyViewModel.ShowBalloonTip("Scan finished", message,
+                        scanContext.HasErrors ? BalloonIcon.Warning : BalloonIcon.Info);
+                    ProgressState = TaskbarItemProgressState.None;
+                    ProgressValue = 0;
                 }
                 else
                 {

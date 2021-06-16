@@ -10,7 +10,7 @@
         WindowStartupLocation="CenterScreen"
         Title="Price Checker by GeniU$" Height="800" Width="1200">
     <Window.TaskbarItemInfo>
-        <TaskbarItemInfo x:Name="taskBarItemInfo"
+        <TaskbarItemInfo
             ProgressState="{Binding ProgressState, Mode=OneWay}"
             ProgressValue="{Binding ProgressValue, Mode=OneWay}"/>
     </Window.TaskbarItemInfo>

@@ -10,6 +10,8 @@ namespace Genius.PriceChecker.UI.Helpers
         void NotifyProgressChange(ProductScanStatus productScanStatus);
 
         IObservable<(TrackerScanStatus Status, double Progress)> ScanProgress { get; }
+        bool HasErrors { get; }
+        bool HasNewLowestPrice { get; }
     }
 
     internal sealed class TrackerScanContext : ITrackerScanContext
@@ -19,14 +21,14 @@ namespace Genius.PriceChecker.UI.Helpers
         private bool _started;
         private int _count;
         private int _finished;
-        private bool _hasErrors;
 
         public void NotifyStarted(int count)
         {
             _started = true;
             _count = count;
             _finished = 0;
-            _hasErrors = false;
+            HasErrors = false;
+            HasNewLowestPrice = false;
 
             var initialProgress = CalculateProgress();
             _scanProgress.OnNext((TrackerScanStatus.InProgress, initialProgress));
@@ -41,7 +43,8 @@ namespace Genius.PriceChecker.UI.Helpers
                 || productScanStatus == ProductScanStatus.ScannedNewLowest
                 || productScanStatus == ProductScanStatus.Failed;
 
-            _hasErrors = _hasErrors || productScanStatus == ProductScanStatus.Failed;
+            HasErrors = HasErrors || productScanStatus == ProductScanStatus.Failed;
+            HasNewLowestPrice = HasNewLowestPrice || productScanStatus == ProductScanStatus.ScannedNewLowest;
 
             if (isFinished)
                 _finished++;
@@ -54,7 +57,7 @@ namespace Genius.PriceChecker.UI.Helpers
                 _started = false;
                 status = Helpers.TrackerScanStatus.Finished;
             }
-            else if (_hasErrors)
+            else if (HasErrors)
                 status = Helpers.TrackerScanStatus.InProgressWithErrors;
 
             _scanProgress.OnNext((status, progress));
@@ -66,5 +69,8 @@ namespace Genius.PriceChecker.UI.Helpers
                 : 1.0d * _finished / _count;
 
         public IObservable<(TrackerScanStatus Status, double Progress)> ScanProgress => _scanProgress;
+
+        public bool HasErrors { get; private set; }
+        public bool HasNewLowestPrice { get; private set; }
     }
 }
