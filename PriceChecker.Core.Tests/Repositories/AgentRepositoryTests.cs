@@ -28,7 +28,7 @@ namespace Genius.PriceChecker.Core.Tests.Repositories
         {
             _agents = _fixture.CreateMany<Agent>().ToList();
 
-            _persisterMock.Setup(x => x.Load<Agent>(It.IsAny<string>()))
+            _persisterMock.Setup(x => x.LoadCollection<Agent>(It.IsAny<string>()))
                 .Returns(_agents.ToArray());
 
             _sut = new AgentRepository(_eventBusMock.Object, _persisterMock.Object,
@@ -95,7 +95,7 @@ namespace Genius.PriceChecker.Core.Tests.Repositories
 
             // Verify
             Assert.False(_sut.GetAll().Except(newAgents).Any());
-            _persisterMock.Verify(x => x.Store<Agent>(It.IsAny<string>(),
+            _persisterMock.Verify(x => x.Store(It.IsAny<string>(),
                 It.Is<List<Agent>>((List<Agent> p) => p.SequenceEqual(newAgents))));
             _eventBusMock.Verify(x => x.Publish(It.IsAny<AgentsUpdatedEvent>()), Times.Once);
         }

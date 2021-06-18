@@ -2,6 +2,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Threading.Tasks;
 using Genius.PriceChecker.Core.Messages;
 using Genius.PriceChecker.Core.Models;
@@ -12,7 +13,7 @@ namespace Genius.PriceChecker.Core.Services
 {
   public interface IPriceSeeker
     {
-        Task<PriceSeekResult[]> SeekAsync(Product product);
+        Task<PriceSeekResult[]> SeekAsync(Product product, CancellationToken cancel);
     }
 
     internal sealed class PriceSeeker : IPriceSeeker
@@ -33,17 +34,17 @@ namespace Genius.PriceChecker.Core.Services
             _logger = logger;
         }
 
-        public async Task<PriceSeekResult[]> SeekAsync(Product product)
+        public async Task<PriceSeekResult[]> SeekAsync(Product product, CancellationToken cancel)
         {
             var result = product.Sources.AsParallel().Select(async (productSource) => {
-                return await Seek(productSource);
+                return await Seek(productSource, cancel);
             });
 
             return await Task.WhenAll(result)
                 .ContinueWith(x => x.Result?.Where(x => x != null).ToArray() ?? new PriceSeekResult[0]);
         }
 
-        private async Task<PriceSeekResult> Seek(ProductSource productSource)
+        private async Task<PriceSeekResult> Seek(ProductSource productSource, CancellationToken cancel)
         {
             var agent = _agentRepo.FindById(productSource.AgentId);
             if (agent == null)
@@ -53,7 +54,7 @@ namespace Genius.PriceChecker.Core.Services
             }
 
             var url = string.Format(agent.Url, productSource.AgentArgument);
-            var content = await _trickyHttpClient.DownloadContent(url);
+            var content = await _trickyHttpClient.DownloadContent(url, cancel);
             if (content == null)
                 return null;
 

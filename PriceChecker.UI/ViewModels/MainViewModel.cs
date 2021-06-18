@@ -42,7 +42,7 @@ namespace Genius.PriceChecker.UI.ViewModels
                             : "Nothing interesting has been caught.";
                     if (scanContext.HasErrors)
                     {
-                        message += Environment.NewLine + Environment.NewLine + "NOTE: Some products could not finish scanning properly. Check the logs for details.";
+                        message += Environment.NewLine + "NOTE: Some products could not finish scanning properly. Check the logs for details.";
                     }
                     notifyViewModel.ShowBalloonTip("Scan finished", message,
                         scanContext.HasErrors ? BalloonIcon.Warning : BalloonIcon.Info);

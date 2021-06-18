@@ -37,7 +37,7 @@ namespace Genius.PriceChecker.Core.Repositories
             _agentRepo = agentRepo;
             _logger = logger;
 
-            _products = _persister.Load<Product>(FILENAME).ToList();
+            _products = _persister.LoadCollection<Product>(FILENAME).ToList();
 
             FillupRelations();
         }
@@ -95,6 +95,8 @@ namespace Genius.PriceChecker.Core.Repositories
             }
 
             _persister.Store(FILENAME, _products);
+
+            _logger.LogInformation($"Products updated.");
         }
 
         private void FillupRelations()

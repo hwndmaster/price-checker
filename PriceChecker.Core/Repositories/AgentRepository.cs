@@ -32,7 +32,7 @@ namespace Genius.PriceChecker.Core.Repositories
             _persister = persister;
             _logger = logger;
 
-            _agents = _persister.Load<Agent>(FILENAME).ToList();
+            _agents = _persister.LoadCollection<Agent>(FILENAME).ToList();
         }
 
         public IEnumerable<Agent> GetAll()
@@ -70,6 +70,8 @@ namespace Genius.PriceChecker.Core.Repositories
             _agents = agents.ToList();
             _persister.Store(FILENAME, _agents);
             _eventBus.Publish(new AgentsUpdatedEvent());
+
+            _logger.LogInformation($"Agents updated.");
         }
     }
 }

@@ -1,3 +1,4 @@
+using System;
 using System.Diagnostics.CodeAnalysis;
 using Genius.PriceChecker.Core.Repositories;
 using Genius.PriceChecker.Core.Services;
@@ -13,6 +14,7 @@ namespace Genius.PriceChecker.Core
             // Repositories
             services.AddSingleton<IAgentRepository, AgentRepository>();
             services.AddSingleton<IProductRepository, ProductRepository>();
+            services.AddSingleton<ISettingsRepository, SettingsRepository>();
 
             // Services
             services.AddTransient<IPersister, Persister>();
@@ -20,6 +22,11 @@ namespace Genius.PriceChecker.Core
             services.AddTransient<IProductStatusProvider, ProductStatusProvider>();
             services.AddSingleton<IProductPriceManager, ProductPriceManager>();
             services.AddSingleton<ITrickyHttpClient, TrickyHttpClient>();
+        }
+
+        public static void Initialize(IServiceProvider serviceProvider)
+        {
+            serviceProvider.GetService<IProductPriceManager>().AutoRefreshInitialize();
         }
     }
 }

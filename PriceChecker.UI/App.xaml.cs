@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Windows;
 using Genius.PriceChecker.Core.Services;
 using Genius.PriceChecker.Infrastructure.Events;
@@ -11,6 +12,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Genius.PriceChecker.UI
 {
+    [ExcludeFromCodeCoverage]
     public partial class App : Application
     {
         private TaskbarIcon _notifyIcon;
@@ -32,6 +34,8 @@ namespace Genius.PriceChecker.UI
 
             ServiceProvider.GetService<Microsoft.Extensions.Logging.ILoggerFactory>()
                 .AddProvider(new EventBasedLoggerProvider(ServiceProvider.GetService<IEventBus>()));
+
+            Core.Module.Initialize(ServiceProvider);
 
             var mainWindow = ServiceProvider.GetRequiredService<MainWindow>();
             mainWindow.Show();

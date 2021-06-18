@@ -10,7 +10,7 @@ namespace Genius.PriceChecker.Core.Services
 {
     public interface ITrickyHttpClient
     {
-        Task<string> DownloadContent(string url);
+        Task<string> DownloadContent(string url, CancellationToken cancel);
     }
 
     public class TrickyHttpClient : ITrickyHttpClient
@@ -27,7 +27,7 @@ namespace Genius.PriceChecker.Core.Services
             _logger = logger;
         }
 
-        public async Task<string> DownloadContent(string url)
+        public async Task<string> DownloadContent(string url, CancellationToken cancel)
         {
             var uri = new Uri(url);
 
@@ -36,7 +36,7 @@ namespace Genius.PriceChecker.Core.Services
             try
             {
                 await Task.Delay(DELAY_MS);
-                return await DownloadInternal(url);
+                return await DownloadInternal(url, cancel);
             }
             finally
             {
@@ -44,7 +44,7 @@ namespace Genius.PriceChecker.Core.Services
             }
         }
 
-        private async Task<string> DownloadInternal(string url)
+        private async Task<string> DownloadInternal(string url, CancellationToken cancel)
         {
             var handler = new HttpClientHandler()
             {
@@ -62,7 +62,7 @@ namespace Genius.PriceChecker.Core.Services
                 httpClient.DefaultRequestHeaders.Add("Accept-Encoding", "gzip, deflate");
                 httpClient.DefaultRequestHeaders.Add("User-Agent", CreateRandomUserAgent());
 
-                var response = await httpClient.GetAsync(url);
+                var response = await httpClient.GetAsync(url, cancel);
                 if (!response.IsSuccessStatusCode)
                 {
                     if (response.StatusCode == HttpStatusCode.TooManyRequests)

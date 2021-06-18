@@ -75,7 +75,6 @@ namespace Genius.PriceChecker.UI.ViewModels
                 if (Status == ProductScanStatus.Scanning)
                     return;
                 _productMng.EnqueueScan(product.Id);
-                Status = ProductScanStatus.Scanning;
             }, _ => Status != ProductScanStatus.Scanning);
 
             eventBus.WhenFired<AgentsUpdatedEvent, AgentDeletedEvent>()

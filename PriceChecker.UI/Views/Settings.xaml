@@ -3,8 +3,19 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:mah="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
         xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
         mc:Ignorable="d">
-    <Grid>
+    <Grid Margin="4,4,4,4">
+        <StackPanel Orientation="Horizontal">
+            <Label Content="Auto Refresh:" />
+            <StackPanel Orientation="Vertical">
+                <mah:ToggleSwitch OnContent="On" OffContent="Off" IsOn="{Binding AutoRefreshEnabled}" />
+                <ComboBox SelectedValue="{Binding AutoRefreshMinutes}"
+                    DisplayMemberPath="Name"
+                    ItemsSource="{Binding AutoRefreshMinuteOptions}"
+                    IsEnabled="{Binding AutoRefreshEnabled}" />
+            </StackPanel>
+        </StackPanel>
     </Grid>
 </UserControl>

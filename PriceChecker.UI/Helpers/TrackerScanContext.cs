@@ -1,6 +1,8 @@
 using System;
 using System.Reactive.Subjects;
+using Genius.PriceChecker.Core.Messages;
 using Genius.PriceChecker.Core.Models;
+using Genius.PriceChecker.Infrastructure.Events;
 
 namespace Genius.PriceChecker.UI.Helpers
 {
@@ -21,6 +23,14 @@ namespace Genius.PriceChecker.UI.Helpers
         private bool _started;
         private int _count;
         private int _finished;
+
+        public TrackerScanContext(IEventBus eventBus)
+        {
+            eventBus.WhenFired<ProductAutoScanStartedEvent>()
+                .Subscribe(ev => {
+                    NotifyStarted(ev.ProductsCount);
+                });
+        }
 
         public void NotifyStarted(int count)
         {

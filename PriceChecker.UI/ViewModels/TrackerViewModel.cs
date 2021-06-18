@@ -78,6 +78,11 @@ namespace Genius.PriceChecker.UI.ViewModels
                 _productRepo.Delete(selectedProduct.Id);
             });
 
+            _eventBus.WhenFired<ProductScanStartedEvent>()
+                .ObserveOnDispatcher()
+                .Subscribe(ev =>
+                    Products.First(x => x.Id == ev.Product.Id).Status = Core.Models.ProductScanStatus.Scanning
+                );
             _eventBus.WhenFired<ProductScannedEvent>()
                 .Subscribe(ev => {
                     Products.First(x => x.Id == ev.Product.Id).Reconcile(ev.LowestPriceUpdated);

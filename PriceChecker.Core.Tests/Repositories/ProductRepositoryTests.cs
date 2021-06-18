@@ -33,7 +33,7 @@ namespace Genius.PriceChecker.Core.Tests.Repositories
             foreach (var agent in _agents)
                 _agentRepoMock.Setup(x => x.FindById(agent.Id)).Returns(agent);
 
-            _persisterMock.Setup(x => x.Load<Product>(It.IsAny<string>()))
+            _persisterMock.Setup(x => x.LoadCollection<Product>(It.IsAny<string>()))
                 .Returns(_products.ToArray());
 
             _sut = new ProductRepository(_eventBusMock.Object, _persisterMock.Object,
@@ -100,7 +100,7 @@ namespace Genius.PriceChecker.Core.Tests.Repositories
             _sut.Store(product);
 
             // Verify
-            _persisterMock.Verify(x => x.Store<Product>(It.IsAny<string>(),
+            _persisterMock.Verify(x => x.Store(It.IsAny<string>(),
                 It.Is<List<Product>>((List<Product> p) => p.SequenceEqual(_products))));
             _eventBusMock.Verify(x => x.Publish(It.Is<ProductUpdatedEvent>(e => e.Product == product)), Times.Once);
         }
@@ -117,7 +117,7 @@ namespace Genius.PriceChecker.Core.Tests.Repositories
 
             // Verify
             var expectedProducts = _products.Concat(new [] { product });
-            _persisterMock.Verify(x => x.Store<Product>(It.IsAny<string>(),
+            _persisterMock.Verify(x => x.Store(It.IsAny<string>(),
                 It.Is<List<Product>>((List<Product> p) => p.SequenceEqual(expectedProducts))));
             _eventBusMock.Verify(x => x.Publish(It.Is<ProductAddedEvent>(e => e.Product == product)), Times.Once);
             Assert.Equal(productCount + 1, _sut.GetAll().Count());
