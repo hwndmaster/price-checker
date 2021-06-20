@@ -1,12 +1,9 @@
-using System.IO;
 using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using Genius.PriceChecker.Core.Messages;
 using Genius.PriceChecker.Core.Models;
-using Genius.PriceChecker.Core.Repositories;
 using Microsoft.Extensions.Logging;
 
 namespace Genius.PriceChecker.Core.Services
@@ -18,19 +15,18 @@ namespace Genius.PriceChecker.Core.Services
 
     internal sealed class PriceSeeker : IPriceSeeker
     {
-        private readonly IAgentRepository _agentRepo;
         private readonly ITrickyHttpClient _trickyHttpClient;
+        private readonly IIoService _io;
         private readonly ILogger<PriceSeeker> _logger;
 
         private const char DEFAULT_DECIMAL_DELIMITER = '.';
 
         private static object _locker = new();
 
-        public PriceSeeker(IAgentRepository agentRepo, ITrickyHttpClient trickyHttpClient,
-            ILogger<PriceSeeker> logger)
+        public PriceSeeker(ITrickyHttpClient trickyHttpClient, IIoService io, ILogger<PriceSeeker> logger)
         {
-            _agentRepo = agentRepo;
             _trickyHttpClient = trickyHttpClient;
+            _io = io;
             _logger = logger;
         }
 
@@ -46,13 +42,7 @@ namespace Genius.PriceChecker.Core.Services
 
         private async Task<PriceSeekResult> Seek(ProductSource productSource, CancellationToken cancel)
         {
-            var agent = _agentRepo.FindById(productSource.AgentId);
-            if (agent == null)
-            {
-                _logger.LogError($"Source not found: {productSource.AgentId}");
-                return null;
-            }
-
+            var agent = productSource.Agent;
             var url = string.Format(agent.Url, productSource.AgentArgument);
             var content = await _trickyHttpClient.DownloadContent(url, cancel);
             if (content == null)
@@ -62,11 +52,12 @@ namespace Genius.PriceChecker.Core.Services
             var match = re.Match(content);
             if (!match.Success)
             {
+                var dumpFileName = $"dump ({productSource.Id}).log";
                 lock(_locker)
                 {
-                    File.WriteAllText($"dump ({productSource.Id}).log", content, Encoding.UTF8);
+                    _io.WriteTextToFile(dumpFileName, content);
                 }
-                _logger.LogError($"Cannot match price from the given content. File = 'content.log', Url = '{url}'");
+                _logger.LogError($"Cannot match price from the given content. File = '{dumpFileName}', Url = '{url}'");
                 return null;
             }
 

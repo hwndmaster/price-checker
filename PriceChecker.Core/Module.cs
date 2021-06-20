@@ -17,6 +17,7 @@ namespace Genius.PriceChecker.Core
             services.AddSingleton<ISettingsRepository, SettingsRepository>();
 
             // Services
+            services.AddSingleton<IIoService, IoService>();
             services.AddTransient<IPersister, Persister>();
             services.AddTransient<IPriceSeeker, PriceSeeker>();
             services.AddTransient<IProductStatusProvider, ProductStatusProvider>();

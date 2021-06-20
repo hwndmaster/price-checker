@@ -1,25 +1,24 @@
-using System.Diagnostics.CodeAnalysis;
-using System.IO;
 using System.Text.Json;
 using System.Threading;
 
 namespace Genius.PriceChecker.Core.Services
 {
-    public interface IPersister
+  public interface IPersister
     {
         T Load<T>(string filePath);
         T[] LoadCollection<T>(string filePath);
         void Store(string filePath, object data);
     }
 
-    [ExcludeFromCodeCoverage]
     internal sealed class Persister : IPersister
     {
+        private readonly IIoService _io;
         private readonly JsonSerializerOptions _jsonOptions;
         private static ReaderWriterLockSlim _locker = new();
 
-        public Persister()
+        public Persister(IIoService io)
         {
+            _io = io;
             _jsonOptions = new JsonSerializerOptions {
                 PropertyNameCaseInsensitive = true,
                 WriteIndented = true
@@ -31,11 +30,11 @@ namespace Genius.PriceChecker.Core.Services
             _locker.EnterReadLock();
             try
             {
-                if (!File.Exists(filePath))
+                if (!_io.FileExists(filePath))
                 {
                     return default(T);
                 }
-                var content = File.ReadAllText(filePath);
+                var content = _io.ReadTextFromFile(filePath);
                 return JsonSerializer.Deserialize<T>(content, _jsonOptions);
             }
             finally
@@ -49,11 +48,11 @@ namespace Genius.PriceChecker.Core.Services
             _locker.EnterReadLock();
             try
             {
-                if (!File.Exists(filePath))
+                if (!_io.FileExists(filePath))
                 {
                     return new T[0];
                 }
-                var content = File.ReadAllText(filePath);
+                var content = _io.ReadTextFromFile(filePath);
                 return JsonSerializer.Deserialize<T[]>(content, _jsonOptions);
             }
             finally
@@ -68,7 +67,7 @@ namespace Genius.PriceChecker.Core.Services
             try
             {
                 var json = JsonSerializer.Serialize(data, _jsonOptions);
-                File.WriteAllText(filePath, json);
+                _io.WriteTextToFile(filePath, json);
             }
             finally
             {
