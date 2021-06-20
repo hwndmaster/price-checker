@@ -19,9 +19,10 @@ namespace Genius.PriceChecker.Core.Services
                 return ProductScanStatus.NotScanned;
 
             if (DateTime.Now - product.Recent.Max(x => x.FoundDate) > OutdatedPeriod)
-            {
                 return ProductScanStatus.Outdated;
-            }
+
+            if (product.Sources.Length != product.Recent.Length)
+                return ProductScanStatus.ScannedWithErrors;
 
             return ProductScanStatus.ScannedOk;
         }

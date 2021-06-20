@@ -5,6 +5,7 @@ namespace Genius.PriceChecker.Core.Models
         NotScanned,
         Scanning,
         ScannedOk,
+        ScannedWithErrors,
         ScannedNewLowest,
         Outdated,
         Failed

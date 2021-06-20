@@ -1,4 +1,4 @@
-[
+﻿[
   {
     "Id": "6a52bd42-d19e-4572-9295-28e01e7e7417",
     "Category": "Car",
@@ -13,14 +13,14 @@
     ],
     "Lowest": {
       "ProductSourceId": "60b9ceed-b34c-45ad-a142-af0ec5491d91",
-      "Price": 20.55,
-      "FoundDate": "2021-06-18T13:21:32.1612982+02:00"
+      "Price": 20.15,
+      "FoundDate": "2021-06-20T19:59:10.0234789+02:00"
     },
     "Recent": [
       {
         "ProductSourceId": "60b9ceed-b34c-45ad-a142-af0ec5491d91",
-        "Price": 20.55,
-        "FoundDate": "2021-06-18T13:21:32.1612982+02:00"
+        "Price": 20.15,
+        "FoundDate": "2021-06-20T19:59:10.0234789+02:00"
       }
     ]
   },
@@ -48,14 +48,14 @@
     },
     "Recent": [
       {
-        "ProductSourceId": "ebeaa98d-aedb-4bb8-b539-1de7e1ee25cc",
-        "Price": 698.99,
-        "FoundDate": "2021-06-18T13:21:21.770214+02:00"
-      },
-      {
         "ProductSourceId": "4753f887-5b20-41de-a06b-3c159262a273",
         "Price": 759,
-        "FoundDate": "2021-06-18T13:21:21.77023+02:00"
+        "FoundDate": "2021-06-20T19:58:55.3228205+02:00"
+      },
+      {
+        "ProductSourceId": "ebeaa98d-aedb-4bb8-b539-1de7e1ee25cc",
+        "Price": 698.99,
+        "FoundDate": "2021-06-20T19:58:55.322826+02:00"
       }
     ]
   },
@@ -84,23 +84,23 @@
     "Lowest": {
       "ProductSourceId": "59b2149f-9148-40eb-88c3-16061247487f",
       "Price": 659.99,
-      "FoundDate": "2021-06-18T13:16:39.5792574+02:00"
+      "FoundDate": "2021-06-20T19:59:54.7048389+02:00"
     },
     "Recent": [
       {
         "ProductSourceId": "59b2149f-9148-40eb-88c3-16061247487f",
         "Price": 659.99,
-        "FoundDate": "2021-06-18T13:16:39.5792574+02:00"
+        "FoundDate": "2021-06-20T19:59:54.7048389+02:00"
       },
       {
         "ProductSourceId": "190b93f8-d428-4b9b-aa70-127c513d352f",
         "Price": 699,
-        "FoundDate": "2021-06-18T13:16:39.5792632+02:00"
+        "FoundDate": "2021-06-20T19:59:54.7048437+02:00"
       },
       {
         "ProductSourceId": "7abd51a9-7ba1-4b72-9ff3-3fb89fce9045",
         "Price": 729.00,
-        "FoundDate": "2021-06-18T13:16:39.5792643+02:00"
+        "FoundDate": "2021-06-20T19:59:54.7048439+02:00"
       }
     ]
   },
@@ -135,17 +135,17 @@
       {
         "ProductSourceId": "3b27b7fc-369d-4f90-ba4c-f209c1a0153b",
         "Price": 168,
-        "FoundDate": "2021-06-18T13:16:46.5745503+02:00"
+        "FoundDate": "2021-06-20T19:59:04.0369221+02:00"
       },
       {
         "ProductSourceId": "d786a796-b93c-468b-8fda-a2892d72802a",
-        "Price": 179.99,
-        "FoundDate": "2021-06-18T13:16:46.574555+02:00"
+        "Price": 179.0,
+        "FoundDate": "2021-06-20T19:59:04.0369276+02:00"
       },
       {
         "ProductSourceId": "1778e5f5-b73d-418b-b3b8-06412828f54f",
         "Price": 168.00,
-        "FoundDate": "2021-06-18T13:16:46.5745555+02:00"
+        "FoundDate": "2021-06-20T19:59:04.0369281+02:00"
       }
     ]
   },
@@ -169,18 +169,13 @@
     "Lowest": {
       "ProductSourceId": "923b83ed-3fcb-43ca-80b0-0e9e717ec9c6",
       "Price": 429.0,
-      "FoundDate": "2021-06-09T11:37:13.8349092+02:00"
+      "FoundDate": "2021-06-20T20:55:36.6045305+02:00"
     },
     "Recent": [
       {
-        "ProductSourceId": "5f5a72a4-d6ad-4cab-9fb9-9d5839fa2a03",
-        "Price": 439.99,
-        "FoundDate": "2021-06-18T13:16:19.5341966+02:00"
-      },
-      {
         "ProductSourceId": "923b83ed-3fcb-43ca-80b0-0e9e717ec9c6",
-        "Price": 429.9,
-        "FoundDate": "2021-06-18T13:16:19.5342012+02:00"
+        "Price": 429.0,
+        "FoundDate": "2021-06-20T20:55:36.6045305+02:00"
       }
     ]
   },
@@ -204,18 +199,18 @@
     "Lowest": {
       "ProductSourceId": "76ba5029-6cf6-4231-bc99-ca7d65cde50d",
       "Price": 179.95,
-      "FoundDate": "2021-06-18T13:16:20.9559236+02:00"
+      "FoundDate": "2021-06-20T19:58:54.0449809+02:00"
     },
     "Recent": [
       {
         "ProductSourceId": "76ba5029-6cf6-4231-bc99-ca7d65cde50d",
         "Price": 179.95,
-        "FoundDate": "2021-06-18T13:16:20.9559236+02:00"
+        "FoundDate": "2021-06-20T19:58:54.0449809+02:00"
       },
       {
         "ProductSourceId": "62dcd317-1805-4b07-bb30-81045d4a6517",
         "Price": 179.95,
-        "FoundDate": "2021-06-18T13:16:20.9559275+02:00"
+        "FoundDate": "2021-06-20T19:58:54.044988+02:00"
       }
     ]
   },
@@ -245,7 +240,12 @@
       {
         "ProductSourceId": "cbb43572-35b9-4408-9e52-09f934b97336",
         "Price": 589.55,
-        "FoundDate": "2021-06-18T13:16:41.3252375+02:00"
+        "FoundDate": "2021-06-20T19:59:05.9221498+02:00"
+      },
+      {
+        "ProductSourceId": "ab80a6f9-c175-4c10-8f69-aee23e7efc64",
+        "Price": 607.95,
+        "FoundDate": "2021-06-20T19:59:05.9221536+02:00"
       }
     ]
   },
@@ -269,13 +269,18 @@
     "Lowest": {
       "ProductSourceId": "aa039437-a86f-4cf7-9283-90c63a95e142",
       "Price": 389.95,
-      "FoundDate": "2021-06-04T16:23:06.2236865+02:00"
+      "FoundDate": "2021-06-20T21:06:04.357447+02:00"
     },
     "Recent": [
       {
         "ProductSourceId": "b129f9f2-416b-493e-af3c-ff0f255a66e9",
         "Price": 499.99,
-        "FoundDate": "2021-06-18T13:16:44.4775595+02:00"
+        "FoundDate": "2021-06-20T21:06:04.3574362+02:00"
+      },
+      {
+        "ProductSourceId": "aa039437-a86f-4cf7-9283-90c63a95e142",
+        "Price": 389.95,
+        "FoundDate": "2021-06-20T21:06:04.357447+02:00"
       }
     ]
   },
@@ -294,13 +299,13 @@
     "Lowest": {
       "ProductSourceId": "831217bc-0784-4d57-a6a5-d71bf6b2bd19",
       "Price": 236.80,
-      "FoundDate": "2021-06-18T13:21:50.3213306+02:00"
+      "FoundDate": "2021-06-20T19:58:56.4396029+02:00"
     },
     "Recent": [
       {
         "ProductSourceId": "831217bc-0784-4d57-a6a5-d71bf6b2bd19",
         "Price": 236.80,
-        "FoundDate": "2021-06-18T13:21:50.3213306+02:00"
+        "FoundDate": "2021-06-20T19:58:56.4396029+02:00"
       }
     ]
   },
@@ -319,13 +324,13 @@
     "Lowest": {
       "ProductSourceId": "65f0f16f-a64c-4244-bd3b-ea58c27740ed",
       "Price": 349.99,
-      "FoundDate": "2021-06-18T13:21:51.5894445+02:00"
+      "FoundDate": "2021-06-20T20:00:12.515681+02:00"
     },
     "Recent": [
       {
         "ProductSourceId": "65f0f16f-a64c-4244-bd3b-ea58c27740ed",
         "Price": 349.99,
-        "FoundDate": "2021-06-18T13:21:51.5894445+02:00"
+        "FoundDate": "2021-06-20T20:00:12.515681+02:00"
       }
     ]
   },
@@ -350,7 +355,7 @@
       {
         "ProductSourceId": "c33f08c8-854e-4a60-8eff-bd900cffe134",
         "Price": 349.0,
-        "FoundDate": "2021-06-18T13:16:31.4199633+02:00"
+        "FoundDate": "2021-06-20T19:58:59.6732845+02:00"
       }
     ]
   },
@@ -375,7 +380,7 @@
       {
         "ProductSourceId": "64f76755-0839-4c6c-9a7c-e28e4cf1e670",
         "Price": 309.99,
-        "FoundDate": "2021-06-18T13:16:35.5622663+02:00"
+        "FoundDate": "2021-06-20T19:59:02.1066094+02:00"
       }
     ]
   },
@@ -398,14 +403,19 @@
     ],
     "Lowest": {
       "ProductSourceId": "e4b4c4d2-d318-4304-af16-3b97a18509f7",
-      "Price": 379.38,
-      "FoundDate": "2021-06-18T13:16:48.7281688+02:00"
+      "Price": 399.99,
+      "FoundDate": "2021-06-20T21:06:55.5968457+02:00"
     },
     "Recent": [
       {
         "ProductSourceId": "e4b4c4d2-d318-4304-af16-3b97a18509f7",
-        "Price": 379.38,
-        "FoundDate": "2021-06-18T13:16:48.7281688+02:00"
+        "Price": 399.99,
+        "FoundDate": "2021-06-20T21:06:55.5968457+02:00"
+      },
+      {
+        "ProductSourceId": "05b5f419-0ace-4ba7-b35a-4eb571c5ecc6",
+        "Price": 409,
+        "FoundDate": "2021-06-20T21:06:55.5968494+02:00"
       }
     ]
   },
@@ -424,13 +434,13 @@
     "Lowest": {
       "ProductSourceId": "e593c859-0dff-491d-a9ad-1a2f74a7f6f6",
       "Price": 229.0,
-      "FoundDate": "2021-06-18T13:16:21.7507219+02:00"
+      "FoundDate": "2021-06-20T19:58:57.2717981+02:00"
     },
     "Recent": [
       {
         "ProductSourceId": "e593c859-0dff-491d-a9ad-1a2f74a7f6f6",
         "Price": 229.0,
-        "FoundDate": "2021-06-18T13:16:21.7507219+02:00"
+        "FoundDate": "2021-06-20T19:58:57.2717981+02:00"
       }
     ]
   }

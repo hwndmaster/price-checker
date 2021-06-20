@@ -106,10 +106,10 @@ namespace Genius.PriceChecker.UI.ViewModels
                 var x = (1 - LowestPrice.Value/previousLowestPrice) * 100;
                 StatusText = $"The new price is by {x:0}% less than by previous scan ({LowestPrice.Value:#,##0.00} vs {previousLowestPrice.Value:#,##0.00})";
             }
+            else if (Status == ProductScanStatus.ScannedWithErrors)
+                StatusText = "One or more source hasn't updated its price. Check the logs.";
             else
-            {
                 StatusText = string.Empty;
-            }
 
             if (_product.Recent.Any())
             {

@@ -50,10 +50,12 @@ namespace Genius.PriceChecker.UI.Helpers
                 return;
 
             var isFinished = productScanStatus == ProductScanStatus.ScannedOk
+                || productScanStatus == ProductScanStatus.ScannedWithErrors
                 || productScanStatus == ProductScanStatus.ScannedNewLowest
                 || productScanStatus == ProductScanStatus.Failed;
 
-            HasErrors = HasErrors || productScanStatus == ProductScanStatus.Failed;
+            HasErrors = HasErrors || productScanStatus == ProductScanStatus.Failed
+                || productScanStatus == ProductScanStatus.ScannedWithErrors;
             HasNewLowestPrice = HasNewLowestPrice || productScanStatus == ProductScanStatus.ScannedNewLowest;
 
             if (isFinished)

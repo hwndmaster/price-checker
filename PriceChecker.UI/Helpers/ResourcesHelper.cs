@@ -12,6 +12,7 @@ namespace Genius.PriceChecker.UI.Helpers
                 ProductScanStatus.NotScanned => "Unknown16",
                 ProductScanStatus.Scanning => "Loading32",
                 ProductScanStatus.ScannedOk => "DonePink16",
+                ProductScanStatus.ScannedWithErrors => "Warning16",
                 ProductScanStatus.ScannedNewLowest => "Dance32",
                 ProductScanStatus.Outdated => "Outdated16",
                 ProductScanStatus.Failed => "Error16",
