@@ -1,5 +1,9 @@
 name: WPF CD
 
+on:
+  release:
+    types: [published]
+
 jobs:
   release:
     name: Release
@@ -12,20 +16,30 @@ jobs:
       with:
         dotnet-version: 5.0.x
     - name: Restore dependencies
-      run: dotnet restore
+      run: dotnet restore --runtime "win-x64"
     - name: Build
-      run: dotnet build --no-restore
-    - name: Create release
+      run: dotnet build PriceChecker.UI/PriceChecker.UI.csproj --runtime "win-x64" -c Release --no-restore
+    - name: Create release (clean)
       shell: bash
       run: |
         tag=$(git describe --tags --abbrev=0)
-        release_name="PriceChecker-$tag-${{ matrix.target }}"
-        dotnet publish PriceChecker.UI/PriceChecker.UI.csproj --runtime "win-x64" -c Release -o "$release_name"
+        release_name="PriceChecker-$tag-x64"
+        dotnet publish --runtime win-x64 -c Release -o $release_name --self-contained false --no-restore --no-build /p:DebugType=None /p:DebugSymbols=false ./PriceChecker.UI/PriceChecker.UI.csproj
         7z a -tzip "${release_name}.zip" "./${release_name}/*"
         rm -r "$release_name"
+    - name: Create release (self contained)
+      shell: bash
+      run: |
+        tag=$(git describe --tags --abbrev=0)
+        release_name_sc="PriceChecker-$tag-bundle-x64"
+        dotnet publish --runtime win-x64 -c Release -o $release_name_sc --self-contained true --no-restore --no-build /p:DebugType=None /p:DebugSymbols=false ./PriceChecker.UI/PriceChecker.UI.csproj
+        7z a -tzip "${release_name_sc}.zip" "./${release_name_sc}/*"
+        rm -r "$release_name_sc"
     - name: Publish
-        uses: softprops/action-gh-release@v1
-        with:
-          files: "PriceChecker*"
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      uses: softprops/action-gh-release@v1
+      with:
+        files: |
+          ${release_name}.zip
+          ${release_name_sc}.zip
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
