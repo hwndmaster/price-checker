@@ -24,7 +24,7 @@ jobs:
       run: |
         tag=$(git describe --tags --abbrev=0)
         release_name="PriceChecker-$tag-x64"
-        dotnet publish --verbosity diag --runtime win-x64 -c Release -o $release_name --self-contained false --no-restore --no-build /p:DebugType=None /p:DebugSymbols=false ./PriceChecker.UI/PriceChecker.UI.csproj
+        dotnet publish --runtime win-x64 -c Release -o ${release_name} --self-contained false --no-restore --no-build /p:DebugType=None /p:DebugSymbols=false ./PriceChecker.UI/PriceChecker.UI.csproj
         7z a -tzip "${release_name}.zip" "./${release_name}/*"
         rm -r "$release_name"
     - name: Create release (self contained)
@@ -32,7 +32,7 @@ jobs:
       run: |
         tag=$(git describe --tags --abbrev=0)
         release_name_sc="PriceChecker-$tag-bundle-x64"
-        dotnet publish --runtime win-x64 -c Release -o $release_name_sc --self-contained true --no-restore --no-build /p:DebugType=None /p:DebugSymbols=false ./PriceChecker.UI/PriceChecker.UI.csproj
+        dotnet publish --runtime win-x64 -c Release -o ${release_name_sc} --self-contained true --no-restore --no-build /p:DebugType=None /p:DebugSymbols=false ./PriceChecker.UI/PriceChecker.UI.csproj
         7z a -tzip "${release_name_sc}.zip" "./${release_name_sc}/*"
         rm -r "$release_name_sc"
     - name: Publish
