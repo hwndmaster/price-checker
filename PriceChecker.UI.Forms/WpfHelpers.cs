@@ -34,7 +34,7 @@ namespace Genius.PriceChecker.UI.Forms
 
         public static DataGridTemplateColumn CreateButtonColumn(string commandPath, string iconName)
         {
-            var caption = commandPath.Replace("Command", "");
+            var caption = Helpers.MakeCaptionFromPropertyName(commandPath.Replace("Command", ""));
 
             var buttonFactory = new FrameworkElementFactory(typeof(Button));
             buttonFactory.SetBinding(Button.CommandProperty, new Binding(commandPath));

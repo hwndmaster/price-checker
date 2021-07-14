@@ -12,13 +12,17 @@ using Genius.PriceChecker.UI.Forms.Attributes;
 
 namespace Genius.PriceChecker.UI.Forms.ViewModels
 {
-    public abstract class ViewModelBase : INotifyPropertyChanged, INotifyDataErrorInfo
+  public interface IViewModel : INotifyPropertyChanged, INotifyDataErrorInfo
+    {
+        bool TryGetPropertyValue(string propertyName, out object value);
+    }
+
+    public abstract class ViewModelBase : IViewModel
     {
         protected readonly ConcurrentDictionary<string, object> _propertyBag = new();
         private readonly Dictionary<string, List<ValidationRule>> _validationRules = new();
         private readonly Dictionary<string, List<string>> _errors = new();
-
-        protected bool PropertiesAreInitialized = false;
+        private bool _suspendDirtySet = false;
 
         public ViewModelBase()
         {
@@ -34,9 +38,27 @@ namespace Genius.PriceChecker.UI.Forms.ViewModels
                 new List<string>();
         }
 
-        internal bool TryGetPropertyValue(string propertyName, out object value)
+        public bool TryGetPropertyValue(string propertyName, out object value)
         {
             return _propertyBag.TryGetValue(propertyName, out value);
+        }
+
+        protected void InitializeProperties(Action action)
+        {
+            _suspendDirtySet = true;
+            try
+            {
+                action();
+
+                if (this is IHasDirtyFlag hasDirtyFlag)
+                {
+                    hasDirtyFlag.IsDirty = false;
+                }
+            }
+            finally
+            {
+                _suspendDirtySet = false;
+            }
         }
 
         protected T GetOrDefault<T>(T defaultValue = default(T), [CallerMemberName] string name = null)
@@ -74,9 +96,9 @@ namespace Genius.PriceChecker.UI.Forms.ViewModels
             _propertyBag.AddOrUpdate(name, _ => value, (_, __) => value);
             OnPropertyChanged(name);
 
-            if (this is IHasDirtyFlag hasDirtyFlag &&
+            if (!_suspendDirtySet &&
+                this is IHasDirtyFlag hasDirtyFlag &&
                 name != nameof(IHasDirtyFlag.IsDirty) &&
-                PropertiesAreInitialized &&
                 (this is not ISelectable || name != nameof(ISelectable.IsSelected)))
             {
                 hasDirtyFlag.IsDirty = true;

@@ -2,7 +2,7 @@ using System.ComponentModel;
 
 namespace Genius.PriceChecker.UI.Forms.ViewModels
 {
-    public interface ITabViewModel
+    public interface ITabViewModel : IViewModel
     {
         IActionCommand Activated { get; }
         IActionCommand Deactivated { get; }

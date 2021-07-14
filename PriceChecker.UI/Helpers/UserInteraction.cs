@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Windows;
 using Genius.PriceChecker.Core.Models;
 using Genius.PriceChecker.Core.Repositories;
@@ -30,6 +31,7 @@ namespace Genius.PriceChecker.UI.Helpers
         void ShowProductInBrowser(ProductSource productSource);
     }
 
+    [ExcludeFromCodeCoverage]
     public class UserInteraction : IUserInteraction
     {
         private readonly IAgentRepository _agentRepo;

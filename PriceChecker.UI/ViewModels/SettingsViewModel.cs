@@ -4,7 +4,11 @@ using Genius.PriceChecker.UI.Forms.ViewModels;
 
 namespace Genius.PriceChecker.UI.ViewModels
 {
-    public class SettingsViewModel : TabViewModelBase
+    public interface ISettingsViewModel : ITabViewModel
+    {
+    }
+
+    internal sealed class SettingsViewModel : TabViewModelBase, ISettingsViewModel
     {
         public SettingsViewModel(ISettingsRepository repo)
         {

@@ -8,7 +8,12 @@ using Genius.PriceChecker.UI.Helpers;
 
 namespace Genius.PriceChecker.UI.ViewModels
 {
-    public class AgentsViewModel : TabViewModelBase, IHasDirtyFlag
+    public interface IAgentsViewModel : ITabViewModel
+    {
+        ObservableCollection<IAgentViewModel> Agents { get; }
+    }
+
+    internal sealed class AgentsViewModel : TabViewModelBase, IAgentsViewModel, IHasDirtyFlag
     {
         private readonly IAgentRepository _agentRepo;
         private readonly IViewModelFactory _vmFactory;
@@ -54,11 +59,9 @@ namespace Genius.PriceChecker.UI.ViewModels
                 }
                 IsDirty = false;
             }, _ => IsDirty);
-
-            PropertiesAreInitialized = true;
         }
 
-        private AgentViewModel CreateAgentViewModel(Agent x)
+        private IAgentViewModel CreateAgentViewModel(Agent x)
         {
             var agentVm = _vmFactory.CreateAgent(this, x);
             agentVm.WhenChanged(x => x.IsDirty, x =>
@@ -81,7 +84,8 @@ namespace Genius.PriceChecker.UI.ViewModels
             IsDirty = false;
         }
 
-        public ObservableCollection<AgentViewModel> Agents { get; } = new ObservableCollection<AgentViewModel>();
+        public ObservableCollection<IAgentViewModel> Agents { get; }
+            = new TypedObservableList<IAgentViewModel, AgentViewModel>();
 
         public bool IsAddEditAgentVisible
         {

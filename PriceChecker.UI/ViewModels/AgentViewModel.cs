@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -8,19 +9,25 @@ using Genius.PriceChecker.UI.Validation;
 
 namespace Genius.PriceChecker.UI.ViewModels
 {
-    public class AgentViewModel : ViewModelBase, IHasDirtyFlag, ISelectable
+    public interface IAgentViewModel : IViewModel, IHasDirtyFlag, ISelectable
     {
-        private readonly AgentsViewModel _owner;
+        Agent CreateEntity();
+        void ResetForm();
+
+        string Id { get; }
+    }
+
+    internal sealed class AgentViewModel : ViewModelBase, IAgentViewModel
+    {
+        private readonly IAgentsViewModel _owner;
         private readonly Agent _agent;
 
-        public AgentViewModel(AgentsViewModel owner, Agent agent)
+        public AgentViewModel(IAgentsViewModel owner, Agent agent)
         {
             _owner = owner;
             _agent = agent;
 
             ResetForm(true);
-
-            PropertiesAreInitialized = true;
         }
 
         public Agent CreateEntity()
@@ -33,18 +40,29 @@ namespace Genius.PriceChecker.UI.ViewModels
             };
         }
 
-        public void ResetForm(bool enforeInitialization = false)
+        public void ResetForm()
         {
-            if (_agent == null && !enforeInitialization)
+            ResetForm(false);
+        }
+
+        private void ResetForm(bool firstTimeInit)
+        {
+            if (_agent == null && !firstTimeInit)
             {
                 return;
             }
-            Id = _agent?.Id;
-            Url = _agent?.Url;
-            PricePattern = _agent?.PricePattern;
-            DecimalDelimiter = _agent?.DecimalDelimiter ?? '.';
 
-            IsDirty = false;
+            Action init = () => {
+                Id = _agent?.Id;
+                Url = _agent?.Url;
+                PricePattern = _agent?.PricePattern;
+                DecimalDelimiter = _agent?.DecimalDelimiter ?? '.';
+            };
+
+            if (firstTimeInit)
+                this.InitializeProperties(init);
+            else
+                init();
         }
 
         [Browsable(false)]

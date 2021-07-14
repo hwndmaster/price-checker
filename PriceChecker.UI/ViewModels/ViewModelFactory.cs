@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using Genius.PriceChecker.Core.Models;
 using Genius.PriceChecker.Core.Repositories;
 using Genius.PriceChecker.Core.Services;
@@ -8,11 +9,12 @@ namespace Genius.PriceChecker.UI.ViewModels
 {
     public interface IViewModelFactory
     {
-        AgentViewModel CreateAgent(AgentsViewModel owner, Agent agent);
-        TrackerProductViewModel CreateTrackerProduct(Product product);
+        IAgentViewModel CreateAgent(IAgentsViewModel owner, Agent agent);
+        ITrackerProductViewModel CreateTrackerProduct(Product product);
     }
 
-    public class ViewModelFactory : IViewModelFactory
+    [ExcludeFromCodeCoverage]
+    internal sealed class ViewModelFactory : IViewModelFactory
     {
         private readonly IAgentRepository _agentRepo;
         private readonly IProductRepository _productRepo;
@@ -35,12 +37,12 @@ namespace Genius.PriceChecker.UI.ViewModels
             _ui = ui;
         }
 
-        public AgentViewModel CreateAgent(AgentsViewModel owner, Agent agent)
+        public IAgentViewModel CreateAgent(IAgentsViewModel owner, Agent agent)
         {
             return new AgentViewModel(owner, agent);
         }
 
-        public TrackerProductViewModel CreateTrackerProduct(Product product)
+        public ITrackerProductViewModel CreateTrackerProduct(Product product)
         {
             return new TrackerProductViewModel(product, _eventBus, _agentRepo,
                 _productPriceMng, _productRepo, _statusProvider, _ui);

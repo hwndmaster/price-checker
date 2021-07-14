@@ -57,7 +57,7 @@ namespace Genius.PriceChecker.UI.Forms.AutoGrid
             }
 
             if (AssociatedObject.SelectionMode == DataGridSelectionMode.Extended &&
-                typeof(ISelectable).IsAssignableFrom(GetItemType()))
+                typeof(ISelectable).IsAssignableFrom(Helpers.GetListItemType(AssociatedObject.ItemsSource)))
             {
                 BindIsSelected();
             }
@@ -117,16 +117,6 @@ namespace Genius.PriceChecker.UI.Forms.AutoGrid
             };
             rowStyle.Setters.Add(new Setter(DataGrid.IsSelectedProperty, binding));
             AssociatedObject.RowStyle = rowStyle;
-        }
-
-        private Type GetItemType()
-        {
-            var sourceCollection = AssociatedObject.ItemsSource;
-            if (sourceCollection is ListCollectionView listCollectionView)
-            {
-                sourceCollection = listCollectionView.SourceCollection;
-            }
-            return sourceCollection.GetType().GetGenericArguments().Single();
         }
     }
 }

@@ -20,7 +20,7 @@ namespace Genius.PriceChecker.UI.Tests.Validation
         }
 
         [Fact]
-        public void Value_not_string__Returns_valid()
+        public void Value__Not_string__Returns_valid()
         {
             // Act
             var result = _sut.Validate(new object(), _fixture.Create<CultureInfo>());

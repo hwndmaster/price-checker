@@ -10,16 +10,16 @@ using Genius.PriceChecker.UI.Helpers;
 
 namespace Genius.PriceChecker.UI.ViewModels
 {
-    public class TrackerProductSourceViewModel : ViewModelBase
+    internal sealed class TrackerProductSourceViewModel : ViewModelBase
     {
         public TrackerProductSourceViewModel(IUserInteraction ui, ProductSource productSource, decimal? lastPrice)
         {
-            Id = productSource?.Id ?? Guid.NewGuid();
-            Agent = productSource?.AgentId;
-            Argument = productSource?.AgentArgument;
-            LastPrice = lastPrice;
-
-            PropertiesAreInitialized = true;
+            InitializeProperties(() => {
+                Id = productSource?.Id ?? Guid.NewGuid();
+                Agent = productSource?.AgentId;
+                Argument = productSource?.AgentArgument;
+                LastPrice = lastPrice;
+            });
 
             ShowInBrowserCommand = new ActionCommand(_ => {
                 ui.ShowProductInBrowser(productSource);

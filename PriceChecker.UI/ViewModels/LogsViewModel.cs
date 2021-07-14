@@ -10,7 +10,11 @@ using Microsoft.Extensions.Logging;
 
 namespace Genius.PriceChecker.UI.ViewModels
 {
-  public class LogsViewModel : TabViewModelBase
+    public interface ILogsViewModel : ITabViewModel
+    {
+    }
+
+    internal sealed class LogsViewModel : TabViewModelBase, ILogsViewModel
     {
         public LogsViewModel(IEventBus eventBus)
         {
@@ -28,7 +32,7 @@ namespace Genius.PriceChecker.UI.ViewModels
             LogItems.CollectionChanged += (_, args) => {
                 if (HasNewErrors)
                     return;
-                HasNewErrors = args.NewItems?.Cast<LogItemViewModel>()
+                HasNewErrors = args.NewItems?.Cast<ILogItemViewModel>()
                     .Any(x => x.Severity >= LogLevel.Error) ?? false;
             };
 
@@ -36,7 +40,8 @@ namespace Genius.PriceChecker.UI.ViewModels
             Deactivated.Executed.Subscribe(_ => HasNewErrors = false);
         }
 
-        public ObservableCollection<LogItemViewModel> LogItems { get; } = new ObservableCollection<LogItemViewModel>();
+        public ObservableCollection<ILogItemViewModel> LogItems { get; }
+            = new TypedObservableList<ILogItemViewModel, LogItemViewModel>();
 
         public bool HasNewErrors
         {

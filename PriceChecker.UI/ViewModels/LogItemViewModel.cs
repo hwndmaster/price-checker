@@ -8,7 +8,12 @@ using Microsoft.Extensions.Logging;
 
 namespace Genius.PriceChecker.UI.ViewModels
 {
-    public class LogItemViewModel : ViewModelBase
+    public interface ILogItemViewModel : IViewModel
+    {
+        LogLevel Severity { get; }
+    }
+
+    internal sealed class LogItemViewModel : ViewModelBase, ILogItemViewModel
     {
         public LogItemViewModel()
         {

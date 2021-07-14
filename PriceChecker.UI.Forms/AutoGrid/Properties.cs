@@ -30,9 +30,9 @@ namespace Genius.PriceChecker.UI.Forms.AutoGrid
             return (IEnumerable) element.GetValue(ItemsSourceProperty);
         }
 
-        public static void ItemsSourceChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        private static void ItemsSourceChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            var itemType = e.NewValue.GetType().GetGenericArguments().Single();
+            var itemType = Helpers.GetListItemType(e.NewValue);
             var properties = itemType.GetProperties();
             var groupByProps = properties
                 .Where(x => x.GetCustomAttributes(false).OfType<GroupByAttribute>().Any())

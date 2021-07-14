@@ -11,10 +11,14 @@ using Genius.PriceChecker.UI.Forms;
 using Genius.PriceChecker.UI.Forms.Attributes;
 using Genius.PriceChecker.UI.Forms.ViewModels;
 using Genius.PriceChecker.UI.Helpers;
+using ReactiveUI;
 
 namespace Genius.PriceChecker.UI.ViewModels
 {
-  public class TrackerViewModel : TabViewModelBase
+    public interface ITrackerViewModel : ITabViewModel
+    { }
+
+    internal sealed class TrackerViewModel : TabViewModelBase, ITrackerViewModel
     {
         private readonly IEventBus _eventBus;
         private readonly IProductRepository _productRepo;
@@ -55,7 +59,7 @@ namespace Genius.PriceChecker.UI.ViewModels
             });
             OpenEditProductFlyoutCommand = new ActionCommand(o => {
                 EditingProduct = Products.FirstOrDefault(x => x.IsSelected);
-                EditingProduct.CommitProductCommand.Executed
+                EditingProduct?.CommitProductCommand.Executed
                     .Take(1)
                     .Subscribe(_ => {
                         IsAddEditProductVisible = false;
@@ -79,7 +83,7 @@ namespace Genius.PriceChecker.UI.ViewModels
             });
 
             _eventBus.WhenFired<ProductScanStartedEvent>()
-                .ObserveOnDispatcher()
+                .ObserveOn(RxApp.MainThreadScheduler)
                 .Subscribe(ev =>
                     Products.First(x => x.Id == ev.Product.Id).Status = Core.Models.ProductScanStatus.Scanning
                 );
@@ -101,11 +105,9 @@ namespace Genius.PriceChecker.UI.ViewModels
             };
 
             ReloadList();
-
-            PropertiesAreInitialized = true;
         }
 
-        private void EnqueueScan(ICollection<TrackerProductViewModel> products)
+        private void EnqueueScan(ICollection<ITrackerProductViewModel> products)
         {
             _scanContext.NotifyStarted(products.Count);
             foreach (var product in products)
@@ -129,9 +131,10 @@ namespace Genius.PriceChecker.UI.ViewModels
             Products.ReplaceItems(productVms);
         }
 
-        public static List<DropDownMenuItem> RefreshOptions { get; private set; }
+        public List<DropDownMenuItem> RefreshOptions { get; private set; }
 
-        public ObservableCollection<TrackerProductViewModel> Products { get; } = new ObservableCollection<TrackerProductViewModel>();
+        public ObservableCollection<ITrackerProductViewModel> Products { get; }
+            = new TypedObservableList<ITrackerProductViewModel, TrackerProductViewModel>();
 
         [FilterContext]
         public string Filter
@@ -146,9 +149,9 @@ namespace Genius.PriceChecker.UI.ViewModels
             set => RaiseAndSetIfChanged(value);
         }
 
-        public TrackerProductViewModel EditingProduct
+        public ITrackerProductViewModel EditingProduct
         {
-            get => GetOrDefault<TrackerProductViewModel>();
+            get => GetOrDefault<ITrackerProductViewModel>();
             set => RaiseAndSetIfChanged(value);
         }
 

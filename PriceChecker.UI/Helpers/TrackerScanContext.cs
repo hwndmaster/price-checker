@@ -82,6 +82,8 @@ namespace Genius.PriceChecker.UI.Helpers
 
         public IObservable<(TrackerScanStatus Status, double Progress)> ScanProgress => _scanProgress;
 
+        public bool IsStarted => _started;
+        public int FinishedJobs => _finished;
         public bool HasErrors { get; private set; }
         public bool HasNewLowestPrice { get; private set; }
     }

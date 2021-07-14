@@ -23,7 +23,7 @@
                     Command="{Binding OpenEditProductFlyoutCommand}" />
             <mah:DropDownButton Content="Refresh" Width="Auto"
                     Padding="5,2" Margin="10,0,0,0"
-                    ItemsSource="{Binding Source={x:Static vm:TrackerViewModel.RefreshOptions}}">
+                    ItemsSource="{Binding RefreshOptions}">
                 <mah:DropDownButton.Icon>
                     <Image Source="{StaticResource Refresh16}" />
                 </mah:DropDownButton.Icon>

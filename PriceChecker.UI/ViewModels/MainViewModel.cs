@@ -7,16 +7,26 @@ using Hardcodet.Wpf.TaskbarNotification;
 
 namespace Genius.PriceChecker.UI.ViewModels
 {
-    public class MainViewModel : ViewModelBase
+    public interface IMainViewModel : IViewModel
     {
+    }
+
+    internal sealed class MainViewModel : ViewModelBase, IMainViewModel
+    {
+        private readonly ITrackerScanContext _scanContext;
+        private readonly INotifyIconViewModel _notifyViewModel;
+
         public MainViewModel(
-            TrackerViewModel tracker,
-            AgentsViewModel agents,
-            SettingsViewModel settings,
-            LogsViewModel logs,
+            ITrackerViewModel tracker,
+            IAgentsViewModel agents,
+            ISettingsViewModel settings,
+            ILogsViewModel logs,
             ITrackerScanContext scanContext,
             INotifyIconViewModel notifyViewModel)
         {
+            _scanContext = scanContext;
+            _notifyViewModel = notifyViewModel;
+
             Tabs = new() {
                 tracker,
                 agents,
@@ -24,37 +34,40 @@ namespace Genius.PriceChecker.UI.ViewModels
                 logs
             };
 
-            scanContext.ScanProgress.Subscribe(args => {
-                if (args.Status == Helpers.TrackerScanStatus.InProgress)
+            scanContext.ScanProgress.Subscribe(args => UpdateProgress(args.Status, args.Progress));
+        }
+
+        private void UpdateProgress(TrackerScanStatus status, double progress)
+        {
+            if (status == Helpers.TrackerScanStatus.InProgress)
+            {
+                ProgressState = TaskbarItemProgressState.Normal;
+                ProgressValue = progress;
+            }
+            else if (status == Helpers.TrackerScanStatus.InProgressWithErrors)
+            {
+                ProgressState = TaskbarItemProgressState.Paused;
+                ProgressValue = progress;
+            }
+            else if (status == Helpers.TrackerScanStatus.Finished)
+            {
+                var message = _scanContext.HasNewLowestPrice ?
+                    "Prices for some products have become even lower! Check it out." :
+                    "Nothing interesting has been caught.";
+                if (_scanContext.HasErrors)
                 {
-                    ProgressState = TaskbarItemProgressState.Normal;
-                    ProgressValue = args.Progress;
+                    message += Environment.NewLine + "NOTE: Some products could not finish scanning properly. Check the logs for details.";
                 }
-                else if (args.Status == Helpers.TrackerScanStatus.InProgressWithErrors)
-                {
-                    ProgressState = TaskbarItemProgressState.Paused;
-                    ProgressValue = args.Progress;
-                }
-                else if (args.Status == Helpers.TrackerScanStatus.Finished)
-                {
-                    var message = scanContext.HasNewLowestPrice
-                            ? "Prices for some products have become even lower! Check it out."
-                            : "Nothing interesting has been caught.";
-                    if (scanContext.HasErrors)
-                    {
-                        message += Environment.NewLine + "NOTE: Some products could not finish scanning properly. Check the logs for details.";
-                    }
-                    notifyViewModel.ShowBalloonTip("Scan finished", message,
-                        scanContext.HasErrors ? BalloonIcon.Warning : BalloonIcon.Info);
-                    ProgressState = TaskbarItemProgressState.None;
-                    ProgressValue = 0;
-                }
-                else
-                {
-                    ProgressState = TaskbarItemProgressState.None;
-                    ProgressValue = 0;
-                }
-            });
+                _notifyViewModel.ShowBalloonTip("Scan finished", message,
+                    _scanContext.HasErrors ? BalloonIcon.Warning : BalloonIcon.Info);
+                ProgressState = TaskbarItemProgressState.None;
+                ProgressValue = 0;
+            }
+            else
+            {
+                ProgressState = TaskbarItemProgressState.None;
+                ProgressValue = 0;
+            }
         }
 
         public List<ITabViewModel> Tabs { get; }

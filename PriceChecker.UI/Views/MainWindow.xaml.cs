@@ -7,7 +7,7 @@ namespace Genius.PriceChecker.UI.Views
     [ExcludeFromCodeCoverage]
     public partial class MainWindow : MetroWindow
     {
-        public MainWindow(MainViewModel mainVm)
+        public MainWindow(IMainViewModel mainVm)
         {
             InitializeComponent();
 

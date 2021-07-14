@@ -62,13 +62,13 @@ namespace Genius.PriceChecker.UI
             // Views, View models, and the View model factory
             services.AddTransient<IViewModelFactory, ViewModelFactory>();
             services.AddTransient<MainWindow>();
-            services.AddTransient<MainViewModel>();
-            services.AddTransient<TrackerViewModel>();
-            services.AddTransient<TrackerProductViewModel>();
-            services.AddTransient<AgentsViewModel>();
-            services.AddTransient<AgentViewModel>();
-            services.AddTransient<SettingsViewModel>();
-            services.AddTransient<LogsViewModel>();
+            services.AddTransient<IMainViewModel, MainViewModel>();
+            services.AddTransient<ITrackerViewModel, TrackerViewModel>();
+            services.AddTransient<ITrackerProductViewModel, TrackerProductViewModel>();
+            services.AddTransient<IAgentsViewModel, AgentsViewModel>();
+            services.AddTransient<IAgentViewModel, AgentViewModel>();
+            services.AddTransient<ISettingsViewModel, SettingsViewModel>();
+            services.AddTransient<ILogsViewModel, LogsViewModel>();
 
             // Services and Helpers:
             services.AddTransient<IUserInteraction, UserInteraction>();

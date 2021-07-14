@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading;
@@ -37,14 +38,23 @@ namespace Genius.PriceChecker.Core.Services
             });
 
             return await Task.WhenAll(result)
-                .ContinueWith(x => x.Result?.Where(x => x != null).ToArray() ?? new PriceSeekResult[0]);
+                .ContinueWith(x => x.Result?.Where(x => x != null).ToArray() ?? new PriceSeekResult[0], TaskContinuationOptions.OnlyOnRanToCompletion);
         }
 
         private async Task<PriceSeekResult> Seek(ProductSource productSource, CancellationToken cancel)
         {
             var agent = productSource.Agent;
             var url = string.Format(agent.Url, productSource.AgentArgument);
-            var content = await _trickyHttpClient.DownloadContent(url, cancel);
+            string content;
+            try
+            {
+                content = await _trickyHttpClient.DownloadContent(url, cancel);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"Failed loading content for source `{productSource.AgentId}`, url = `{url}`");
+                throw;
+            }
             if (content == null)
                 return null;
 

@@ -17,11 +17,24 @@ using Genius.PriceChecker.UI.Forms.Attributes;
 using Genius.PriceChecker.UI.Forms.ViewModels;
 using Genius.PriceChecker.UI.Helpers;
 using Genius.PriceChecker.UI.ValueConverters;
+using ReactiveUI;
 
 namespace Genius.PriceChecker.UI.ViewModels
 {
+    public interface ITrackerProductViewModel : IViewModel, ISelectable
+    {
+        void Reconcile(bool lowestPriceUpdated);
+        void SetFailed(string errorMessage);
+
+        Guid Id { get; }
+        string Name { get; }
+        ProductScanStatus Status { get; set; }
+        IActionCommand CommitProductCommand { get; }
+        IActionCommand RefreshPriceCommand { get; }
+    }
+
     [ShowOnlyBrowsable(true)]
-    public class TrackerProductViewModel : ViewModelBase, ISelectable
+    internal sealed class TrackerProductViewModel : ViewModelBase, ITrackerProductViewModel
     {
         private readonly IAgentRepository _agentRepo;
         private readonly IProductPriceManager _productMng;
@@ -43,14 +56,16 @@ namespace Genius.PriceChecker.UI.ViewModels
             _product = product;
             _ui = ui;
 
-            RefreshAgents();
-            RefreshCategories();
+            InitializeProperties(() => {
+                RefreshAgents();
+                RefreshCategories();
 
-            if (_product != null)
-            {
-                ResetForm();
-                Reconcile(false);
-            }
+                if (_product != null)
+                {
+                    ResetForm();
+                    Reconcile(false);
+                }
+            });
 
             CommitProductCommand = new ActionCommand(_ => CommitProduct());
 
@@ -78,17 +93,15 @@ namespace Genius.PriceChecker.UI.ViewModels
             }, _ => Status != ProductScanStatus.Scanning);
 
             eventBus.WhenFired<AgentsUpdatedEvent, AgentDeletedEvent>()
-                .ObserveOnDispatcher()
+                .ObserveOn(RxApp.MainThreadScheduler)
                 .Subscribe(_ =>
                     RefreshAgents()
                 );
             eventBus.WhenFired<ProductUpdatedEvent, ProductAddedEvent>()
-                .ObserveOnDispatcher()
+                .ObserveOn(RxApp.MainThreadScheduler)
                 .Subscribe(_ =>
                     RefreshCategories()
                 );
-
-            PropertiesAreInitialized = true;
         }
 
         public void Reconcile(bool lowestPriceUpdated)
@@ -272,12 +285,14 @@ namespace Genius.PriceChecker.UI.ViewModels
         }
 
         public IActionCommand CommitProductCommand { get; }
+
         [Browsable(true)]
         [Icon("Web16")]
         public IActionCommand ShowInBrowserCommand { get; }
         public IActionCommand AddSourceCommand { get; }
         public IActionCommand ResetCommand { get; }
         public IActionCommand DropPricesCommand { get; }
+
         [Browsable(true)]
         [Icon("Refresh16")]
         public IActionCommand RefreshPriceCommand { get; }
