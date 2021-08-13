@@ -26,7 +26,7 @@ namespace Genius.PriceChecker.UI.ViewModels
 
             AutoRefreshEnabled = settings.AutoRefreshEnabled;
             AutoRefreshMinutes = AutoRefreshMinuteOptions.FirstOrDefault(x => x.Value == settings.AutoRefreshMinutes)
-                ?? AutoRefreshMinuteOptions.First();
+                ?? AutoRefreshMinuteOptions[0];
 
             this.PropertyChanged += (sender, args) => {
                 settings.AutoRefreshEnabled = AutoRefreshEnabled;

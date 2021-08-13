@@ -44,7 +44,7 @@ namespace Genius.PriceChecker.UI.ViewModels
                 IsAddEditProductVisible = false;
                 EnqueueScan(Products.Where(x => x.IsSelected).ToArray());
             });
-            OpenAddProductFlyoutCommand = new ActionCommand(o => {
+            OpenAddProductFlyoutCommand = new ActionCommand(_ => {
                 IsAddEditProductVisible = !IsAddEditProductVisible;
                 if (IsAddEditProductVisible)
                 {
@@ -57,13 +57,11 @@ namespace Genius.PriceChecker.UI.ViewModels
                         });
                 }
             });
-            OpenEditProductFlyoutCommand = new ActionCommand(o => {
+            OpenEditProductFlyoutCommand = new ActionCommand(_ => {
                 EditingProduct = Products.FirstOrDefault(x => x.IsSelected);
                 EditingProduct?.CommitProductCommand.Executed
                     .Take(1)
-                    .Subscribe(_ => {
-                        IsAddEditProductVisible = false;
-                    });
+                    .Subscribe(_ => IsAddEditProductVisible = false);
                 IsAddEditProductVisible = EditingProduct != null;
             });
 
@@ -88,13 +86,11 @@ namespace Genius.PriceChecker.UI.ViewModels
                     Products.First(x => x.Id == ev.Product.Id).Status = Core.Models.ProductScanStatus.Scanning
                 );
             _eventBus.WhenFired<ProductScannedEvent>()
-                .Subscribe(ev => {
-                    Products.First(x => x.Id == ev.Product.Id).Reconcile(ev.LowestPriceUpdated);
-                });
+                .Subscribe(ev =>
+                    Products.First(x => x.Id == ev.Product.Id).Reconcile(ev.LowestPriceUpdated));
             _eventBus.WhenFired<ProductScanFailedEvent>()
-                .Subscribe(ev => {
-                    Products.First(x => x.Id == ev.Product.Id).SetFailed(ev.ErrorMessage);
-                });
+                .Subscribe(ev =>
+                    Products.First(x => x.Id == ev.Product.Id).SetFailed(ev.ErrorMessage));
 
             Deactivated.Executed.Subscribe(_ =>
                 IsAddEditProductVisible = false);
@@ -124,14 +120,13 @@ namespace Genius.PriceChecker.UI.ViewModels
                 .ToList();
             foreach (var productVm in productVms)
             {
-                productVm.WhenChanged(x => x.Status, status => {
-                    _scanContext.NotifyProgressChange(status);
-                });
+                productVm.WhenChanged(x => x.Status, status =>
+                    _scanContext.NotifyProgressChange(status));
             }
             Products.ReplaceItems(productVms);
         }
 
-        public List<DropDownMenuItem> RefreshOptions { get; private set; }
+        public List<DropDownMenuItem> RefreshOptions { get; }
 
         public ObservableCollection<ITrackerProductViewModel> Products { get; }
             = new TypedObservableList<ITrackerProductViewModel, TrackerProductViewModel>();

@@ -14,10 +14,10 @@ namespace Genius.PriceChecker.Core.Models
         [MaybeNull]
         public string Description { get; set; }
         [NotNull]
-        public ProductSource[] Sources { get; set; } = new ProductSource[0];
+        public ProductSource[] Sources { get; set; } = Array.Empty<ProductSource>();
         [MaybeNull]
         public ProductPrice Lowest { get; set; }
         [NotNull]
-        public ProductPrice[] Recent { get; set; } = new ProductPrice[0];
+        public ProductPrice[] Recent { get; set; } = Array.Empty<ProductPrice>();
     }
 }

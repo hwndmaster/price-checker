@@ -22,7 +22,7 @@ namespace Genius.PriceChecker.Core.Services
 
         private const char DEFAULT_DECIMAL_DELIMITER = '.';
 
-        private static object _locker = new();
+        private static readonly object _locker = new();
 
         public PriceSeeker(ITrickyHttpClient trickyHttpClient, IIoService io, ILogger<PriceSeeker> logger)
         {
@@ -33,9 +33,8 @@ namespace Genius.PriceChecker.Core.Services
 
         public async Task<PriceSeekResult[]> SeekAsync(Product product, CancellationToken cancel)
         {
-            var result = product.Sources.AsParallel().Select(async (productSource) => {
-                return await Seek(productSource, cancel);
-            });
+            var result = product.Sources.AsParallel().Select(async (productSource) =>
+                await Seek(productSource, cancel));
 
             return await Task.WhenAll(result)
                 .ContinueWith(x => x.Result?.Where(x => x != null).ToArray() ?? new PriceSeekResult[0], TaskContinuationOptions.OnlyOnRanToCompletion);

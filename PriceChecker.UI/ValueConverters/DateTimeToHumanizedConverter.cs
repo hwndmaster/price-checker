@@ -9,7 +9,7 @@ namespace Genius.PriceChecker.UI.ValueConverters
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            if (!(value is DateTime dt))
+            if (value is not DateTime dt)
             {
                 return null;
             }

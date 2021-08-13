@@ -34,13 +34,13 @@ namespace Genius.PriceChecker.UI.Tests.Helpers
         public void NotifyStarted__Resets_state_and_calculates_initial_progress()
         {
             // Arrange
-            var count = 10;
+            const int count = 10;
 
             // Act
             _sut.NotifyStarted(count);
 
             // Verify
-            var expectedProgress = 1d / (count * 2);
+            const double expectedProgress = 1d / (count * 2);
             Assert.True(_sut.IsStarted);
             Assert.False(_sut.HasErrors);
             Assert.False(_sut.HasNewLowestPrice);
@@ -53,14 +53,14 @@ namespace Genius.PriceChecker.UI.Tests.Helpers
         public void NotifyProgressChange__When_ScannedOk__Increases_progress()
         {
             // Arrange
-            var count = 2;
+            const int count = 2;
             _sut.NotifyStarted(count);
 
             // Act
             _sut.NotifyProgressChange(ProductScanStatus.ScannedOk);
 
             // Verify
-            var expectedProgress = 0.5d; // 50% of 2 jobs
+            const double expectedProgress = 0.5d; // 50% of 2 jobs
             Assert.True(_sut.IsStarted);
             Assert.False(_sut.HasErrors);
             Assert.False(_sut.HasNewLowestPrice);
@@ -119,13 +119,13 @@ namespace Genius.PriceChecker.UI.Tests.Helpers
         public void ProductAutoScanStartedEvent_fired__Calls_NotifyStarted()
         {
             // Arrange
-            var count = 10;
+            const int count = 10;
 
             // Act
             _productAutoScanStartedEventSubject.OnNext(new ProductAutoScanStartedEvent(count));
 
             // Verify
-            var expectedProgress = 1d / (count * 2);
+            const double expectedProgress = 1d / (count * 2);
             Assert.True(_sut.IsStarted);
             Assert.False(_sut.HasErrors);
             Assert.False(_sut.HasNewLowestPrice);

@@ -27,7 +27,7 @@ namespace Genius.PriceChecker.UI.ViewModels
             var agentVms = agentRepo.GetAll().Select(x => CreateAgentViewModel(x));
             Agents.ReplaceItems(agentVms);
 
-            AddAgentCommand = new ActionCommand(o =>
+            AddAgentCommand = new ActionCommand(_ =>
             {
                 Agents.Add(CreateAgentViewModel(null));
                 IsDirty = true;
@@ -64,10 +64,7 @@ namespace Genius.PriceChecker.UI.ViewModels
         private IAgentViewModel CreateAgentViewModel(Agent x)
         {
             var agentVm = _vmFactory.CreateAgent(this, x);
-            agentVm.WhenChanged(x => x.IsDirty, x =>
-            {
-                IsDirty = IsDirty || x;
-            });
+            agentVm.WhenChanged(x => x.IsDirty, x => IsDirty = IsDirty || x);
             return agentVm;
         }
 

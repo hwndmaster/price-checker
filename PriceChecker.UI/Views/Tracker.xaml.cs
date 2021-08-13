@@ -14,9 +14,8 @@ namespace Genius.PriceChecker.UI.Views
         {
             InitializeComponent();
 
-            this.Loaded += (sender, args) => {
+            this.Loaded += (sender, args) =>
                 WpfHelpers.AddFlyout<AddEditProductFlyout>(this, nameof(TrackerViewModel.IsAddEditProductVisible), nameof(TrackerViewModel.EditingProduct));
-            };
         }
 
         private void Filter_KeyUp(object sender, KeyEventArgs e)

@@ -54,7 +54,7 @@ namespace Genius.PriceChecker.UI.Tests.ViewModels
             _logsMock.DropHistory();
 
             // Act
-            var settingsTabIndex = 2;
+            const int settingsTabIndex = 2;
             _sut.SelectedTabIndex = settingsTabIndex;
 
             // Verify
@@ -110,7 +110,7 @@ namespace Genius.PriceChecker.UI.Tests.ViewModels
         }
     }
 
-    class TabMock<T> : Mock<T>
+    internal class TabMock<T> : Mock<T>
         where T: class, ITabViewModel
     {
         public int ActivatedCalls = 0;

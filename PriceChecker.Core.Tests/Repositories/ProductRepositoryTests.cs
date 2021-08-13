@@ -162,8 +162,8 @@ namespace Genius.PriceChecker.Core.Tests.Repositories
         private Product CreateProduct()
         {
             var product = _fixture.Create<Product>();
-            foreach (var r in product.Recent.Zip(product.Sources))
-                r.First.ProductSourceId = r.Second.Id;
+            foreach (var (first, second) in product.Recent.Zip(product.Sources))
+                first.ProductSourceId = second.Id;
             return product;
         }
     }

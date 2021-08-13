@@ -13,7 +13,7 @@ namespace Genius.PriceChecker.UI.Tests
 {
     public abstract class TestBase
     {
-        public TestBase()
+        protected TestBase()
         {
             Fixture.Behaviors.Add(new OmitOnRecursionBehavior(recursionDepth: 2));
 
@@ -52,7 +52,7 @@ namespace Genius.PriceChecker.UI.Tests
 
         protected Fixture Fixture { get; } = new();
 
-        private Lazy<Mock<IEventBus>> _eventBusMock = new Lazy<Mock<IEventBus>>(() => new Mock<IEventBus>());
+        private readonly Lazy<Mock<IEventBus>> _eventBusMock = new Lazy<Mock<IEventBus>>(() => new Mock<IEventBus>());
         protected Mock<IEventBus> EventBusMock => _eventBusMock.Value;
     }
 }
