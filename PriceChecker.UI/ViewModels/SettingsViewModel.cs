@@ -1,6 +1,6 @@
 using System.Linq;
 using Genius.PriceChecker.Core.Repositories;
-using Genius.PriceChecker.UI.Forms.ViewModels;
+using Genius.Atom.UI.Forms.ViewModels;
 
 namespace Genius.PriceChecker.UI.ViewModels
 {

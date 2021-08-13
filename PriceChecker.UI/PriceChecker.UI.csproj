@@ -27,17 +27,17 @@
 
   <ItemGroup>
     <ProjectReference Include="..\PriceChecker.Core\PriceChecker.Core.csproj" />
-    <ProjectReference Include="..\PriceChecker.Infrastructure\PriceChecker.Infrastructure.csproj" />
-    <ProjectReference Include="..\PriceChecker.UI.Forms\PriceChecker.UI.Forms.csproj" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="System.Reactive" />
-    <PackageReference Include="ReactiveUI" />
+    <PackageReference Include="ReactiveUI.WPF" />
     <PackageReference Include="Humanizer.Core" />
     <PackageReference Include="MahApps.Metro" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" />
     <PackageReference Include="Microsoft.Extensions.Logging" />
-    <PackageReference Include="Hardcodet.NotifyIcon.Wpf" Version="1.1.0" />
+    <PackageReference Include="Hardcodet.NotifyIcon.Wpf" />
+    <PackageReference Include="Genius.Atom.Infrastructure" />
+    <PackageReference Include="Genius.Atom.UI.Forms" />
   </ItemGroup>
 </Project>

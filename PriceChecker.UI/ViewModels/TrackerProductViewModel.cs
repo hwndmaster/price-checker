@@ -7,14 +7,14 @@ using System.Linq;
 using System.Reactive.Linq;
 using System.Windows;
 using System.Windows.Media.Imaging;
+using Genius.Atom.Infrastructure.Events;
+using Genius.Atom.UI.Forms;
+using Genius.Atom.UI.Forms.Attributes;
+using Genius.Atom.UI.Forms.ViewModels;
 using Genius.PriceChecker.Core.Messages;
 using Genius.PriceChecker.Core.Models;
 using Genius.PriceChecker.Core.Repositories;
 using Genius.PriceChecker.Core.Services;
-using Genius.PriceChecker.Infrastructure.Events;
-using Genius.PriceChecker.UI.Forms;
-using Genius.PriceChecker.UI.Forms.Attributes;
-using Genius.PriceChecker.UI.Forms.ViewModels;
 using Genius.PriceChecker.UI.Helpers;
 using Genius.PriceChecker.UI.ValueConverters;
 using ReactiveUI;
@@ -56,7 +56,8 @@ namespace Genius.PriceChecker.UI.ViewModels
             _product = product;
             _ui = ui;
 
-            InitializeProperties(() => {
+            InitializeProperties(() =>
+            {
                 RefreshAgents();
                 RefreshCategories();
 
@@ -75,18 +76,18 @@ namespace Genius.PriceChecker.UI.ViewModels
             AddSourceCommand = new ActionCommand(_ =>
                 Sources.Add(CreateSourceViewModel(null)));
 
-            ResetCommand = new ActionCommand(_ => {
-                ResetForm();
-            }, _ => _product != null);
+            ResetCommand = new ActionCommand(_ => ResetForm(), _ => _product != null);
 
-            DropPricesCommand = new ActionCommand(_ => {
+            DropPricesCommand = new ActionCommand(_ =>
+            {
                 if (!_ui.AskForConfirmation("Are you sure?", "Prices drop confirmation"))
                     return;
                 _productRepo.DropPrices(_product);
                 Reconcile(true);
             });
 
-            RefreshPriceCommand = new ActionCommand(_ => {
+            RefreshPriceCommand = new ActionCommand(_ =>
+            {
                 if (Status == ProductScanStatus.Scanning)
                     return;
                 _productMng.EnqueueScan(product.Id);
@@ -109,20 +110,27 @@ namespace Genius.PriceChecker.UI.ViewModels
             var previousLowestPrice = LowestPrice;
             LowestPrice = _product.Lowest?.Price;
             LowestFoundOn = _product.Lowest?.FoundDate;
-            Status = lowestPriceUpdated && _product.Lowest != null
-                ? ProductScanStatus.ScannedNewLowest
-                : _statusProvider.DetermineStatus(_product);
+            RecentPrice = _product.Recent.Any()
+                ? _product.Recent.Min(x => x.Price)
+                : null;
+            Status = lowestPriceUpdated && _product.Lowest != null ?
+                ProductScanStatus.ScannedNewLowest :
+                _statusProvider.DetermineStatus(_product);
             LastUpdated = null;
 
             if (lowestPriceUpdated && LowestPrice.HasValue && previousLowestPrice.HasValue)
             {
-                var x = (1 - LowestPrice.Value/previousLowestPrice) * 100;
+                var x = (1 - LowestPrice.Value / previousLowestPrice) * 100;
                 StatusText = $"The new price is by {x:0}% less than by previous scan ({LowestPrice.Value:#,##0.00} vs {previousLowestPrice.Value:#,##0.00})";
             }
             else if (Status == ProductScanStatus.ScannedWithErrors)
+            {
                 StatusText = "One or more source hasn't updated its price. Check the logs.";
+            }
             else
+            {
                 StatusText = string.Empty;
+            }
 
             if (_product.Recent.Any())
             {
@@ -131,9 +139,9 @@ namespace Genius.PriceChecker.UI.ViewModels
                 var pricesDict = _product.Recent.ToDictionary(x => x.ProductSourceId, x => x.Price);
                 foreach (var source in Sources)
                 {
-                    source.LastPrice = pricesDict.ContainsKey(source.Id)
-                        ? pricesDict[source.Id]
-                        : null;
+                    source.LastPrice = pricesDict.ContainsKey(source.Id) ?
+                        pricesDict[source.Id] :
+                        null;
                 }
             }
             else
@@ -159,15 +167,16 @@ namespace Genius.PriceChecker.UI.ViewModels
                 return;
             }
 
-            _product = _product ?? new Product();
+            _product ??= new Product();
             _product.Name = Name;
             _product.Category = Category;
             _product.Description = Description;
 
-            _product.Sources = Sources.Select(x => new ProductSource {
+            _product.Sources = Sources.Select(x => new ProductSource
+            {
                 Id = x.Id,
-                AgentId = x.Agent,
-                AgentArgument = x.Argument
+                    AgentId = x.Agent,
+                    AgentArgument = x.Argument
             }).ToArray();
 
             _productRepo.Store(_product);
@@ -175,9 +184,9 @@ namespace Genius.PriceChecker.UI.ViewModels
 
         private TrackerProductSourceViewModel CreateSourceViewModel(ProductSource productSource)
         {
-            var lastPrice = productSource == null || _product?.Recent == null
-                ? null
-                : _product.Recent.FirstOrDefault(x => x.ProductSourceId == productSource.Id)?.Price;
+            var lastPrice = productSource == null || _product?.Recent == null ?
+                null :
+                _product.Recent.FirstOrDefault(x => x.ProductSourceId == productSource.Id)?.Price;
             var vm = new TrackerProductSourceViewModel(_ui, productSource, lastPrice);
             vm.DeleteCommand.Executed.Subscribe(_ =>
                 Sources.Remove(vm));
@@ -213,15 +222,14 @@ namespace Genius.PriceChecker.UI.ViewModels
         public ObservableCollection<string> Categories { get; } = new ObservableCollection<string>();
 
         [Browsable(true)]
-        [IconSource(nameof(StatusIcon), fixedSize: 16d, hideText: true)]
+        [IconSource(nameof(StatusIcon), fixedSize : 16d, hideText : true)]
         [TooltipSource(nameof(StatusText))]
         [Style(HorizontalAlignment = HorizontalAlignment.Right)]
         public ProductScanStatus Status
         {
             get => GetOrDefault<ProductScanStatus>();
-            set => RaiseAndSetIfChanged(value, (@old, @new) => {
-                OnPropertyChanged(nameof(StatusIcon));
-            });
+            set => RaiseAndSetIfChanged(value, (_, __) =>
+                OnPropertyChanged(nameof(StatusIcon)));
         }
 
         public BitmapImage StatusIcon => ResourcesHelper.GetStatusIcon(Status);
@@ -257,6 +265,15 @@ namespace Genius.PriceChecker.UI.ViewModels
         [DisplayFormat(DataFormatString = "€ #,##0.00")]
         [Style(HorizontalAlignment = HorizontalAlignment.Right)]
         public decimal? LowestPrice
+        {
+            get => GetOrDefault<decimal?>();
+            set => RaiseAndSetIfChanged(value);
+        }
+
+        [Browsable(true)]
+        [DisplayFormat(DataFormatString = "€ #,##0.00")]
+        [Style(HorizontalAlignment = HorizontalAlignment.Right)]
+        public decimal? RecentPrice
         {
             get => GetOrDefault<decimal?>();
             set => RaiseAndSetIfChanged(value);

@@ -5,9 +5,8 @@
         xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:mah="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
-        xmlns:autogrid="clr-namespace:Genius.PriceChecker.UI.Forms.AutoGrid;assembly=PriceChecker.UI.Forms"
+        xmlns:autogrid="clr-namespace:Genius.Atom.UI.Forms.Controls.AutoGrid;assembly=Genius.Atom.UI.Forms"
         xmlns:vm="clr-namespace:Genius.PriceChecker.UI.ViewModels"
-        xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
         mc:Ignorable="d">
     <Grid>
         <Grid.RowDefinitions>

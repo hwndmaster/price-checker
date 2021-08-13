@@ -8,7 +8,10 @@
 
   <ItemGroup>
     <ProjectReference Include="..\PriceChecker.Core\PriceChecker.Core.csproj" />
-    <ProjectReference Include="..\PriceChecker.Infrastructure\PriceChecker.Infrastructure.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Genius.Atom.Infrastructure" />
   </ItemGroup>
 
 </Project>

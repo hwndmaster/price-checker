@@ -2,10 +2,10 @@ using System;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
-using Genius.PriceChecker.Infrastructure.Events;
-using Genius.PriceChecker.Infrastructure.Logging;
-using Genius.PriceChecker.UI.Forms;
-using Genius.PriceChecker.UI.Forms.ViewModels;
+using Genius.Atom.Infrastructure.Events;
+using Genius.Atom.Infrastructure.Logging;
+using Genius.Atom.UI.Forms;
+using Genius.Atom.UI.Forms.ViewModels;
 using Microsoft.Extensions.Logging;
 
 namespace Genius.PriceChecker.UI.ViewModels
@@ -20,14 +20,12 @@ namespace Genius.PriceChecker.UI.ViewModels
         {
             eventBus.WhenFired<LogEvent>()
                 .Subscribe(x => {
-                    Application.Current.Dispatcher.Invoke(() => {
-                        LogItems.Add(new LogItemViewModel { Severity = x.Severity, Logger = x.Logger, Message = x.Message });
-                    });
+                    Application.Current.Dispatcher.Invoke(() =>
+                        LogItems.Add(new LogItemViewModel { Severity = x.Severity, Logger = x.Logger, Message = x.Message })
+                    );
                 });
 
-            CleanLogCommand = new ActionCommand(_ => {
-                LogItems.Clear();
-            });
+            CleanLogCommand = new ActionCommand(_ => LogItems.Clear());
 
             LogItems.CollectionChanged += (_, args) => {
                 if (HasNewErrors)

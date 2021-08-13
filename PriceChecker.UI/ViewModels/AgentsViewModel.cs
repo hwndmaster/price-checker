@@ -2,8 +2,8 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using Genius.PriceChecker.Core.Models;
 using Genius.PriceChecker.Core.Repositories;
-using Genius.PriceChecker.UI.Forms;
-using Genius.PriceChecker.UI.Forms.ViewModels;
+using Genius.Atom.UI.Forms;
+using Genius.Atom.UI.Forms.ViewModels;
 using Genius.PriceChecker.UI.Helpers;
 
 namespace Genius.PriceChecker.UI.ViewModels

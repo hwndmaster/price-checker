@@ -1,9 +1,9 @@
 using System.ComponentModel;
 using System.Windows.Forms;
 using System.Windows.Media.Imaging;
-using Genius.PriceChecker.UI.Forms;
-using Genius.PriceChecker.UI.Forms.ViewModels;
-using Genius.PriceChecker.UI.Forms.Attributes;
+using Genius.Atom.UI.Forms;
+using Genius.Atom.UI.Forms.ViewModels;
+using Genius.Atom.UI.Forms.Attributes;
 using Microsoft.Extensions.Logging;
 
 namespace Genius.PriceChecker.UI.ViewModels
@@ -17,9 +17,8 @@ namespace Genius.PriceChecker.UI.ViewModels
     {
         public LogItemViewModel()
         {
-            CopyToClipboardCommand = new ActionCommand(_ => {
-                Clipboard.SetText(Message);
-            });
+            CopyToClipboardCommand = new ActionCommand(_ =>
+                Clipboard.SetText(Message));
         }
 
         [IconSource(nameof(SeverityIcon), 16d)]

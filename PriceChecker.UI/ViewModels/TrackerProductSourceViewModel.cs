@@ -3,9 +3,9 @@ using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Windows;
 using Genius.PriceChecker.Core.Models;
-using Genius.PriceChecker.UI.Forms;
-using Genius.PriceChecker.UI.Forms.Attributes;
-using Genius.PriceChecker.UI.Forms.ViewModels;
+using Genius.Atom.UI.Forms;
+using Genius.Atom.UI.Forms.Attributes;
+using Genius.Atom.UI.Forms.ViewModels;
 using Genius.PriceChecker.UI.Helpers;
 
 namespace Genius.PriceChecker.UI.ViewModels
@@ -21,9 +21,8 @@ namespace Genius.PriceChecker.UI.ViewModels
                 LastPrice = lastPrice;
             });
 
-            ShowInBrowserCommand = new ActionCommand(_ => {
-                ui.ShowProductInBrowser(productSource);
-            });
+            ShowInBrowserCommand = new ActionCommand(_ =>
+                ui.ShowProductInBrowser(productSource));
         }
 
         [Browsable(false)]

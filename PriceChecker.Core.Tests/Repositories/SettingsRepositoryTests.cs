@@ -4,7 +4,7 @@ using Genius.PriceChecker.Core.Messages;
 using Genius.PriceChecker.Core.Models;
 using Genius.PriceChecker.Core.Repositories;
 using Genius.PriceChecker.Core.Services;
-using Genius.PriceChecker.Infrastructure.Events;
+using Genius.Atom.Infrastructure.Events;
 using Microsoft.Extensions.Logging;
 using Moq;
 using Xunit;

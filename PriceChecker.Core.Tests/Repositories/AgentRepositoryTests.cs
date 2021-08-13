@@ -2,11 +2,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using AutoFixture;
+using Genius.Atom.Infrastructure.Events;
 using Genius.PriceChecker.Core.Messages;
 using Genius.PriceChecker.Core.Models;
 using Genius.PriceChecker.Core.Repositories;
 using Genius.PriceChecker.Core.Services;
-using Genius.PriceChecker.Infrastructure.Events;
 using Microsoft.Extensions.Logging;
 using Moq;
 using Xunit;
@@ -19,9 +19,7 @@ namespace Genius.PriceChecker.Core.Tests.Repositories
         private readonly Fixture _fixture = new();
         private readonly Mock<IEventBus> _eventBusMock = new();
         private readonly Mock<IPersister> _persisterMock = new();
-        private readonly Mock<IAgentRepository> _agentRepoMock = new();
 
-        private readonly List<Product> _products = new();
         private readonly List<Agent> _agents = new();
 
         public AgentRepositoryTests()

@@ -4,9 +4,9 @@ using System.Linq.Expressions;
 using System.Reactive.Subjects;
 using System.Windows.Threading;
 using AutoFixture;
-using Genius.PriceChecker.Infrastructure;
-using Genius.PriceChecker.Infrastructure.Events;
-using Genius.PriceChecker.UI.Forms.ViewModels;
+using Genius.Atom.Infrastructure;
+using Genius.Atom.Infrastructure.Events;
+using Genius.Atom.UI.Forms.ViewModels;
 using Moq;
 
 namespace Genius.PriceChecker.UI.Tests

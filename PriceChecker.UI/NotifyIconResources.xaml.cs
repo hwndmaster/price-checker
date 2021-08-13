@@ -15,9 +15,8 @@ namespace Genius.PriceChecker.UI
             var notifyIcon = (TaskbarIcon)this["NotifyIcon"];
             var viewModel = (NotifyIconViewModel)notifyIcon.DataContext;
 
-            viewModel.ShowBalloonTipTriggered += (_, args) => {
+            viewModel.ShowBalloonTipTriggered += (_, args) =>
                 notifyIcon.ShowBalloonTip(args.Title, args.Message, args.Icon);
-            };
         }
     }
 }

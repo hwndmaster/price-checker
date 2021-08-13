@@ -1,5 +1,5 @@
 using Genius.PriceChecker.Core.Models;
-using Genius.PriceChecker.Infrastructure.Events;
+using Genius.Atom.Infrastructure.Events;
 
 namespace Genius.PriceChecker.Core.Messages
 {

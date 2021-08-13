@@ -6,10 +6,10 @@ using System.Reactive.Linq;
 using System.Windows.Input;
 using Genius.PriceChecker.Core.Messages;
 using Genius.PriceChecker.Core.Repositories;
-using Genius.PriceChecker.Infrastructure.Events;
-using Genius.PriceChecker.UI.Forms;
-using Genius.PriceChecker.UI.Forms.Attributes;
-using Genius.PriceChecker.UI.Forms.ViewModels;
+using Genius.Atom.Infrastructure.Events;
+using Genius.Atom.UI.Forms;
+using Genius.Atom.UI.Forms.Attributes;
+using Genius.Atom.UI.Forms.ViewModels;
 using Genius.PriceChecker.UI.Helpers;
 using ReactiveUI;
 

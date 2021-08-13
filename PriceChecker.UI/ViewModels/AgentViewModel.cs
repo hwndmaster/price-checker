@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using Genius.PriceChecker.Core.Models;
-using Genius.PriceChecker.UI.Forms.Attributes;
-using Genius.PriceChecker.UI.Forms.ViewModels;
+using Genius.Atom.UI.Forms.Attributes;
+using Genius.Atom.UI.Forms.ViewModels;
 using Genius.PriceChecker.UI.Validation;
 
 namespace Genius.PriceChecker.UI.ViewModels
@@ -52,17 +52,18 @@ namespace Genius.PriceChecker.UI.ViewModels
                 return;
             }
 
-            Action init = () => {
+            if (firstTimeInit)
+                InitializeProperties(init);
+            else
+                init();
+
+            void init()
+            {
                 Id = _agent?.Id;
                 Url = _agent?.Url;
                 PricePattern = _agent?.PricePattern;
                 DecimalDelimiter = _agent?.DecimalDelimiter ?? '.';
-            };
-
-            if (firstTimeInit)
-                this.InitializeProperties(init);
-            else
-                init();
+            }
         }
 
         [Browsable(false)]

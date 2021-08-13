@@ -82,14 +82,14 @@ namespace Genius.PriceChecker.Core.Services
             return null;
         }
 
-        private string CreateRandomUserAgent()
+        private static string CreateRandomUserAgent()
         {
             var platform = new [] { "Machintosh", "Windows", "X11" }.TakeRandom();
             var os = (platform switch {
                 "Machintosh" => new [] { "68K", "PPC" },
                 "Windows" => new [] { "Win3.11", "WinNT3.51", "WinNT4.0", "Windows NT 5.0", "Windows NT 5.1", "Windows NT 5.2", "Windows NT 6.0", "Windows NT 6.1", "Windows NT 6.2", "Win95", "Win98", "Win 9x 4.90", "WindowsCE" },
                 "X11" => new [] { "Linux i686", "Linux x86_64" },
-                _ => new string[] {}
+                _ => Array.Empty<string>()
             }).TakeRandom();
             var browser = new [] { "Chrome", "Firefox", "IE" }.TakeRandom();
 

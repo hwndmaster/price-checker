@@ -2,8 +2,8 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Windows;
 using Genius.PriceChecker.Core.Services;
-using Genius.PriceChecker.Infrastructure.Events;
-using Genius.PriceChecker.Infrastructure.Logging;
+using Genius.Atom.Infrastructure.Events;
+using Genius.Atom.Infrastructure.Logging;
 using Genius.PriceChecker.UI.Helpers;
 using Genius.PriceChecker.UI.ViewModels;
 using Genius.PriceChecker.UI.Views;
@@ -31,11 +31,8 @@ namespace Genius.PriceChecker.UI
             serviceCollection.AddSingleton<INotifyIconViewModel>((NotifyIconViewModel)_notifyIcon.DataContext);
 
             ServiceProvider = serviceCollection.BuildServiceProvider();
-
-            ServiceProvider.GetService<Microsoft.Extensions.Logging.ILoggerFactory>()
-                .AddProvider(new EventBasedLoggerProvider(ServiceProvider.GetService<IEventBus>()));
-
             Core.Module.Initialize(ServiceProvider);
+            Atom.UI.Forms.Module.Initialize(ServiceProvider);
 
             var mainWindow = ServiceProvider.GetRequiredService<MainWindow>();
             mainWindow.Show();
@@ -51,9 +48,9 @@ namespace Genius.PriceChecker.UI
             _notifyIcon.Dispose();
         }
 
-        private void ConfigureServices(IServiceCollection services)
+        private static void ConfigureServices(IServiceCollection services)
         {
-            Infrastructure.Module.Configure(services);
+            Atom.Infrastructure.Module.Configure(services);
             Core.Module.Configure(services);
 
             // Framework:

@@ -2,7 +2,7 @@ using System;
 using System.Reactive.Subjects;
 using Genius.PriceChecker.Core.Messages;
 using Genius.PriceChecker.Core.Models;
-using Genius.PriceChecker.Infrastructure.Events;
+using Genius.Atom.Infrastructure.Events;
 
 namespace Genius.PriceChecker.UI.Helpers
 {
@@ -27,9 +27,8 @@ namespace Genius.PriceChecker.UI.Helpers
         public TrackerScanContext(IEventBus eventBus)
         {
             eventBus.WhenFired<ProductAutoScanStartedEvent>()
-                .Subscribe(ev => {
-                    NotifyStarted(ev.ProductsCount);
-                });
+                .Subscribe(ev =>
+                    NotifyStarted(ev.ProductsCount));
         }
 
         public void NotifyStarted(int count)
@@ -63,14 +62,16 @@ namespace Genius.PriceChecker.UI.Helpers
 
             double progress = CalculateProgress();
 
-            TrackerScanStatus status = Helpers.TrackerScanStatus.InProgress;
+            var status = TrackerScanStatus.InProgress;
             if (_finished == _count)
             {
                 _started = false;
-                status = Helpers.TrackerScanStatus.Finished;
+                status = TrackerScanStatus.Finished;
             }
             else if (HasErrors)
-                status = Helpers.TrackerScanStatus.InProgressWithErrors;
+            {
+                status = TrackerScanStatus.InProgressWithErrors;
+            }
 
             _scanProgress.OnNext((status, progress));
         }

@@ -7,7 +7,7 @@ using AutoFixture;
 using Genius.PriceChecker.Core.Messages;
 using Genius.PriceChecker.Core.Models;
 using Genius.PriceChecker.Core.Repositories;
-using Genius.PriceChecker.UI.Forms;
+using Genius.Atom.UI.Forms;
 using Genius.PriceChecker.UI.Helpers;
 using Genius.PriceChecker.UI.ViewModels;
 using Moq;
@@ -99,7 +99,7 @@ namespace Genius.PriceChecker.UI.Tests.ViewModels
         public void OpenAddProductFlyoutCommand__When_flyout_is_closed__Flyout_shows_up()
         {
             // Arrange
-            var products = SampleProducts();
+            SampleProducts();
             var sut = CreateSystemUnderTest();
             sut.IsAddEditProductVisible = false;
             sut.EditingProduct = null;
@@ -117,7 +117,7 @@ namespace Genius.PriceChecker.UI.Tests.ViewModels
         public void OpenAddProductFlyoutCommand__When_flyout_is_opened__Flyout_closed()
         {
             // Arrange
-            var products = SampleProducts();
+            SampleProducts();
             var sut = CreateSystemUnderTest();
             sut.IsAddEditProductVisible = true;
 
@@ -167,7 +167,7 @@ namespace Genius.PriceChecker.UI.Tests.ViewModels
         public void OpenEditProductFlyoutCommand__When_flyout_is_opened__Flyout_closed()
         {
             // Arrange
-            var products = SampleProducts();
+            SampleProducts();
             var sut = CreateSystemUnderTest();
             sut.IsAddEditProductVisible = true;
 
@@ -182,7 +182,7 @@ namespace Genius.PriceChecker.UI.Tests.ViewModels
         public void OpenEditProductFlyoutCommand__Product_committed__Flyout_closed()
         {
             // Arrange
-            var products = SampleProducts();
+            SampleProducts();
             var sut = CreateSystemUnderTest();
             sut.Products[0].IsSelected = true;
             sut.OpenEditProductFlyoutCommand.Execute(null); // trigger to open flyout
@@ -260,7 +260,7 @@ namespace Genius.PriceChecker.UI.Tests.ViewModels
             // Arrange
             var products = SampleProducts();
             var sut = CreateSystemUnderTest();
-            var productScanningIndex = 1;
+            const int productScanningIndex = 1;
 
             // Act
             _productScanStartedEventSubject.OnNext(new ProductScanStartedEvent(products.ElementAt(productScanningIndex)));
@@ -276,7 +276,7 @@ namespace Genius.PriceChecker.UI.Tests.ViewModels
             var products = SampleProducts();
             var sut = CreateSystemUnderTest();
             var lowestUpdated = Fixture.Create<bool>();
-            var productScannedIndex = 1;
+            const int productScannedIndex = 1;
 
             // Act
             _productScannedEventSubject.OnNext(new ProductScannedEvent(products.ElementAt(productScannedIndex), lowestUpdated));
@@ -291,7 +291,7 @@ namespace Genius.PriceChecker.UI.Tests.ViewModels
             // Arrange
             var products = SampleProducts();
             var sut = CreateSystemUnderTest();
-            var productFailedIndex = 1;
+            const int productFailedIndex = 1;
             var errorMessage = Fixture.Create<string>();
 
             // Act
@@ -305,7 +305,7 @@ namespace Genius.PriceChecker.UI.Tests.ViewModels
         public void Deactivated__Flyout_closed()
         {
             // Arrange
-            var products = SampleProducts();
+            SampleProducts();
             var sut = CreateSystemUnderTest();
             sut.IsAddEditProductVisible = true;
 

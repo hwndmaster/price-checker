@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Windows.Controls;
-using Genius.PriceChecker.UI.Forms.ViewModels;
+using Genius.Atom.UI.Forms.ViewModels;
 
 namespace Genius.PriceChecker.UI.Validation
 {

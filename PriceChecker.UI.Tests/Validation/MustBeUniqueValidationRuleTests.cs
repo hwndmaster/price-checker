@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using AutoFixture;
-using Genius.PriceChecker.UI.Forms.ViewModels;
+using Genius.Atom.UI.Forms.ViewModels;
 using Genius.PriceChecker.UI.Validation;
 using Xunit;
 

@@ -2,7 +2,7 @@ using System.Diagnostics.CodeAnalysis;
 using Genius.PriceChecker.Core.Models;
 using Genius.PriceChecker.Core.Repositories;
 using Genius.PriceChecker.Core.Services;
-using Genius.PriceChecker.Infrastructure.Events;
+using Genius.Atom.Infrastructure.Events;
 using Genius.PriceChecker.UI.Helpers;
 
 namespace Genius.PriceChecker.UI.ViewModels

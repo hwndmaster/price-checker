@@ -8,11 +8,16 @@
     <PackageReference Update="Microsoft.Extensions.Logging" Version="5.0.0" />
     <PackageReference Update="Microsoft.Extensions.Logging.Abstractions" Version="5.0.0" />
 
+    <!-- Atom Framework -->
+    <PackageReference Update="Genius.Atom.Infrastructure" Version="0.0.2" />
+    <PackageReference Update="Genius.Atom.UI.Forms" Version="0.0.2" />
+
     <!-- Misc -->
-    <PackageReference Update="Humanizer.Core" Version="2.10.1" />
-    <PackageReference Update="MahApps.Metro" Version="2.4.5" />
-    <PackageReference Update="WpfAnimatedGif" Version="2.0.0" />
-    <PackageReference Update="ReactiveUI" Version="13.3.2" />
+    <PackageReference Update="Hardcodet.NotifyIcon.Wpf" Version="1.1.0" />
+    <PackageReference Update="Humanizer.Core" Version="2.11.10" />
+    <PackageReference Update="MahApps.Metro" Version="2.4.7" />
+    <PackageReference Update="ReactiveUI" Version="14.3.1" />
+    <PackageReference Update="ReactiveUI.WPF" Version="14.3.1" />
   </ItemGroup>
 
   <!-- Automated Testing components -->
@@ -23,12 +28,12 @@
         <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         <PrivateAssets>all</PrivateAssets>
     </PackageReference>
-    <PackageReference Include="coverlet.collector" Version="3.0.1">
+    <PackageReference Include="coverlet.collector" Version="3.1.0">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
 
-    <PackageReference Include="AutoFixture" Version="4.16.0" />
+    <PackageReference Include="AutoFixture" Version="4.17.0" />
     <PackageReference Include="Moq" Version="4.16.1" />
   </ItemGroup>
 

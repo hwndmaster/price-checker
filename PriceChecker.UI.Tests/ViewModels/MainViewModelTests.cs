@@ -1,8 +1,8 @@
 using System.Reactive.Subjects;
 using System.Windows.Shell;
 using AutoFixture;
-using Genius.PriceChecker.UI.Forms;
-using Genius.PriceChecker.UI.Forms.ViewModels;
+using Genius.Atom.UI.Forms;
+using Genius.Atom.UI.Forms.ViewModels;
 using Genius.PriceChecker.UI.Helpers;
 using Genius.PriceChecker.UI.ViewModels;
 using Moq;
