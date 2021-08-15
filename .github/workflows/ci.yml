@@ -18,12 +18,8 @@ jobs:
       with:
         dotnet-version: 5.0.x
     - name: Restore dependencies
-      run: >-
-        dotnet nuget add source https://nuget.pkg.github.com/hwndmaster/index.json
-          -n github
-          -u hwndmaster
-          -p ${{ secrets.PRIVATE_PKG_TOKEN }}
-          --store-password-in-clear-text;
+      run: |
+        dotnet nuget add source https://nuget.pkg.github.com/hwndmaster/index.json -n github -u hwndmaster -p ${{ secrets.PRIVATE_PKG_TOKEN }} --store-password-in-clear-text
         dotnet restore
     - name: Build
       run: dotnet build --no-restore
