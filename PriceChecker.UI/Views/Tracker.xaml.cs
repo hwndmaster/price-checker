@@ -29,9 +29,8 @@ namespace Genius.PriceChecker.UI.Views
                     filterTextbox.Text = string.Empty;
                 }
 
-                BindingExpression binding = BindingOperations.GetBindingExpression(filterTextbox, TextBox.TextProperty);
-                if (binding != null)
-                    binding.UpdateSource();
+                var bindingExpr = BindingOperations.GetBindingExpression(filterTextbox, TextBox.TextProperty);
+                bindingExpr?.UpdateSource();
             }
         }
     }

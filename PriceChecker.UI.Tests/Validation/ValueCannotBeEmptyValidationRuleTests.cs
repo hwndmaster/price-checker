@@ -34,7 +34,7 @@ namespace Genius.PriceChecker.UI.Tests.Validation
         public void Value__Null_string__Returns_not_valid()
         {
             // Arrange
-            string value = null;
+            const string value = null;
 
             // Act
             var result = _sut.Validate(value, _fixture.Create<CultureInfo>());
@@ -60,7 +60,7 @@ namespace Genius.PriceChecker.UI.Tests.Validation
         public void Value__Whitespaced_string__Returns_not_valid()
         {
             // Arrange
-            string value = "   ";
+            const string value = "   ";
 
             // Act
             var result = _sut.Validate(value, _fixture.Create<CultureInfo>());
