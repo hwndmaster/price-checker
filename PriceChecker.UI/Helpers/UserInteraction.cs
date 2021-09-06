@@ -34,11 +34,11 @@ namespace Genius.PriceChecker.UI.Helpers
     [ExcludeFromCodeCoverage]
     public class UserInteraction : IUserInteraction
     {
-        private readonly IAgentRepository _agentRepo;
+        private readonly IAgentQueryService _agentQuery;
 
-        public UserInteraction(IAgentRepository agentRepo)
+        public UserInteraction(IAgentQueryService agentQuery)
         {
-            _agentRepo = agentRepo;
+            _agentQuery = agentQuery;
         }
 
         public bool AskForConfirmation(string message, string title)
@@ -62,7 +62,7 @@ namespace Genius.PriceChecker.UI.Helpers
             if (productSource == null)
                 return;
 
-            var agentUrl = _agentRepo.FindById(productSource.AgentId).Url;
+            var agentUrl = _agentQuery.FindByKey(productSource.AgentKey).Url;
             var url = string.Format(agentUrl, productSource.AgentArgument);
 
             url = url.Replace("&", "^&");

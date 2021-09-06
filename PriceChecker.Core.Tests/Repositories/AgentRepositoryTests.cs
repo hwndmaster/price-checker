@@ -2,23 +2,23 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using AutoFixture;
+using Genius.Atom.Infrastructure.Entities;
 using Genius.Atom.Infrastructure.Events;
-using Genius.PriceChecker.Core.Messages;
+using Genius.Atom.Infrastructure.Persistence;
 using Genius.PriceChecker.Core.Models;
 using Genius.PriceChecker.Core.Repositories;
-using Genius.PriceChecker.Core.Services;
 using Microsoft.Extensions.Logging;
 using Moq;
 using Xunit;
 
 namespace Genius.PriceChecker.Core.Tests.Repositories
 {
-    public class AgentRepositoryTests
+  public class AgentRepositoryTests
     {
         private readonly AgentRepository _sut;
         private readonly Fixture _fixture = new();
         private readonly Mock<IEventBus> _eventBusMock = new();
-        private readonly Mock<IPersister> _persisterMock = new();
+        private readonly Mock<IJsonPersister> _persisterMock = new();
 
         private readonly List<Agent> _agents = new();
 
@@ -76,7 +76,7 @@ namespace Genius.PriceChecker.Core.Tests.Repositories
             var agentCount = _sut.GetAll().Count();
 
             // Act
-            _sut.Delete(Guid.NewGuid().ToString());
+            _sut.Delete(Guid.NewGuid());
 
             // Verify
             Assert.Equal(agentCount, _sut.GetAll().Count());
@@ -86,7 +86,7 @@ namespace Genius.PriceChecker.Core.Tests.Repositories
         public void Store__Replaces_all_existing_agents_and_updates_cache_and_fires_event()
         {
             // Arrange
-            var newAgents = _fixture.CreateMany<Agent>().ToList();
+            var newAgents = _fixture.CreateMany<Agent>().ToArray();
 
             // Act
             _sut.Store(newAgents);
@@ -94,8 +94,8 @@ namespace Genius.PriceChecker.Core.Tests.Repositories
             // Verify
             Assert.False(_sut.GetAll().Except(newAgents).Any());
             _persisterMock.Verify(x => x.Store(It.IsAny<string>(),
-                It.Is<List<Agent>>((List<Agent> p) => p.SequenceEqual(newAgents))));
-            _eventBusMock.Verify(x => x.Publish(It.IsAny<AgentsUpdatedEvent>()), Times.Once);
+                It.Is((List<Agent> p) => p.SequenceEqual(newAgents))));
+            _eventBusMock.Verify(x => x.Publish(It.IsAny<EntitiesUpdatedEvent>()), Times.Once);
         }
     }
 }

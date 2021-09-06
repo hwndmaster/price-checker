@@ -1,10 +1,10 @@
 using System;
 using AutoFixture;
+using Genius.Atom.Infrastructure.Events;
+using Genius.Atom.Infrastructure.Persistence;
 using Genius.PriceChecker.Core.Messages;
 using Genius.PriceChecker.Core.Models;
 using Genius.PriceChecker.Core.Repositories;
-using Genius.PriceChecker.Core.Services;
-using Genius.Atom.Infrastructure.Events;
 using Microsoft.Extensions.Logging;
 using Moq;
 using Xunit;
@@ -15,7 +15,7 @@ namespace Genius.PriceChecker.Core.Tests.Repositories
     {
         private readonly Fixture _fixture = new();
         private readonly Mock<IEventBus> _eventBusMock = new();
-        private readonly Mock<IPersister> _persisterMock = new();
+        private readonly Mock<IJsonPersister> _persisterMock = new();
 
         [Fact]
         public void Constructor__Previous_settings_exist__Loaded()

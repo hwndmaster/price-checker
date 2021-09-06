@@ -2,6 +2,7 @@ using System.Reactive.Subjects;
 using System.Windows.Shell;
 using AutoFixture;
 using Genius.Atom.UI.Forms;
+using Genius.Atom.UI.Forms.TestingUtil;
 using Genius.Atom.UI.Forms.ViewModels;
 using Genius.PriceChecker.UI.Helpers;
 using Genius.PriceChecker.UI.ViewModels;

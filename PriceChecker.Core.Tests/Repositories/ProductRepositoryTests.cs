@@ -2,24 +2,24 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using AutoFixture;
-using Genius.PriceChecker.Core.Messages;
+using Genius.Atom.Infrastructure.Entities;
+using Genius.Atom.Infrastructure.Events;
+using Genius.Atom.Infrastructure.Persistence;
 using Genius.PriceChecker.Core.Models;
 using Genius.PriceChecker.Core.Repositories;
-using Genius.PriceChecker.Core.Services;
-using Genius.Atom.Infrastructure.Events;
 using Microsoft.Extensions.Logging;
 using Moq;
 using Xunit;
 
 namespace Genius.PriceChecker.Core.Tests.Repositories
 {
-    public class ProductRepositoryTests
+  public class ProductRepositoryTests
     {
         private readonly ProductRepository _sut;
         private readonly Fixture _fixture = new();
         private readonly Mock<IEventBus> _eventBusMock = new();
-        private readonly Mock<IPersister> _persisterMock = new();
-        private readonly Mock<IAgentRepository> _agentRepoMock = new();
+        private readonly Mock<IJsonPersister> _persisterMock = new();
+        private readonly Mock<IAgentQueryService> _agentQueryMock = new();
 
         private readonly List<Product> _products = new();
         private readonly List<Agent> _agents = new();
@@ -28,16 +28,16 @@ namespace Genius.PriceChecker.Core.Tests.Repositories
         {
             _products.AddRange(Enumerable.Range(1, 3).Select(_ => CreateProduct()));
             _agents = _products.SelectMany(x => x.Sources)
-                .Select(x => new Agent { Id = x.AgentId }).ToList();
+                .Select(x => new Agent { Key = x.AgentKey }).ToList();
 
             foreach (var agent in _agents)
-                _agentRepoMock.Setup(x => x.FindById(agent.Id)).Returns(agent);
+                _agentQueryMock.Setup(x => x.FindById(agent.Id)).Returns(agent);
 
             _persisterMock.Setup(x => x.LoadCollection<Product>(It.IsAny<string>()))
                 .Returns(_products.ToArray());
 
             _sut = new ProductRepository(_eventBusMock.Object, _persisterMock.Object,
-                _agentRepoMock.Object,
+                _agentQueryMock.Object,
                 Mock.Of<ILogger<ProductRepository>>());
         }
 
@@ -101,8 +101,8 @@ namespace Genius.PriceChecker.Core.Tests.Repositories
 
             // Verify
             _persisterMock.Verify(x => x.Store(It.IsAny<string>(),
-                It.Is<List<Product>>((List<Product> p) => p.SequenceEqual(_products))));
-            _eventBusMock.Verify(x => x.Publish(It.Is<ProductUpdatedEvent>(e => e.Product == product)), Times.Once);
+                It.Is((List<Product> p) => p.SequenceEqual(_products))));
+            _eventBusMock.Verify(x => x.Publish(It.Is<EntitiesUpdatedEvent>(e => e.Entities.First().Value == product)), Times.Once);
         }
 
         [Fact]
@@ -118,8 +118,8 @@ namespace Genius.PriceChecker.Core.Tests.Repositories
             // Verify
             var expectedProducts = _products.Concat(new [] { product });
             _persisterMock.Verify(x => x.Store(It.IsAny<string>(),
-                It.Is<List<Product>>((List<Product> p) => p.SequenceEqual(expectedProducts))));
-            _eventBusMock.Verify(x => x.Publish(It.Is<ProductAddedEvent>(e => e.Product == product)), Times.Once);
+                It.Is((List<Product> p) => p.SequenceEqual(expectedProducts))));
+            _eventBusMock.Verify(x => x.Publish(It.Is<EntitiesAddedEvent>(e => e.Entities.First().Value == product)), Times.Once);
             Assert.Equal(productCount + 1, _sut.GetAll().Count());
         }
 
@@ -149,7 +149,7 @@ namespace Genius.PriceChecker.Core.Tests.Repositories
             {
                 foreach (var source in product.Sources)
                 {
-                    Assert.Equal(source.AgentId, source.Agent.Id);
+                    Assert.Equal(source.AgentKey, source.Agent.Key);
                     Assert.Equal(product, source.Product);
                 }
                 foreach (var price in product.Recent)

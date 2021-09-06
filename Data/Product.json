@@ -7,7 +7,7 @@
     "Sources": [
       {
         "Id": "60b9ceed-b34c-45ad-a142-af0ec5491d91",
-        "AgentId": "amazon.de_alt",
+        "AgentKey": "amazon.de_alt",
         "AgentArgument": "B0047AKFDG"
       }
     ],
@@ -19,8 +19,8 @@
     "Recent": [
       {
         "ProductSourceId": "60b9ceed-b34c-45ad-a142-af0ec5491d91",
-        "Price": 20.99,
-        "FoundDate": "2021-08-13T22:17:06.1706+02:00"
+        "Price": 22.99,
+        "FoundDate": "2021-09-05T12:42:42.5166281+02:00"
       }
     ]
   },
@@ -32,12 +32,12 @@
     "Sources": [
       {
         "Id": "4753f887-5b20-41de-a06b-3c159262a273",
-        "AgentId": "tweakers.net",
+        "AgentKey": "tweakers.net",
         "AgentArgument": "1617418/irobot-roomba-i7\u002B-zilver-zwart.html"
       },
       {
         "Id": "ebeaa98d-aedb-4bb8-b539-1de7e1ee25cc",
-        "AgentId": "tweakers.net",
+        "AgentKey": "tweakers.net",
         "AgentArgument": "1274693/irobot-roomba-i7\u002B-zwart.html"
       }
     ],
@@ -50,12 +50,12 @@
       {
         "ProductSourceId": "4753f887-5b20-41de-a06b-3c159262a273",
         "Price": 739,
-        "FoundDate": "2021-08-13T22:16:48.6621087+02:00"
+        "FoundDate": "2021-09-05T12:42:28.7320067+02:00"
       },
       {
         "ProductSourceId": "ebeaa98d-aedb-4bb8-b539-1de7e1ee25cc",
         "Price": 699,
-        "FoundDate": "2021-08-13T22:16:48.6621219+02:00"
+        "FoundDate": "2021-09-05T12:42:28.732012+02:00"
       }
     ]
   },
@@ -67,40 +67,35 @@
     "Sources": [
       {
         "Id": "3b27b7fc-369d-4f90-ba4c-f209c1a0153b",
-        "AgentId": "tweakers.net",
+        "AgentKey": "tweakers.net",
         "AgentArgument": "1432208/microsoft-xbox-elite-wireless-controller-series-2-zwart.html"
       },
       {
         "Id": "d786a796-b93c-468b-8fda-a2892d72802a",
-        "AgentId": "amazon.de",
+        "AgentKey": "amazon.de",
         "AgentArgument": "B07SR4R8K1"
       },
       {
         "Id": "1778e5f5-b73d-418b-b3b8-06412828f54f",
-        "AgentId": "amazon.nl",
+        "AgentKey": "amazon.nl",
         "AgentArgument": "B07SR4R8K1"
       }
     ],
     "Lowest": {
-      "ProductSourceId": "3b27b7fc-369d-4f90-ba4c-f209c1a0153b",
-      "Price": 165.95,
-      "FoundDate": "2021-06-09T11:37:11.7831872+02:00"
+      "ProductSourceId": "d786a796-b93c-468b-8fda-a2892d72802a",
+      "Price": 161.99,
+      "FoundDate": "2021-09-05T12:42:44.8578396+02:00"
     },
     "Recent": [
       {
         "ProductSourceId": "3b27b7fc-369d-4f90-ba4c-f209c1a0153b",
-        "Price": 177,
-        "FoundDate": "2021-08-13T22:16:48.5836644+02:00"
+        "Price": 176.95,
+        "FoundDate": "2021-09-05T12:42:44.8578345+02:00"
       },
       {
         "ProductSourceId": "d786a796-b93c-468b-8fda-a2892d72802a",
-        "Price": 167.99,
-        "FoundDate": "2021-08-13T22:16:48.583672+02:00"
-      },
-      {
-        "ProductSourceId": "1778e5f5-b73d-418b-b3b8-06412828f54f",
-        "Price": 177.00,
-        "FoundDate": "2021-08-13T22:16:48.5836728+02:00"
+        "Price": 161.99,
+        "FoundDate": "2021-09-05T12:42:44.8578396+02:00"
       }
     ]
   },
@@ -112,12 +107,12 @@
     "Sources": [
       {
         "Id": "5f5a72a4-d6ad-4cab-9fb9-9d5839fa2a03",
-        "AgentId": "bol.com",
+        "AgentKey": "bol.com",
         "AgentArgument": "lego-mindstorms-ev3-31313/1004004013515960"
       },
       {
         "Id": "923b83ed-3fcb-43ca-80b0-0e9e717ec9c6",
-        "AgentId": "amazon.de",
+        "AgentKey": "amazon.de",
         "AgentArgument": "B00BMKLVJ6"
       }
     ],
@@ -129,13 +124,13 @@
     "Recent": [
       {
         "ProductSourceId": "5f5a72a4-d6ad-4cab-9fb9-9d5839fa2a03",
-        "Price": 435.99,
-        "FoundDate": "2021-08-13T22:17:03.4602629+02:00"
+        "Price": 474.95,
+        "FoundDate": "2021-09-05T12:42:37.8786059+02:00"
       },
       {
         "ProductSourceId": "923b83ed-3fcb-43ca-80b0-0e9e717ec9c6",
-        "Price": 449.0,
-        "FoundDate": "2021-08-13T22:17:03.4602718+02:00"
+        "Price": 449.9,
+        "FoundDate": "2021-09-05T12:42:37.878611+02:00"
       }
     ]
   },
@@ -147,12 +142,12 @@
     "Sources": [
       {
         "Id": "cbb43572-35b9-4408-9e52-09f934b97336",
-        "AgentId": "tweakers.net",
+        "AgentKey": "tweakers.net",
         "AgentArgument": "582163/sony-fdr-x3000r-wit.html"
       },
       {
         "Id": "ab80a6f9-c175-4c10-8f69-aee23e7efc64",
-        "AgentId": "amazon.de",
+        "AgentKey": "amazon.de",
         "AgentArgument": "B08QDVWY4T"
       }
     ],
@@ -177,30 +172,25 @@
     "Sources": [
       {
         "Id": "aa039437-a86f-4cf7-9283-90c63a95e142",
-        "AgentId": "amazon.de",
+        "AgentKey": "amazon.de",
         "AgentArgument": "B01K4CYV58"
       },
       {
         "Id": "b129f9f2-416b-493e-af3c-ff0f255a66e9",
-        "AgentId": "tweakers.net",
+        "AgentKey": "tweakers.net",
         "AgentArgument": "580883/garmin-virb-ultra-30-rood-zwart.html"
       }
     ],
     "Lowest": {
       "ProductSourceId": "aa039437-a86f-4cf7-9283-90c63a95e142",
       "Price": 389.95,
-      "FoundDate": "2021-08-13T22:17:26.5477921+02:00"
+      "FoundDate": "2021-09-05T12:43:05.9642497+02:00"
     },
     "Recent": [
       {
-        "ProductSourceId": "b129f9f2-416b-493e-af3c-ff0f255a66e9",
-        "Price": 499.99,
-        "FoundDate": "2021-08-13T22:17:26.5477789+02:00"
-      },
-      {
         "ProductSourceId": "aa039437-a86f-4cf7-9283-90c63a95e142",
         "Price": 389.95,
-        "FoundDate": "2021-08-13T22:17:26.5477921+02:00"
+        "FoundDate": "2021-09-05T12:43:05.9642497+02:00"
       }
     ]
   },
@@ -212,7 +202,7 @@
     "Sources": [
       {
         "Id": "831217bc-0784-4d57-a6a5-d71bf6b2bd19",
-        "AgentId": "amazon.nl",
+        "AgentKey": "amazon.nl",
         "AgentArgument": "B06XS5XFSP"
       }
     ],
@@ -237,7 +227,7 @@
     "Sources": [
       {
         "Id": "65f0f16f-a64c-4244-bd3b-ea58c27740ed",
-        "AgentId": "tweakers.net",
+        "AgentKey": "tweakers.net",
         "AgentArgument": "542421/xiaomi-yi-4k-zwart.html"
       }
     ],
@@ -262,7 +252,7 @@
     "Sources": [
       {
         "Id": "c33f08c8-854e-4a60-8eff-bd900cffe134",
-        "AgentId": "amazon.de",
+        "AgentKey": "amazon.de",
         "AgentArgument": "B07GSVDFTQ"
       }
     ],
@@ -287,7 +277,7 @@
     "Sources": [
       {
         "Id": "64f76755-0839-4c6c-9a7c-e28e4cf1e670",
-        "AgentId": "amazon.de",
+        "AgentKey": "amazon.de",
         "AgentArgument": "B07YGSXVB8"
       }
     ],
@@ -299,8 +289,8 @@
     "Recent": [
       {
         "ProductSourceId": "64f76755-0839-4c6c-9a7c-e28e4cf1e670",
-        "Price": 299.87,
-        "FoundDate": "2021-08-13T22:16:53.799147+02:00"
+        "Price": 299.99,
+        "FoundDate": "2021-09-05T12:42:30.0347677+02:00"
       }
     ]
   },
@@ -312,30 +302,30 @@
     "Sources": [
       {
         "Id": "e4b4c4d2-d318-4304-af16-3b97a18509f7",
-        "AgentId": "amazon.de",
+        "AgentKey": "amazon.de",
         "AgentArgument": "B08G2HBBB6"
       },
       {
         "Id": "05b5f419-0ace-4ba7-b35a-4eb571c5ecc6",
-        "AgentId": "tweakers.net",
+        "AgentKey": "tweakers.net",
         "AgentArgument": "1611988/gopro-hero9-black-zwart.html"
       }
     ],
     "Lowest": {
-      "ProductSourceId": "e4b4c4d2-d318-4304-af16-3b97a18509f7",
-      "Price": 399.99,
-      "FoundDate": "2021-08-13T22:17:45.4498742+02:00"
+      "ProductSourceId": "05b5f419-0ace-4ba7-b35a-4eb571c5ecc6",
+      "Price": 365,
+      "FoundDate": "2021-09-05T12:42:35.4458115+02:00"
     },
     "Recent": [
       {
         "ProductSourceId": "e4b4c4d2-d318-4304-af16-3b97a18509f7",
-        "Price": 399.99,
-        "FoundDate": "2021-08-13T22:17:45.4498742+02:00"
+        "Price": 399.0,
+        "FoundDate": "2021-09-05T12:42:35.4458073+02:00"
       },
       {
         "ProductSourceId": "05b5f419-0ace-4ba7-b35a-4eb571c5ecc6",
-        "Price": 399.99,
-        "FoundDate": "2021-08-13T22:17:45.4498837+02:00"
+        "Price": 365,
+        "FoundDate": "2021-09-05T12:42:35.4458115+02:00"
       }
     ]
   },
@@ -347,7 +337,7 @@
     "Sources": [
       {
         "Id": "e593c859-0dff-491d-a9ad-1a2f74a7f6f6",
-        "AgentId": "amazon.de",
+        "AgentKey": "amazon.de",
         "AgentArgument": "B07RJMK2GV"
       }
     ],
@@ -360,7 +350,7 @@
       {
         "ProductSourceId": "e593c859-0dff-491d-a9ad-1a2f74a7f6f6",
         "Price": 239.0,
-        "FoundDate": "2021-08-13T22:16:58.5578261+02:00"
+        "FoundDate": "2021-09-05T12:42:40.2080246+02:00"
       }
     ]
   },
@@ -372,50 +362,45 @@
     "Sources": [
       {
         "Id": "66a75039-0fcf-4407-8dc6-1065ad4ae925",
-        "AgentId": "tweakers.net",
+        "AgentKey": "tweakers.net",
         "AgentArgument": "1712698/sony-wf-1000xm4-zwart.html"
       },
       {
         "Id": "f29d4d3a-e932-48d5-b979-3d9f91689137",
-        "AgentId": "amazon.de",
+        "AgentKey": "amazon.de",
         "AgentArgument": "B095DNPH4R"
       },
       {
         "Id": "af8a851b-a524-4849-857c-0af66bb8f404",
-        "AgentId": "amazon.nl",
+        "AgentKey": "amazon.nl",
         "AgentArgument": "B095DNPH4R"
       },
       {
         "Id": "9417f567-36ee-421c-acd3-d2428d60076f",
-        "AgentId": "bol.com",
+        "AgentKey": "bol.com",
         "AgentArgument": "sony-wf-1000xm4-volledig-draadloze-oordopjes-met-noise-cancelling-zwart/9300000039263860"
       }
     ],
     "Lowest": {
-      "ProductSourceId": "66a75039-0fcf-4407-8dc6-1065ad4ae925",
-      "Price": 279,
-      "FoundDate": "2021-08-13T22:16:51.2820615+02:00"
+      "ProductSourceId": "f29d4d3a-e932-48d5-b979-3d9f91689137",
+      "Price": 277.0,
+      "FoundDate": "2021-09-05T12:42:47.797209+02:00"
     },
     "Recent": [
       {
-        "ProductSourceId": "66a75039-0fcf-4407-8dc6-1065ad4ae925",
-        "Price": 279,
-        "FoundDate": "2021-08-13T22:16:51.2820615+02:00"
-      },
-      {
         "ProductSourceId": "f29d4d3a-e932-48d5-b979-3d9f91689137",
-        "Price": 279.0,
-        "FoundDate": "2021-08-13T22:16:51.2820754+02:00"
+        "Price": 277.0,
+        "FoundDate": "2021-09-05T12:42:47.797209+02:00"
       },
       {
         "ProductSourceId": "af8a851b-a524-4849-857c-0af66bb8f404",
         "Price": 279.00,
-        "FoundDate": "2021-08-13T22:16:51.2820785+02:00"
+        "FoundDate": "2021-09-05T12:42:47.7972168+02:00"
       },
       {
         "ProductSourceId": "9417f567-36ee-421c-acd3-d2428d60076f",
         "Price": 279.00,
-        "FoundDate": "2021-08-13T22:16:51.2820812+02:00"
+        "FoundDate": "2021-09-05T12:42:47.7972174+02:00"
       }
     ]
   }

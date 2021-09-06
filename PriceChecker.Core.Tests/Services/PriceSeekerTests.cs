@@ -2,6 +2,8 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using AutoFixture;
+using Genius.Atom.Infrastructure.Io;
+using Genius.Atom.Infrastructure.Net;
 using Genius.PriceChecker.Core.Models;
 using Genius.PriceChecker.Core.Services;
 using Microsoft.Extensions.Logging;
@@ -10,11 +12,11 @@ using Xunit;
 
 namespace Genius.PriceChecker.Core.Tests.Services
 {
-  public class PriceSeekerTests
+    public class PriceSeekerTests
     {
         private readonly Fixture _fixture = new();
         private readonly Mock<ITrickyHttpClient> _httpMock = new();
-        private readonly Mock<IIoService> _ioMock = new();
+        private readonly Mock<IFileService> _fileMock = new();
         private readonly Mock<ILogger<PriceSeeker>> _loggerMock = new();
 
         private readonly PriceSeeker _sut;
@@ -23,7 +25,7 @@ namespace Genius.PriceChecker.Core.Tests.Services
         {
             _fixture.Behaviors.Add(new OmitOnRecursionBehavior(recursionDepth: 2));
 
-            _sut = new PriceSeeker(_httpMock.Object, _ioMock.Object, _loggerMock.Object);
+            _sut = new PriceSeeker(_httpMock.Object, _fileMock.Object, _loggerMock.Object);
         }
 
         [Fact]
@@ -37,7 +39,7 @@ namespace Genius.PriceChecker.Core.Tests.Services
 
             // Verify
             Assert.Equal(product.Sources.Length, result.Length);
-            _ioMock.Verify(x => x.WriteTextToFile(It.IsAny<string>(), It.IsAny<string>()), Times.Never);
+            _fileMock.Verify(x => x.WriteTextToFile(It.IsAny<string>(), It.IsAny<string>()), Times.Never);
             TestHelpers.VerifyLogger(_loggerMock, LogLevel.Warning, Times.Never());
             TestHelpers.VerifyLogger(_loggerMock, LogLevel.Error, Times.Never());
         }
@@ -71,7 +73,7 @@ namespace Genius.PriceChecker.Core.Tests.Services
 
             // Verify
             Assert.Empty(result);
-            _ioMock.Verify(x => x.WriteTextToFile(It.IsAny<string>(), It.IsAny<string>()), Times.Once);
+            _fileMock.Verify(x => x.WriteTextToFile(It.IsAny<string>(), It.IsAny<string>()), Times.Once);
             TestHelpers.VerifyLogger(_loggerMock, LogLevel.Error);
         }
 

@@ -9,8 +9,9 @@
     <PackageReference Update="Microsoft.Extensions.Logging.Abstractions" Version="5.0.0" />
 
     <!-- Atom Framework -->
-    <PackageReference Update="Genius.Atom.Infrastructure" Version="0.0.2" />
-    <PackageReference Update="Genius.Atom.UI.Forms" Version="0.0.2" />
+    <PackageReference Update="Genius.Atom.Infrastructure" Version="0.0.3" />
+    <PackageReference Update="Genius.Atom.UI.Forms" Version="0.0.3" />
+    <PackageReference Update="Genius.Atom.UI.Forms.TestingUtil" Version="0.0.3" />
 
     <!-- Misc -->
     <PackageReference Update="Hardcodet.NotifyIcon.Wpf" Version="1.1.0" />

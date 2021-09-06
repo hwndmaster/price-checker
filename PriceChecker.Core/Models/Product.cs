@@ -1,12 +1,11 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
+using Genius.Atom.Infrastructure.Entities;
 
 namespace Genius.PriceChecker.Core.Models
 {
-    public class Product
+    public class Product : EntityBase
     {
-        public Guid Id { get; set; }
-
         [MaybeNull]
         public string Category { get; set; }
         [NotNull]

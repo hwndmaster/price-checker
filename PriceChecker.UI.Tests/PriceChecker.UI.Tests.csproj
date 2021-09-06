@@ -10,4 +10,21 @@
     <ProjectReference Include="..\PriceChecker.UI\PriceChecker.UI.csproj" />
   </ItemGroup>
 
+  <ItemGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|AnyCPU'">
+    <Reference Include="Genius.Atom.Infrastructure">
+      <HintPath>..\..\atom\Atom.Infrastructure\bin\Debug\net5.0\Genius.Atom.Infrastructure.dll</HintPath>
+    </Reference>
+    <Reference Include="Genius.Atom.UI.Forms">
+      <HintPath>..\..\atom\Atom.UI.Forms\bin\Debug\net5.0-windows\Genius.Atom.UI.Forms.dll</HintPath>
+    </Reference>
+    <Reference Include="Genius.Atom.UI.Forms.TestingUtil">
+      <HintPath>..\..\atom\Atom.UI.Forms.TestingUtil\bin\Debug\net5.0-windows\Genius.Atom.UI.Forms.TestingUtil.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup Condition="'$(Configuration)|$(Platform)' == 'Release|AnyCPU'">
+    <PackageReference Include="Genius.Atom.Infrastructure" />
+    <PackageReference Include="Genius.Atom.UI.Forms" />
+    <PackageReference Include="Genius.Atom.UI.Forms.TestingUtil" />
+  </ItemGroup>
+
 </Project>

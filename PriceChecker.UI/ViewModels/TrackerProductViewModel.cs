@@ -5,12 +5,15 @@ using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Reactive.Linq;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media.Imaging;
+using Genius.Atom.Infrastructure.Commands;
 using Genius.Atom.Infrastructure.Events;
 using Genius.Atom.UI.Forms;
 using Genius.Atom.UI.Forms.Attributes;
 using Genius.Atom.UI.Forms.ViewModels;
+using Genius.PriceChecker.Core.Commands;
 using Genius.PriceChecker.Core.Messages;
 using Genius.PriceChecker.Core.Models;
 using Genius.PriceChecker.Core.Repositories;
@@ -36,23 +39,24 @@ namespace Genius.PriceChecker.UI.ViewModels
     [ShowOnlyBrowsable(true)]
     internal sealed class TrackerProductViewModel : ViewModelBase, ITrackerProductViewModel
     {
-        private readonly IAgentRepository _agentRepo;
-        private readonly IProductPriceManager _productMng;
-        private readonly IProductRepository _productRepo;
+        private readonly IAgentQueryService _agentQuery;
+        private readonly IProductQueryService _productQuery;
         private readonly IProductStatusProvider _statusProvider;
+        private readonly ICommandBus _commandBus;
         private readonly IUserInteraction _ui;
 
         private Product _product;
 
         public TrackerProductViewModel(Product product, IEventBus eventBus,
-            IAgentRepository agentRepo, IProductPriceManager productMng,
-            IProductRepository productRepo, IProductStatusProvider statusProvider,
+            ICommandBus commandBus,
+            IAgentQueryService agentQuery,
+            IProductQueryService productQuery, IProductStatusProvider statusProvider,
             IUserInteraction ui)
         {
-            _agentRepo = agentRepo;
-            _productMng = productMng;
-            _productRepo = productRepo;
+            _agentQuery = agentQuery;
+            _productQuery = productQuery;
             _statusProvider = statusProvider;
+            _commandBus = commandBus;
             _product = product;
             _ui = ui;
 
@@ -78,27 +82,27 @@ namespace Genius.PriceChecker.UI.ViewModels
 
             ResetCommand = new ActionCommand(_ => ResetForm(), _ => _product != null);
 
-            DropPricesCommand = new ActionCommand(_ =>
+            DropPricesCommand = new ActionCommand(async _ =>
             {
                 if (!_ui.AskForConfirmation("Are you sure?", "Prices drop confirmation"))
                     return;
-                _productRepo.DropPrices(_product);
+                await commandBus.SendAsync(new ProductDropPricesCommand(_product.Id));
                 Reconcile(true);
             });
 
-            RefreshPriceCommand = new ActionCommand(_ =>
+            RefreshPriceCommand = new ActionCommand(async _ =>
             {
                 if (Status == ProductScanStatus.Scanning)
                     return;
-                _productMng.EnqueueScan(product.Id);
+                await commandBus.SendAsync(new ProductEnqueueScanCommand(product.Id));
             }, _ => Status != ProductScanStatus.Scanning);
 
-            eventBus.WhenFired<AgentsUpdatedEvent, AgentDeletedEvent>()
+            eventBus.WhenFired<AgentsAffectedEvent>()
                 .ObserveOn(RxApp.MainThreadScheduler)
                 .Subscribe(_ =>
                     RefreshAgents()
                 );
-            eventBus.WhenFired<ProductUpdatedEvent, ProductAddedEvent>()
+            eventBus.WhenFired<ProductsAffectedEvent>()
                 .ObserveOn(RxApp.MainThreadScheduler)
                 .Subscribe(_ =>
                     RefreshCategories()
@@ -159,7 +163,7 @@ namespace Genius.PriceChecker.UI.ViewModels
             StatusText = errorMessage;
         }
 
-        private void CommitProduct()
+        private async Task CommitProduct()
         {
             if (string.IsNullOrEmpty(Name))
             {
@@ -167,19 +171,22 @@ namespace Genius.PriceChecker.UI.ViewModels
                 return;
             }
 
-            _product ??= new Product();
-            _product.Name = Name;
-            _product.Category = Category;
-            _product.Description = Description;
-
-            _product.Sources = Sources.Select(x => new ProductSource
+            var sources = Sources.Select(x => new ProductSource
             {
                 Id = x.Id,
-                    AgentId = x.Agent,
+                    AgentKey = x.AgentKey,
                     AgentArgument = x.Argument
             }).ToArray();
 
-            _productRepo.Store(_product);
+            if (_product == null)
+            {
+                var productId = await _commandBus.SendAsync(new ProductCreateCommand(Name, Category, Description, sources));
+                _product = _productQuery.FindById(productId);
+            }
+            else
+            {
+                await _commandBus.SendAsync(new ProductUpdateCommand(_product.Id, Name, Category, Description, sources));
+            }
         }
 
         private TrackerProductSourceViewModel CreateSourceViewModel(ProductSource productSource)
@@ -195,13 +202,13 @@ namespace Genius.PriceChecker.UI.ViewModels
 
         private void RefreshAgents()
         {
-            Agents = _agentRepo.GetAll().Select(x => x.Id).ToList();
+            Agents = _agentQuery.GetAll().Select(x => x.Key).ToList();
         }
 
         private void RefreshCategories()
         {
             Categories.ReplaceItems(
-                _productRepo.GetAll().Select(x => x.Category).Distinct());
+                _productQuery.GetAll().Select(x => x.Category).Distinct());
         }
 
         private void ResetForm()

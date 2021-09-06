@@ -5,6 +5,9 @@ using Genius.PriceChecker.Core.Repositories;
 using Genius.Atom.UI.Forms;
 using Genius.Atom.UI.Forms.ViewModels;
 using Genius.PriceChecker.UI.Helpers;
+using Genius.Atom.Infrastructure.Commands;
+using Genius.PriceChecker.Core.Commands;
+using System.Threading.Tasks;
 
 namespace Genius.PriceChecker.UI.ViewModels
 {
@@ -15,16 +18,16 @@ namespace Genius.PriceChecker.UI.ViewModels
 
     internal sealed class AgentsViewModel : TabViewModelBase, IAgentsViewModel, IHasDirtyFlag
     {
-        private readonly IAgentRepository _agentRepo;
+        private readonly ICommandBus _commandBus;
         private readonly IViewModelFactory _vmFactory;
 
-        public AgentsViewModel(IAgentRepository agentRepo, IViewModelFactory vmFactory,
-            IUserInteraction ui)
+        public AgentsViewModel(IAgentQueryService agentQuery, IViewModelFactory vmFactory,
+            IUserInteraction ui, ICommandBus commandBus)
         {
-            _agentRepo = agentRepo;
+            _commandBus = commandBus;
             _vmFactory = vmFactory;
 
-            var agentVms = agentRepo.GetAll().Select(x => CreateAgentViewModel(x));
+            var agentVms = agentQuery.GetAll().OrderBy(x => x.Key).Select(x => CreateAgentViewModel(x));
             Agents.ReplaceItems(agentVms);
 
             AddAgentCommand = new ActionCommand(_ =>
@@ -33,7 +36,7 @@ namespace Genius.PriceChecker.UI.ViewModels
                 IsDirty = true;
             });
 
-            DeleteAgentCommand = new ActionCommand(_ =>
+            DeleteAgentCommand = new ActionCommand(async _ =>
             {
                 var selectedAgent = Agents.FirstOrDefault(x => x.IsSelected);
                 if (selectedAgent == null)
@@ -45,8 +48,10 @@ namespace Genius.PriceChecker.UI.ViewModels
                     return;
 
                 Agents.Remove(selectedAgent);
-                if (!string.IsNullOrEmpty(selectedAgent.Id))
-                    agentRepo.Delete(selectedAgent.Id);
+                if (selectedAgent.Id.HasValue)
+                {
+                    await commandBus.SendAsync(new AgentDeleteCommand(selectedAgent.Id.Value));
+                }
             });
 
             CommitAgentsCommand = new ActionCommand(_ => CommitAgents(),
@@ -68,15 +73,16 @@ namespace Genius.PriceChecker.UI.ViewModels
             return agentVm;
         }
 
-        private void CommitAgents()
+        private async Task CommitAgents()
         {
             if (HasErrors)
             {
                 return;
             }
 
-            var agents = Agents.Select(x => x.CreateEntity()).ToList();
-            _agentRepo.Store(agents);
+            var agents = Agents.Select(x => x.GetOrCreateEntity()).ToArray();
+
+            await _commandBus.SendAsync(new AgentsStoreWithOverwriteCommand(agents));
 
             IsDirty = false;
         }

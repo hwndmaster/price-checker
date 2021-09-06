@@ -16,7 +16,7 @@ namespace Genius.PriceChecker.UI.ViewModels
         {
             InitializeProperties(() => {
                 Id = productSource?.Id ?? Guid.NewGuid();
-                Agent = productSource?.AgentId;
+                AgentKey = productSource?.AgentKey;
                 Argument = productSource?.AgentArgument;
                 LastPrice = lastPrice;
             });
@@ -29,7 +29,7 @@ namespace Genius.PriceChecker.UI.ViewModels
         public Guid Id { get; set; }
 
         [SelectFromList(nameof(TrackerProductViewModel.Agents), fromOwnerContext: true)]
-        public string Agent
+        public string AgentKey
         {
             get => GetOrDefault<string>();
             set => RaiseAndSetIfChanged(value);

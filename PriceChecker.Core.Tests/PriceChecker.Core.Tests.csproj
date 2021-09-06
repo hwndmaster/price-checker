@@ -10,7 +10,12 @@
     <ProjectReference Include="..\PriceChecker.Core\PriceChecker.Core.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
+  <ItemGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|AnyCPU'">
+    <Reference Include="Genius.Atom.Infrastructure">
+      <HintPath>..\..\atom\Atom.Infrastructure\bin\Debug\net5.0\Genius.Atom.Infrastructure.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup Condition="'$(Configuration)|$(Platform)' == 'Release|AnyCPU'">
     <PackageReference Include="Genius.Atom.Infrastructure" />
   </ItemGroup>
 

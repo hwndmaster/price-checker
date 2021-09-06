@@ -4,6 +4,7 @@ using Genius.PriceChecker.Core.Repositories;
 using Genius.PriceChecker.Core.Services;
 using Genius.Atom.Infrastructure.Events;
 using Genius.PriceChecker.UI.Helpers;
+using Genius.Atom.Infrastructure.Commands;
 
 namespace Genius.PriceChecker.UI.ViewModels
 {
@@ -16,22 +17,25 @@ namespace Genius.PriceChecker.UI.ViewModels
     [ExcludeFromCodeCoverage]
     internal sealed class ViewModelFactory : IViewModelFactory
     {
-        private readonly IAgentRepository _agentRepo;
-        private readonly IProductRepository _productRepo;
+        private readonly IAgentQueryService _agentQuery;
+        private readonly IProductQueryService _productQuery;
         private readonly IProductPriceManager _productPriceMng;
         private readonly IProductStatusProvider _statusProvider;
         private readonly IEventBus _eventBus;
+        private readonly ICommandBus _commandBus;
         private readonly IUserInteraction _ui;
 
         public ViewModelFactory(IEventBus eventBus,
-            IAgentRepository agentRepo, IProductRepository productRepo,
+            ICommandBus commandBus,
+            IAgentQueryService agentQuery, IProductQueryService productQuery,
             IProductPriceManager productPriceMng,
             IProductStatusProvider statusProvider,
             IUserInteraction ui)
         {
             _eventBus = eventBus;
-            _agentRepo = agentRepo;
-            _productRepo = productRepo;
+            _commandBus = commandBus;
+            _agentQuery = agentQuery;
+            _productQuery = productQuery;
             _productPriceMng = productPriceMng;
             _statusProvider = statusProvider;
             _ui = ui;
@@ -44,8 +48,8 @@ namespace Genius.PriceChecker.UI.ViewModels
 
         public ITrackerProductViewModel CreateTrackerProduct(Product product)
         {
-            return new TrackerProductViewModel(product, _eventBus, _agentRepo,
-                _productPriceMng, _productRepo, _statusProvider, _ui);
+            return new TrackerProductViewModel(product, _eventBus, _commandBus, _agentQuery,
+                _productQuery, _statusProvider, _ui);
         }
     }
 }

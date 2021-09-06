@@ -4,10 +4,13 @@ using System.Linq;
 using System.Reactive;
 using System.Reactive.Subjects;
 using AutoFixture;
+using Genius.Atom.Infrastructure.Commands;
+using Genius.Atom.UI.Forms;
+using Genius.Atom.UI.Forms.TestingUtil;
+using Genius.PriceChecker.Core.Commands;
 using Genius.PriceChecker.Core.Messages;
 using Genius.PriceChecker.Core.Models;
 using Genius.PriceChecker.Core.Repositories;
-using Genius.Atom.UI.Forms;
 using Genius.PriceChecker.UI.Helpers;
 using Genius.PriceChecker.UI.ViewModels;
 using Moq;
@@ -17,10 +20,11 @@ namespace Genius.PriceChecker.UI.Tests.ViewModels
 {
   public class TrackerViewModelTests : TestBase
     {
-        private readonly Mock<IProductRepository> _productRepoMock = new();
+        private readonly Mock<IProductQueryService> _productQueryMock = new();
         private readonly Mock<IViewModelFactory> _vmFactoryMock = new();
         private readonly Mock<IUserInteraction> _uiMock = new();
         private readonly Mock<ITrackerScanContext> _scanContextMock = new();
+        private readonly Mock<ICommandBus> _commandBusMock = new();
 
         // Session values:
         private readonly Subject<ProductScanStartedEvent> _productScanStartedEventSubject;
@@ -141,7 +145,7 @@ namespace Genius.PriceChecker.UI.Tests.ViewModels
 
             // Verify
             Assert.False(sut.IsAddEditProductVisible);
-            _productRepoMock.Verify(x => x.GetAll(), Times.Exactly(2));
+            _productQueryMock.Verify(x => x.GetAll(), Times.Exactly(2));
         }
 
         [Fact]
@@ -212,7 +216,7 @@ namespace Genius.PriceChecker.UI.Tests.ViewModels
             Assert.False(sut.IsAddEditProductVisible);
             Assert.DoesNotContain(sut.Products, x => x.Id == deletedProductId);
             Assert.Equal(products.Count - 1, sut.Products.Count);
-            _productRepoMock.Verify(x => x.Delete(deletedProductId));
+            _commandBusMock.Verify(x => x.SendAsync(It.Is<ProductDeleteCommand>(c => c.ProductId == deletedProductId)));
         }
 
         [Fact]
@@ -233,7 +237,7 @@ namespace Genius.PriceChecker.UI.Tests.ViewModels
             Assert.False(sut.IsAddEditProductVisible);
             Assert.Contains(sut.Products, x => x.Id == deletingProductId);
             Assert.Equal(products.Count, sut.Products.Count);
-            _productRepoMock.Verify(x => x.Delete(deletingProductId), Times.Never);
+            _commandBusMock.Verify(x => x.SendAsync(It.IsAny<ProductDeleteCommand>()), Times.Never);
         }
 
         [Fact]
@@ -250,7 +254,7 @@ namespace Genius.PriceChecker.UI.Tests.ViewModels
             // Verify
             Assert.False(sut.IsAddEditProductVisible);
             Assert.Equal(products.Count, sut.Products.Count);
-            _productRepoMock.Verify(x => x.Delete(It.IsAny<Guid>()), Times.Never);
+            _commandBusMock.Verify(x => x.SendAsync(It.IsAny<ProductDeleteCommand>()), Times.Never);
             _uiMock.Verify(x => x.AskForConfirmation(It.IsAny<string>(), It.IsAny<string>()), Times.Never);
         }
 
@@ -335,14 +339,15 @@ namespace Genius.PriceChecker.UI.Tests.ViewModels
 
         private TrackerViewModel CreateSystemUnderTest()
         {
-            return new TrackerViewModel(EventBusMock.Object, _productRepoMock.Object, _vmFactoryMock.Object,
-                _uiMock.Object, _scanContextMock.Object);
+            return new TrackerViewModel(EventBusMock.Object, _productQueryMock.Object,
+                _vmFactoryMock.Object, _uiMock.Object, _scanContextMock.Object,
+                _commandBusMock.Object);
         }
 
         private ICollection<Product> SampleProducts()
         {
             var products = Fixture.CreateMany<Product>().ToList();
-            _productRepoMock.Setup(x => x.GetAll()).Returns(products);
+            _productQueryMock.Setup(x => x.GetAll()).Returns(products);
             return products;
         }
     }

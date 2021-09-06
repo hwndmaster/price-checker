@@ -1,6 +1,7 @@
 using System;
 using System.Reactive.Subjects;
 using AutoFixture;
+using Genius.Atom.UI.Forms.TestingUtil;
 using Genius.PriceChecker.Core.Messages;
 using Genius.PriceChecker.Core.Models;
 using Genius.PriceChecker.UI.Helpers;
@@ -8,9 +9,8 @@ using Xunit;
 
 namespace Genius.PriceChecker.UI.Tests.Helpers
 {
-  public class TrackerScanContextTests : TestBase
+    public class TrackerScanContextTests : TestBase
     {
-        private readonly Fixture _fixture = new();
         private readonly TrackerScanContext _sut;
 
         // Session values:
@@ -92,7 +92,7 @@ namespace Genius.PriceChecker.UI.Tests.Helpers
         public void NotifyProgressChange__When_ScannedWithErrors__Reports_about_errors()
         {
             // Arrange
-            _sut.NotifyStarted(_fixture.Create<int>());
+            _sut.NotifyStarted(Fixture.Create<int>());
 
             // Act
             _sut.NotifyProgressChange(ProductScanStatus.ScannedWithErrors);
@@ -106,7 +106,7 @@ namespace Genius.PriceChecker.UI.Tests.Helpers
         public void NotifyProgressChange__When_ScannedNewLowest__Reports_about_new_lowest()
         {
             // Arrange
-            _sut.NotifyStarted(_fixture.Create<int>());
+            _sut.NotifyStarted(Fixture.Create<int>());
 
             // Act
             _sut.NotifyProgressChange(ProductScanStatus.ScannedNewLowest);

@@ -8,5 +8,6 @@
     "coverage-gutters.coverageFileNames": [
         "lcov.info"
     ],
-    "dotnet-test-explorer.autoWatch": true
+    "dotnet-test-explorer.autoWatch": true,
+    "editor.tabSize": 4
 }

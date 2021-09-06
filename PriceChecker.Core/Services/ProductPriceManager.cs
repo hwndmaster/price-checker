@@ -21,6 +21,7 @@ namespace Genius.PriceChecker.Core.Services
     internal sealed class ProductPriceManager : IProductPriceManager
     {
         private readonly IProductRepository _productRepo;
+        private readonly IProductQueryService _productQuery;
         private readonly IPriceSeeker _priceSeeker;
         private readonly IEventBus _eventBus;
         private readonly ISettingsRepository _settingsRepo;
@@ -32,11 +33,13 @@ namespace Genius.PriceChecker.Core.Services
         private readonly TimeSpan RecentPeriod = TimeSpan.FromHours(3);
 
         public ProductPriceManager(IProductRepository productRepo,
+            IProductQueryService productQuery,
             IPriceSeeker priceSeeker, IEventBus eventBus,
             ISettingsRepository settingsRepo,
             ILogger<ProductPriceManager> logger)
         {
             _productRepo = productRepo;
+            _productQuery = productQuery;
             _priceSeeker = priceSeeker;
             _eventBus = eventBus;
             _settingsRepo = settingsRepo;
@@ -54,7 +57,7 @@ namespace Genius.PriceChecker.Core.Services
 
         public void EnqueueScan(Guid productId)
         {
-            var product = _productRepo.FindById(productId);
+            var product = _productQuery.FindById(productId);
             if (product == null)
             {
                 _logger.LogError($"Product with ID '{productId}' was not found.");
@@ -88,7 +91,7 @@ namespace Genius.PriceChecker.Core.Services
                     List<Task> tasks = new();
                     if (_settingsRepo.Get().AutoRefreshEnabled)
                     {
-                        var products = _productRepo.GetAll().ToList();
+                        var products = _productQuery.GetAll().ToList();
                         _eventBus.Publish(new ProductAutoScanStartedEvent(products.Count));
                         foreach (var product in products)
                             tasks.Add(EnqueueScan(product, ignoreRecentDate: false, cancel));

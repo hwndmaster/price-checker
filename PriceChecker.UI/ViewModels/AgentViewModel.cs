@@ -11,16 +11,17 @@ namespace Genius.PriceChecker.UI.ViewModels
 {
     public interface IAgentViewModel : IViewModel, IHasDirtyFlag, ISelectable
     {
-        Agent CreateEntity();
+        Agent GetOrCreateEntity();
         void ResetForm();
 
-        string Id { get; }
+        Guid? Id { get; }
+        string Key { get; }
     }
 
     internal sealed class AgentViewModel : ViewModelBase, IAgentViewModel
     {
         private readonly IAgentsViewModel _owner;
-        private readonly Agent _agent;
+        private Agent _agent;
 
         public AgentViewModel(IAgentsViewModel owner, Agent agent)
         {
@@ -30,10 +31,11 @@ namespace Genius.PriceChecker.UI.ViewModels
             ResetForm(true);
         }
 
-        public Agent CreateEntity()
+        public Agent GetOrCreateEntity()
         {
-            return new Agent {
-                Id = Id,
+            return _agent ??= new Agent {
+                Id = Guid.NewGuid(),
+                Key = Key,
                 Url = Url,
                 PricePattern = PricePattern,
                 DecimalDelimiter = DecimalDelimiter
@@ -59,7 +61,7 @@ namespace Genius.PriceChecker.UI.ViewModels
 
             void init()
             {
-                Id = _agent?.Id;
+                Key = _agent?.Key;
                 Url = _agent?.Url;
                 PricePattern = _agent?.PricePattern;
                 DecimalDelimiter = _agent?.DecimalDelimiter ?? '.';
@@ -67,7 +69,10 @@ namespace Genius.PriceChecker.UI.ViewModels
         }
 
         [Browsable(false)]
-        public IEnumerable<string> UsedIds => _owner.Agents.Select(x => x.Id);
+        public IEnumerable<string> UsedKeys => _owner.Agents.Select(x => x.Key);
+
+        [Browsable(false)]
+        public Guid? Id => _agent?.Id;
 
         public bool IsDirty
         {
@@ -76,8 +81,8 @@ namespace Genius.PriceChecker.UI.ViewModels
         }
 
         [ValidationRule(typeof(ValueCannotBeEmptyValidationRule))]
-        [ValidationRule(typeof(MustBeUniqueValidationRule), nameof(UsedIds))]
-        public string Id
+        [ValidationRule(typeof(MustBeUniqueValidationRule), nameof(UsedKeys))]
+        public string Key
         {
             get => GetOrDefault<string>();
             set => RaiseAndSetIfChanged(value);

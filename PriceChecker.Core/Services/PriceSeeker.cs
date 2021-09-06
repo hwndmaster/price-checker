@@ -3,13 +3,15 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
+using Genius.Atom.Infrastructure.Io;
+using Genius.Atom.Infrastructure.Net;
 using Genius.PriceChecker.Core.Messages;
 using Genius.PriceChecker.Core.Models;
 using Microsoft.Extensions.Logging;
 
 namespace Genius.PriceChecker.Core.Services
 {
-  public interface IPriceSeeker
+    public interface IPriceSeeker
     {
         Task<PriceSeekResult[]> SeekAsync(Product product, CancellationToken cancel);
     }
@@ -17,14 +19,14 @@ namespace Genius.PriceChecker.Core.Services
     internal sealed class PriceSeeker : IPriceSeeker
     {
         private readonly ITrickyHttpClient _trickyHttpClient;
-        private readonly IIoService _io;
+        private readonly IFileService _io;
         private readonly ILogger<PriceSeeker> _logger;
 
         private const char DEFAULT_DECIMAL_DELIMITER = '.';
 
         private static readonly object _locker = new();
 
-        public PriceSeeker(ITrickyHttpClient trickyHttpClient, IIoService io, ILogger<PriceSeeker> logger)
+        public PriceSeeker(ITrickyHttpClient trickyHttpClient, IFileService io, ILogger<PriceSeeker> logger)
         {
             _trickyHttpClient = trickyHttpClient;
             _io = io;
@@ -51,7 +53,7 @@ namespace Genius.PriceChecker.Core.Services
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, $"Failed loading content for source `{productSource.AgentId}`, url = `{url}`");
+                _logger.LogError(ex, $"Failed loading content for source `{productSource.AgentKey}`, url = `{url}`");
                 throw;
             }
             if (content == null)
@@ -81,7 +83,7 @@ namespace Genius.PriceChecker.Core.Services
 
             return new PriceSeekResult {
                 ProductSourceId = productSource.Id,
-                AgentId = agent.Id,
+                AgentKey = agent.Key,
                 Price = price
             };
 
