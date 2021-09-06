@@ -44,7 +44,7 @@ namespace Genius.PriceChecker.UI.ViewModels
                     ui.ShowWarning("No agent selected.");
                     return;
                 }
-                if (!ui.AskForConfirmation($"Are you sure you want to delete the selected '{selectedAgent.Id}' agent?", "Delete agent"))
+                if (!ui.AskForConfirmation($"Are you sure you want to delete the selected '{selectedAgent.Key}' agent?", "Delete agent"))
                     return;
 
                 Agents.Remove(selectedAgent);

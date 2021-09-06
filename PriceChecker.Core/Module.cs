@@ -15,13 +15,15 @@ namespace Genius.PriceChecker.Core
         public static void Configure(IServiceCollection services)
         {
             // Repositories
-            services.AddSingleton<IAgentRepository, AgentRepository>();
-            services.AddSingleton<IProductRepository, ProductRepository>();
+            services.AddSingleton<AgentRepository>();
+            services.AddSingleton<ProductRepository>();
+            services.AddSingleton<IAgentRepository>(sp => sp.GetService<AgentRepository>());
+            services.AddSingleton<IProductRepository>(sp => sp.GetService<ProductRepository>());
             services.AddSingleton<ISettingsRepository, SettingsRepository>();
 
             // Query services
-            services.AddSingleton<IAgentQueryService, AgentRepository>();
-            services.AddSingleton<IProductQueryService, ProductRepository>();
+            services.AddSingleton<IAgentQueryService>(sp => sp.GetService<AgentRepository>());
+            services.AddSingleton<IProductQueryService>(sp => sp.GetService<ProductRepository>());
 
             // Services
             services.AddTransient<IPriceSeeker, PriceSeeker>();
