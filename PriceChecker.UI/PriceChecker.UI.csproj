@@ -49,10 +49,10 @@
 
     <!-- 3rd-party dependencies from Atom.UI.Forms -->
     <Reference Include="DotNetProjects.WpfToolkit.Input">
-      <HintPath>..\..\atom\Atom.UI.Forms.TestingUtil\bin\Debug\net5.0-windows\DotNetProjects.Input.Toolkit.dll</HintPath>
+      <HintPath>..\..\atom\Atom.UI.Forms.Demo\bin\Debug\net5.0-windows\DotNetProjects.Input.Toolkit.dll</HintPath>
     </Reference>
     <Reference Include="WpfAnimatedGif">
-      <HintPath>..\..\atom\Atom.UI.Forms.TestingUtil\bin\Debug\net5.0-windows\WpfAnimatedGif.dll</HintPath>
+      <HintPath>..\..\atom\Atom.UI.Forms.Demo\bin\Debug\net5.0-windows\WpfAnimatedGif.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup Condition="'$(Configuration)|$(Platform)' == 'Release|AnyCPU'">

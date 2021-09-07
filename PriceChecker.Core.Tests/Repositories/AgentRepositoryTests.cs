@@ -13,7 +13,7 @@ using Xunit;
 
 namespace Genius.PriceChecker.Core.Tests.Repositories
 {
-  public class AgentRepositoryTests
+    public class AgentRepositoryTests
     {
         private readonly AgentRepository _sut;
         private readonly Fixture _fixture = new();
@@ -31,16 +31,8 @@ namespace Genius.PriceChecker.Core.Tests.Repositories
 
             _sut = new AgentRepository(_eventBusMock.Object, _persisterMock.Object,
                 Mock.Of<ILogger<AgentRepository>>());
-        }
 
-        [Fact]
-        public void GetAll__Returns_all_loaded_agents_ordered_by_id()
-        {
-            // Act
-            var result = _sut.GetAll();
-
-            // Verify
-            Assert.Equal(_agents.OrderBy(x => x.Id), result);
+            _sut.GetAll(); // To trigger the initializer
         }
 
         [Fact]
@@ -87,15 +79,17 @@ namespace Genius.PriceChecker.Core.Tests.Repositories
         {
             // Arrange
             var newAgents = _fixture.CreateMany<Agent>().ToArray();
+            var previousAgents = _sut.GetAll().ToArray();
 
             // Act
-            _sut.Store(newAgents);
+            _sut.Overwrite(newAgents);
 
             // Verify
             Assert.False(_sut.GetAll().Except(newAgents).Any());
             _persisterMock.Verify(x => x.Store(It.IsAny<string>(),
                 It.Is((List<Agent> p) => p.SequenceEqual(newAgents))));
-            _eventBusMock.Verify(x => x.Publish(It.IsAny<EntitiesUpdatedEvent>()), Times.Once);
+            _eventBusMock.Verify(x => x.Publish(It.Is<EntitiesAddedEvent>(e => e.Entities.Count == newAgents.Length)), Times.Once);
+            _eventBusMock.Verify(x => x.Publish(It.Is<EntitiesDeletedEvent>(e => e.Entities.Count == previousAgents.Length)), Times.Once);
         }
     }
 }

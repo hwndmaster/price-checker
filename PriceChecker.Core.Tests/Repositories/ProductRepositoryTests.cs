@@ -31,7 +31,7 @@ namespace Genius.PriceChecker.Core.Tests.Repositories
                 .Select(x => new Agent { Key = x.AgentKey }).ToList();
 
             foreach (var agent in _agents)
-                _agentQueryMock.Setup(x => x.FindById(agent.Id)).Returns(agent);
+                _agentQueryMock.Setup(x => x.FindByKey(agent.Key)).Returns(agent);
 
             _persisterMock.Setup(x => x.LoadCollection<Product>(It.IsAny<string>()))
                 .Returns(_products.ToArray());
@@ -39,6 +39,8 @@ namespace Genius.PriceChecker.Core.Tests.Repositories
             _sut = new ProductRepository(_eventBusMock.Object, _persisterMock.Object,
                 _agentQueryMock.Object,
                 Mock.Of<ILogger<ProductRepository>>());
+
+            _sut.GetAll(); // To trigger the initializer
         }
 
         [Fact]
