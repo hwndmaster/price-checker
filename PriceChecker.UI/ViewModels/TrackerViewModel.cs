@@ -8,8 +8,6 @@ using Genius.PriceChecker.Core.Messages;
 using Genius.PriceChecker.Core.Repositories;
 using Genius.Atom.Infrastructure.Events;
 using Genius.Atom.UI.Forms;
-using Genius.Atom.UI.Forms.Attributes;
-using Genius.Atom.UI.Forms.ViewModels;
 using Genius.PriceChecker.UI.Helpers;
 using ReactiveUI;
 using Genius.Atom.Infrastructure.Commands;

@@ -1,6 +1,5 @@
 ﻿[
   {
-    "Id": "6a52bd42-d19e-4572-9295-28e01e7e7417",
     "Category": "Car",
     "Name": "Koch Chemie ReactiveWheelCleaner",
     "Description": "\u0421\u0440\u0435\u0434\u0441\u0442\u0432\u043E \u0434\u043B\u044F \u0447\u0438\u0441\u0442\u043A\u0438 \u043A\u043E\u043B\u0451\u0441\u043D\u044B\u0445 \u0434\u0438\u0441\u043A\u043E\u0432",
@@ -13,19 +12,19 @@
     ],
     "Lowest": {
       "ProductSourceId": "60b9ceed-b34c-45ad-a142-af0ec5491d91",
-      "Price": 20.15,
-      "FoundDate": "2021-06-20T19:59:10.0234789+02:00"
+      "Price": 15.90,
+      "FoundDate": "2021-09-29T20:55:22.756699+02:00"
     },
     "Recent": [
       {
         "ProductSourceId": "60b9ceed-b34c-45ad-a142-af0ec5491d91",
-        "Price": 22.99,
-        "FoundDate": "2021-09-05T12:42:42.5166281+02:00"
+        "Price": 15.90,
+        "FoundDate": "2021-09-29T20:55:22.756699+02:00"
       }
-    ]
+    ],
+    "Id": "6a52bd42-d19e-4572-9295-28e01e7e7417"
   },
   {
-    "Id": "5486193d-b417-4936-b71c-be250317dc81",
     "Category": "Household",
     "Name": "IROBOT Roomba i7\u002B (i7558)",
     "Description": null,
@@ -43,24 +42,24 @@
     ],
     "Lowest": {
       "ProductSourceId": "ebeaa98d-aedb-4bb8-b539-1de7e1ee25cc",
-      "Price": 658,
-      "FoundDate": "2021-06-04T19:19:37.5821656+02:00"
+      "Price": 655.2,
+      "FoundDate": "2021-09-29T20:55:17.8470223+02:00"
     },
     "Recent": [
       {
         "ProductSourceId": "4753f887-5b20-41de-a06b-3c159262a273",
-        "Price": 739,
-        "FoundDate": "2021-09-05T12:42:28.7320067+02:00"
+        "Price": 679,
+        "FoundDate": "2021-09-29T20:55:17.8470177+02:00"
       },
       {
         "ProductSourceId": "ebeaa98d-aedb-4bb8-b539-1de7e1ee25cc",
-        "Price": 699,
-        "FoundDate": "2021-09-05T12:42:28.732012+02:00"
+        "Price": 655.2,
+        "FoundDate": "2021-09-29T20:55:17.8470223+02:00"
       }
-    ]
+    ],
+    "Id": "5486193d-b417-4936-b71c-be250317dc81"
   },
   {
-    "Id": "e10533c4-8e07-443c-b751-52020da1e7ee",
     "Category": "Gaming",
     "Name": "Xbox Elite 2 Controller",
     "Description": null,
@@ -83,24 +82,24 @@
     ],
     "Lowest": {
       "ProductSourceId": "d786a796-b93c-468b-8fda-a2892d72802a",
-      "Price": 161.99,
-      "FoundDate": "2021-09-05T12:42:44.8578396+02:00"
+      "Price": 159.0,
+      "FoundDate": "2021-09-29T20:55:18.0914128+02:00"
     },
     "Recent": [
       {
         "ProductSourceId": "3b27b7fc-369d-4f90-ba4c-f209c1a0153b",
         "Price": 176.95,
-        "FoundDate": "2021-09-05T12:42:44.8578345+02:00"
+        "FoundDate": "2021-09-29T20:55:18.0914075+02:00"
       },
       {
         "ProductSourceId": "d786a796-b93c-468b-8fda-a2892d72802a",
-        "Price": 161.99,
-        "FoundDate": "2021-09-05T12:42:44.8578396+02:00"
+        "Price": 159.0,
+        "FoundDate": "2021-09-29T20:55:18.0914128+02:00"
       }
-    ]
+    ],
+    "Id": "e10533c4-8e07-443c-b751-52020da1e7ee"
   },
   {
-    "Id": "1b60bf08-2d90-4f85-99ce-3d26d19bb696",
     "Category": "Lego",
     "Name": "Lego Mindstorms EV3 31313",
     "Description": null,
@@ -125,17 +124,17 @@
       {
         "ProductSourceId": "5f5a72a4-d6ad-4cab-9fb9-9d5839fa2a03",
         "Price": 474.95,
-        "FoundDate": "2021-09-05T12:42:37.8786059+02:00"
+        "FoundDate": "2021-09-29T20:55:15.5162843+02:00"
       },
       {
         "ProductSourceId": "923b83ed-3fcb-43ca-80b0-0e9e717ec9c6",
         "Price": 449.9,
-        "FoundDate": "2021-09-05T12:42:37.878611+02:00"
+        "FoundDate": "2021-09-29T20:55:15.5162897+02:00"
       }
-    ]
+    ],
+    "Id": "1b60bf08-2d90-4f85-99ce-3d26d19bb696"
   },
   {
-    "Id": "fa6bca3a-0e5b-4efd-acc0-b20fc07fd269",
     "Category": "Action cam",
     "Name": "Sony FDR-X3000R",
     "Description": null,
@@ -162,10 +161,10 @@
         "Price": 611.78,
         "FoundDate": "2021-08-13T22:17:53.0693481+02:00"
       }
-    ]
+    ],
+    "Id": "fa6bca3a-0e5b-4efd-acc0-b20fc07fd269"
   },
   {
-    "Id": "76ed6168-fbae-4fb3-a572-bc70c4d1e567",
     "Category": "Action cam",
     "Name": "Garmin VIRB Ultra 30",
     "Description": null,
@@ -192,10 +191,10 @@
         "Price": 389.95,
         "FoundDate": "2021-09-05T12:43:05.9642497+02:00"
       }
-    ]
+    ],
+    "Id": "76ed6168-fbae-4fb3-a572-bc70c4d1e567"
   },
   {
-    "Id": "40467c0b-d5ff-45d6-b1b7-30d8ab344dc8",
     "Category": "Action cam",
     "Name": "YI 4K \u002B",
     "Description": null,
@@ -217,10 +216,10 @@
         "Price": 236.80,
         "FoundDate": "2021-06-20T19:58:56.4396029+02:00"
       }
-    ]
+    ],
+    "Id": "40467c0b-d5ff-45d6-b1b7-30d8ab344dc8"
   },
   {
-    "Id": "9f051b51-640a-4dd5-8a5b-1fb9996e7f91",
     "Category": "Action cam",
     "Name": "Xiaomi YI 4K",
     "Description": null,
@@ -242,10 +241,10 @@
         "Price": 349.99,
         "FoundDate": "2021-08-13T22:18:13.1946227+02:00"
       }
-    ]
+    ],
+    "Id": "9f051b51-640a-4dd5-8a5b-1fb9996e7f91"
   },
   {
-    "Id": "e115a648-8c10-42b5-a7d2-d304ee13b65c",
     "Category": "Action cam",
     "Name": "GoPro HERO 7 Black",
     "Description": null,
@@ -267,10 +266,10 @@
         "Price": 279.99,
         "FoundDate": "2021-08-13T22:17:08.7208269+02:00"
       }
-    ]
+    ],
+    "Id": "e115a648-8c10-42b5-a7d2-d304ee13b65c"
   },
   {
-    "Id": "2a1ee1b8-aab3-4f08-b81f-ab5479e690ee",
     "Category": "Action cam",
     "Name": "GoPro HERO 8",
     "Description": null,
@@ -292,10 +291,10 @@
         "Price": 299.99,
         "FoundDate": "2021-09-05T12:42:30.0347677+02:00"
       }
-    ]
+    ],
+    "Id": "2a1ee1b8-aab3-4f08-b81f-ab5479e690ee"
   },
   {
-    "Id": "cf9d930f-081e-4d86-b037-8623917619f5",
     "Category": "Action cam",
     "Name": "GoPro HERO 9",
     "Description": null,
@@ -327,10 +326,10 @@
         "Price": 365,
         "FoundDate": "2021-09-05T12:42:35.4458115+02:00"
       }
-    ]
+    ],
+    "Id": "cf9d930f-081e-4d86-b037-8623917619f5"
   },
   {
-    "Id": "f7e83340-1fc1-45b5-b6b5-c449c7ddcb0a",
     "Category": "Action cam",
     "Name": "DJI Osmo Action",
     "Description": null,
@@ -352,10 +351,10 @@
         "Price": 239.0,
         "FoundDate": "2021-09-05T12:42:40.2080246+02:00"
       }
-    ]
+    ],
+    "Id": "f7e83340-1fc1-45b5-b6b5-c449c7ddcb0a"
   },
   {
-    "Id": "19ebfdd9-7870-4169-a357-876430934f53",
     "Category": "Gadgets",
     "Name": "Sony WF-1000XM4",
     "Description": "",
@@ -384,24 +383,55 @@
     "Lowest": {
       "ProductSourceId": "f29d4d3a-e932-48d5-b979-3d9f91689137",
       "Price": 277.0,
-      "FoundDate": "2021-09-05T12:42:47.797209+02:00"
+      "FoundDate": "2021-09-29T20:55:08.2090506+02:00"
     },
     "Recent": [
       {
+        "ProductSourceId": "66a75039-0fcf-4407-8dc6-1065ad4ae925",
+        "Price": 279,
+        "FoundDate": "2021-09-29T20:55:08.2090437+02:00"
+      },
+      {
         "ProductSourceId": "f29d4d3a-e932-48d5-b979-3d9f91689137",
         "Price": 277.0,
-        "FoundDate": "2021-09-05T12:42:47.797209+02:00"
+        "FoundDate": "2021-09-29T20:55:08.2090506+02:00"
       },
       {
         "ProductSourceId": "af8a851b-a524-4849-857c-0af66bb8f404",
         "Price": 279.00,
-        "FoundDate": "2021-09-05T12:42:47.7972168+02:00"
+        "FoundDate": "2021-09-29T20:55:08.2090513+02:00"
       },
       {
         "ProductSourceId": "9417f567-36ee-421c-acd3-d2428d60076f",
         "Price": 279.00,
-        "FoundDate": "2021-09-05T12:42:47.7972174+02:00"
+        "FoundDate": "2021-09-29T20:55:08.2090518+02:00"
       }
-    ]
+    ],
+    "Id": "19ebfdd9-7870-4169-a357-876430934f53"
+  },
+  {
+    "Category": "Gadgets",
+    "Name": "Bowers \u0026 Wilkins PI7",
+    "Description": null,
+    "Sources": [
+      {
+        "Id": "87fc8175-1b49-49e1-af9f-cdaeb9ad3a39",
+        "AgentKey": "tweakers.net",
+        "AgentArgument": "1695126/bowers-en-wilkins-pi7-zwart.html"
+      }
+    ],
+    "Lowest": {
+      "ProductSourceId": "87fc8175-1b49-49e1-af9f-cdaeb9ad3a39",
+      "Price": 399,
+      "FoundDate": "2021-09-29T21:57:50.980999+02:00"
+    },
+    "Recent": [
+      {
+        "ProductSourceId": "87fc8175-1b49-49e1-af9f-cdaeb9ad3a39",
+        "Price": 399,
+        "FoundDate": "2021-09-29T21:57:50.980999+02:00"
+      }
+    ],
+    "Id": "99f1c51b-588f-48e3-ae0f-a53d94ffaf48"
   }
 ]

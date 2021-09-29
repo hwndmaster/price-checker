@@ -4,8 +4,6 @@ using System.ComponentModel.DataAnnotations;
 using System.Windows;
 using Genius.PriceChecker.Core.Models;
 using Genius.Atom.UI.Forms;
-using Genius.Atom.UI.Forms.Attributes;
-using Genius.Atom.UI.Forms.ViewModels;
 using Genius.PriceChecker.UI.Helpers;
 
 namespace Genius.PriceChecker.UI.ViewModels

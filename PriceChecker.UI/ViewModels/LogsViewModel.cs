@@ -5,7 +5,6 @@ using System.Windows;
 using Genius.Atom.Infrastructure.Events;
 using Genius.Atom.Infrastructure.Logging;
 using Genius.Atom.UI.Forms;
-using Genius.Atom.UI.Forms.ViewModels;
 using Microsoft.Extensions.Logging;
 
 namespace Genius.PriceChecker.UI.ViewModels

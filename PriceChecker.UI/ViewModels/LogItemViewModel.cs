@@ -2,8 +2,6 @@ using System.ComponentModel;
 using System.Windows.Forms;
 using System.Windows.Media.Imaging;
 using Genius.Atom.UI.Forms;
-using Genius.Atom.UI.Forms.ViewModels;
-using Genius.Atom.UI.Forms.Attributes;
 using Microsoft.Extensions.Logging;
 
 namespace Genius.PriceChecker.UI.ViewModels

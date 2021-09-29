@@ -33,6 +33,8 @@ namespace Genius.PriceChecker.Core
             // Command Handlers
             services.AddScoped<ICommandHandler<AgentDeleteCommand>, AgentDeleteCommandHandler>();
             services.AddScoped<ICommandHandler<AgentsStoreWithOverwriteCommand>, AgentsStoreWithOverwriteCommandHandler>();
+            services.AddScoped<ICommandHandler<ProductCreateCommand, Guid>, ProductCreateOrUpdateCommandHandler>();
+            services.AddScoped<ICommandHandler<ProductUpdateCommand>, ProductCreateOrUpdateCommandHandler>();
             services.AddScoped<ICommandHandler<ProductDeleteCommand>, ProductDeleteCommandHandler>();
             services.AddScoped<ICommandHandler<ProductDropPricesCommand>, ProductDropPricesCommandHandler>();
             services.AddScoped<ICommandHandler<ProductEnqueueScanCommand>, ProductEnqueueScanCommandHandler>();

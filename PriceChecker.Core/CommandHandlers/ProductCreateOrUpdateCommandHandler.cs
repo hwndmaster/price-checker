@@ -1,3 +1,4 @@
+using System;
 using System.Threading.Tasks;
 using Genius.Atom.Infrastructure.Commands;
 using Genius.Atom.Infrastructure.Events;
@@ -10,7 +11,7 @@ using Genius.PriceChecker.Core.Repositories;
 namespace Genius.PriceChecker.Core.CommandHandlers
 {
     internal sealed class ProductCreateOrUpdateCommandHandler:
-        ICommandHandler<ProductCreateCommand>,
+        ICommandHandler<ProductCreateCommand, Guid>,
         ICommandHandler<ProductUpdateCommand>
     {
         private readonly IProductRepository _productRepo;
@@ -24,7 +25,7 @@ namespace Genius.PriceChecker.Core.CommandHandlers
             _eventBus = eventBus;
         }
 
-        public Task ProcessAsync(ProductCreateCommand command)
+        public Task<Guid> ProcessAsync(ProductCreateCommand command)
         {
             var product = new Product();
             UpdateProperties(product, command);
@@ -32,7 +33,7 @@ namespace Genius.PriceChecker.Core.CommandHandlers
 
             _eventBus.Publish(new ProductsAffectedEvent());
 
-            return Task.CompletedTask;
+            return Task.FromResult(product.Id);
         }
 
         public Task ProcessAsync(ProductUpdateCommand command)

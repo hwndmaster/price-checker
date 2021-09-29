@@ -3,8 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using Genius.PriceChecker.Core.Models;
-using Genius.Atom.UI.Forms.Attributes;
-using Genius.Atom.UI.Forms.ViewModels;
+using Genius.Atom.UI.Forms;
 using Genius.PriceChecker.UI.Validation;
 
 namespace Genius.PriceChecker.UI.ViewModels

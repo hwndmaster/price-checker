@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Windows.Shell;
-using Genius.Atom.UI.Forms.ViewModels;
+using Genius.Atom.UI.Forms;
 using Genius.PriceChecker.UI.Helpers;
 using Hardcodet.Wpf.TaskbarNotification;
 

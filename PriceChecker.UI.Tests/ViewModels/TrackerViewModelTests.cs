@@ -21,7 +21,7 @@ namespace Genius.PriceChecker.UI.Tests.ViewModels
   public class TrackerViewModelTests : TestBase
     {
         private readonly Mock<IProductQueryService> _productQueryMock = new();
-        private readonly Mock<IViewModelFactory> _vmFactoryMock = new();
+        private readonly Mock<UI.ViewModels.IViewModelFactory> _vmFactoryMock = new();
         private readonly Mock<IUserInteraction> _uiMock = new();
         private readonly Mock<ITrackerScanContext> _scanContextMock = new();
         private readonly Mock<ICommandBus> _commandBusMock = new();

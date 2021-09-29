@@ -11,8 +11,6 @@ using System.Windows.Media.Imaging;
 using Genius.Atom.Infrastructure.Commands;
 using Genius.Atom.Infrastructure.Events;
 using Genius.Atom.UI.Forms;
-using Genius.Atom.UI.Forms.Attributes;
-using Genius.Atom.UI.Forms.ViewModels;
 using Genius.PriceChecker.Core.Commands;
 using Genius.PriceChecker.Core.Messages;
 using Genius.PriceChecker.Core.Models;

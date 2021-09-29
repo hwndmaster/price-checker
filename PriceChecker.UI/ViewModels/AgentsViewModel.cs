@@ -3,7 +3,6 @@ using System.Linq;
 using Genius.PriceChecker.Core.Models;
 using Genius.PriceChecker.Core.Repositories;
 using Genius.Atom.UI.Forms;
-using Genius.Atom.UI.Forms.ViewModels;
 using Genius.PriceChecker.UI.Helpers;
 using Genius.Atom.Infrastructure.Commands;
 using Genius.PriceChecker.Core.Commands;
