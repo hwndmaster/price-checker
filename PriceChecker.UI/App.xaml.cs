@@ -1,83 +1,82 @@
-﻿using System;
+﻿global using System;
+global using Genius.Atom.Infrastructure;
+
 using System.Diagnostics.CodeAnalysis;
 using System.Windows;
 using Genius.PriceChecker.Core.Services;
-using Genius.Atom.Infrastructure.Events;
-using Genius.Atom.Infrastructure.Logging;
 using Genius.PriceChecker.UI.Helpers;
 using Genius.PriceChecker.UI.ViewModels;
 using Genius.PriceChecker.UI.Views;
 using Hardcodet.Wpf.TaskbarNotification;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Genius.PriceChecker.UI
+namespace Genius.PriceChecker.UI;
+
+[ExcludeFromCodeCoverage]
+public partial class App : Application
 {
-    [ExcludeFromCodeCoverage]
-    public partial class App : Application
+    private TaskbarIcon _notifyIcon;
+
+    public static IServiceProvider ServiceProvider { get; private set; }
+
+    protected override void OnStartup(StartupEventArgs e)
     {
-        private TaskbarIcon _notifyIcon;
+        base.OnStartup(e);
 
-        public static IServiceProvider ServiceProvider { get; private set; }
+        _notifyIcon = (TaskbarIcon) FindResource("NotifyIcon");
 
-        protected override void OnStartup(StartupEventArgs e)
-        {
-            base.OnStartup(e);
+        var serviceCollection = new ServiceCollection();
+        ConfigureServices(serviceCollection);
 
-            _notifyIcon = (TaskbarIcon) FindResource("NotifyIcon");
+        serviceCollection.AddSingleton<INotifyIconViewModel>((NotifyIconViewModel)_notifyIcon.DataContext);
 
-            var serviceCollection = new ServiceCollection();
-            ConfigureServices(serviceCollection);
+        ServiceProvider = serviceCollection.BuildServiceProvider();
+        Core.Module.Initialize(ServiceProvider);
+        Atom.UI.Forms.Module.Initialize(ServiceProvider);
 
-            serviceCollection.AddSingleton<INotifyIconViewModel>((NotifyIconViewModel)_notifyIcon.DataContext);
+        var mainWindow = ServiceProvider.GetRequiredService<MainWindow>();
+        mainWindow.Show();
+    }
 
-            ServiceProvider = serviceCollection.BuildServiceProvider();
-            Core.Module.Initialize(ServiceProvider);
-            Atom.UI.Forms.Module.Initialize(ServiceProvider);
+    protected override void OnExit(ExitEventArgs e)
+    {
+        base.OnExit(e);
 
-            var mainWindow = ServiceProvider.GetRequiredService<MainWindow>();
-            mainWindow.Show();
-        }
+        var manager = ServiceProvider.GetRequiredService<IProductPriceManager>();
+        manager.Dispose();
 
-        protected override void OnExit(ExitEventArgs e)
-        {
-            base.OnExit(e);
+        _notifyIcon.Dispose();
+    }
 
-            var manager = ServiceProvider.GetRequiredService<IProductPriceManager>();
-            manager.Dispose();
+    private static void ConfigureServices(IServiceCollection services)
+    {
+        Atom.Infrastructure.Module.Configure(services);
+        Core.Module.Configure(services);
 
-            _notifyIcon.Dispose();
-        }
+        // Framework:
+        services.AddLogging();
 
-        private static void ConfigureServices(IServiceCollection services)
-        {
-            Atom.Infrastructure.Module.Configure(services);
-            Core.Module.Configure(services);
+        // Views, View models, and the View model factory
+        services.AddTransient<IViewModelFactory, ViewModelFactory>();
+        services.AddTransient<MainWindow>();
+        services.AddTransient<IMainViewModel, MainViewModel>();
+        services.AddTransient<ITrackerViewModel, TrackerViewModel>();
+        services.AddTransient<ITrackerProductViewModel, TrackerProductViewModel>();
+        services.AddTransient<IAgentsViewModel, AgentsViewModel>();
+        services.AddTransient<IAgentViewModel, AgentViewModel>();
+        services.AddTransient<ISettingsViewModel, SettingsViewModel>();
+        services.AddTransient<ILogsViewModel, LogsViewModel>();
 
-            // Framework:
-            services.AddLogging();
+        // Services and Helpers:
+        services.AddTransient<IUserInteraction, UserInteraction>();
+        services.AddSingleton<ITrackerScanContext, TrackerScanContext>();
+    }
 
-            // Views, View models, and the View model factory
-            services.AddTransient<IViewModelFactory, ViewModelFactory>();
-            services.AddTransient<MainWindow>();
-            services.AddTransient<IMainViewModel, MainViewModel>();
-            services.AddTransient<ITrackerViewModel, TrackerViewModel>();
-            services.AddTransient<ITrackerProductViewModel, TrackerProductViewModel>();
-            services.AddTransient<IAgentsViewModel, AgentsViewModel>();
-            services.AddTransient<IAgentViewModel, AgentViewModel>();
-            services.AddTransient<ISettingsViewModel, SettingsViewModel>();
-            services.AddTransient<ILogsViewModel, LogsViewModel>();
-
-            // Services and Helpers:
-            services.AddTransient<IUserInteraction, UserInteraction>();
-            services.AddSingleton<ITrackerScanContext, TrackerScanContext>();
-        }
-
-        private void Application_DispatcherUnhandledException(object sender, System.Windows.Threading.DispatcherUnhandledExceptionEventArgs e)
-        {
+    private void Application_DispatcherUnhandledException(object sender, System.Windows.Threading.DispatcherUnhandledExceptionEventArgs e)
+    {
 #if !DEBUG
-            MessageBox.Show("An unhandled exception just occurred: " + e.Exception.Message, "Unhandled Exception", MessageBoxButton.OK, MessageBoxImage.Warning);
-            e.Handled = true;
+        MessageBox.Show("An unhandled exception just occurred: " + e.Exception.Message, "Unhandled Exception", MessageBoxButton.OK, MessageBoxImage.Warning);
+        e.Handled = true;
 #endif
-        }
     }
 }

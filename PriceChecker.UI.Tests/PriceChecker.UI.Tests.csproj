@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net5.0-windows</TargetFramework>
+    <TargetFramework>net6.0-windows</TargetFramework>
     <RootNamespace>Genius.PriceChecker.UI.Tests</RootNamespace>
     <IsPackable>false</IsPackable>
   </PropertyGroup>
@@ -12,21 +12,21 @@
 
   <ItemGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|AnyCPU'">
     <Reference Include="Genius.Atom.Infrastructure">
-      <HintPath>..\..\atom\Atom.Infrastructure\bin\Debug\net5.0\Genius.Atom.Infrastructure.dll</HintPath>
+      <HintPath>..\..\atom\Atom.Infrastructure\bin\Debug\net6.0\Genius.Atom.Infrastructure.dll</HintPath>
     </Reference>
     <Reference Include="Genius.Atom.UI.Forms">
-      <HintPath>..\..\atom\Atom.UI.Forms\bin\Debug\net5.0-windows\Genius.Atom.UI.Forms.dll</HintPath>
+      <HintPath>..\..\atom\Atom.UI.Forms\bin\Debug\net6.0-windows\Genius.Atom.UI.Forms.dll</HintPath>
     </Reference>
     <Reference Include="Genius.Atom.UI.Forms.TestingUtil">
-      <HintPath>..\..\atom\Atom.UI.Forms.TestingUtil\bin\Debug\net5.0-windows\Genius.Atom.UI.Forms.TestingUtil.dll</HintPath>
+      <HintPath>..\..\atom\Atom.UI.Forms.TestingUtil\bin\Debug\net6.0-windows\Genius.Atom.UI.Forms.TestingUtil.dll</HintPath>
     </Reference>
 
     <!-- 3rd-party dependencies from Atom.UI.Forms -->
     <Reference Include="DotNetProjects.WpfToolkit.Input">
-      <HintPath>..\..\atom\Atom.UI.Forms.Demo\bin\Debug\net5.0-windows\DotNetProjects.Input.Toolkit.dll</HintPath>
+      <HintPath>..\..\atom\Atom.UI.Forms.Demo\bin\Debug\net6.0-windows\DotNetProjects.Input.Toolkit.dll</HintPath>
     </Reference>
     <Reference Include="WpfAnimatedGif">
-      <HintPath>..\..\atom\Atom.UI.Forms.Demo\bin\Debug\net5.0-windows\WpfAnimatedGif.dll</HintPath>
+      <HintPath>..\..\atom\Atom.UI.Forms.Demo\bin\Debug\net6.0-windows\WpfAnimatedGif.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup Condition="'$(Configuration)|$(Platform)' == 'Release|AnyCPU'">

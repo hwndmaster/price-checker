@@ -1,4 +1,3 @@
-using System;
 using System.Threading.Tasks;
 using Genius.Atom.Infrastructure.Commands;
 using Genius.Atom.Infrastructure.Events;
@@ -8,51 +7,52 @@ using Genius.PriceChecker.Core.Messages;
 using Genius.PriceChecker.Core.Models;
 using Genius.PriceChecker.Core.Repositories;
 
-namespace Genius.PriceChecker.Core.CommandHandlers
+namespace Genius.PriceChecker.Core.CommandHandlers;
+
+internal sealed class ProductCreateOrUpdateCommandHandler:
+    ICommandHandler<ProductCreateCommand, Guid>,
+    ICommandHandler<ProductUpdateCommand>
 {
-    internal sealed class ProductCreateOrUpdateCommandHandler:
-        ICommandHandler<ProductCreateCommand, Guid>,
-        ICommandHandler<ProductUpdateCommand>
+    private readonly IProductRepository _productRepo;
+    private readonly IProductQueryService _productQuery;
+    private readonly IEventBus _eventBus;
+
+    public ProductCreateOrUpdateCommandHandler(IProductRepository productRepo, IProductQueryService productQuery, IEventBus eventBus)
     {
-        private readonly IProductRepository _productRepo;
-        private readonly IProductQueryService _productQuery;
-        private readonly IEventBus _eventBus;
+        _productRepo = productRepo;
+        _productQuery = productQuery;
+        _eventBus = eventBus;
+    }
 
-        public ProductCreateOrUpdateCommandHandler(IProductRepository productRepo, IProductQueryService productQuery, IEventBus eventBus)
-        {
-            _productRepo = productRepo;
-            _productQuery = productQuery;
-            _eventBus = eventBus;
-        }
+    public Task<Guid> ProcessAsync(ProductCreateCommand command)
+    {
+        var product = new Product();
+        UpdateProperties(product, command);
+        _productRepo.Store(product);
 
-        public Task<Guid> ProcessAsync(ProductCreateCommand command)
-        {
-            var product = new Product();
-            UpdateProperties(product, command);
-            _productRepo.Store(product);
+        _eventBus.Publish(new ProductsAffectedEvent());
 
-            _eventBus.Publish(new ProductsAffectedEvent());
+        return Task.FromResult(product.Id);
+    }
 
-            return Task.FromResult(product.Id);
-        }
+    public Task ProcessAsync(ProductUpdateCommand command)
+    {
+        var product = _productQuery.FindById(command.ProductId);
+        Guard.AgainstNull(product, nameof(product));
 
-        public Task ProcessAsync(ProductUpdateCommand command)
-        {
-            var product = _productQuery.FindById(command.ProductId);
-            UpdateProperties(product, command);
-            _productRepo.Store(product);
+        UpdateProperties(product, command);
+        _productRepo.Store(product);
 
-            _eventBus.Publish(new ProductsAffectedEvent());
+        _eventBus.Publish(new ProductsAffectedEvent());
 
-            return Task.CompletedTask;
-        }
+        return Task.CompletedTask;
+    }
 
-        private static void UpdateProperties(Product product, ProductUpdatableData command)
-        {
-            product.Name = command.Name;
-            product.Category = command.Category;
-            product.Description = command.Description;
-            product.Sources = command.Sources;
-        }
+    private static void UpdateProperties(Product product, ProductUpdatableData command)
+    {
+        product.Name = command.Name;
+        product.Category = command.Category;
+        product.Description = command.Description;
+        product.Sources = command.Sources;
     }
 }

@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reactive.Concurrency;
@@ -10,175 +9,176 @@ using Genius.PriceChecker.Core.Repositories;
 using Genius.Atom.Infrastructure.Events;
 using Microsoft.Extensions.Logging;
 
-namespace Genius.PriceChecker.Core.Services
+namespace Genius.PriceChecker.Core.Services;
+
+public interface IProductPriceManager : IDisposable
 {
-  public interface IProductPriceManager : IDisposable
+    void EnqueueScan(Guid productId);
+    void AutoRefreshInitialize();
+}
+
+internal sealed class ProductPriceManager : IProductPriceManager
+{
+    private readonly IProductRepository _productRepo;
+    private readonly IProductQueryService _productQuery;
+    private readonly IPriceSeeker _priceSeeker;
+    private readonly IEventBus _eventBus;
+    private readonly ISettingsRepository _settingsRepo;
+    private readonly ILogger<ProductPriceManager> _logger;
+
+    private IDisposable? _scheduledAutoRefresh;
+    private int _previousAutoRefreshMinutes;
+
+    private readonly TimeSpan RecentPeriod = TimeSpan.FromHours(3);
+
+    public ProductPriceManager(IProductRepository productRepo,
+        IProductQueryService productQuery,
+        IPriceSeeker priceSeeker, IEventBus eventBus,
+        ISettingsRepository settingsRepo,
+        ILogger<ProductPriceManager> logger)
     {
-        void EnqueueScan(Guid productId);
-        void AutoRefreshInitialize();
+        _productRepo = productRepo;
+        _productQuery = productQuery;
+        _priceSeeker = priceSeeker;
+        _eventBus = eventBus;
+        _settingsRepo = settingsRepo;
+        _logger = logger;
+
+        eventBus.WhenFired<SettingsUpdatedEvent>().Subscribe(args => {
+            if (args.Settings.AutoRefreshEnabled && _scheduledAutoRefresh is null
+                || args.Settings.AutoRefreshMinutes != _previousAutoRefreshMinutes)
+            {
+                _scheduledAutoRefresh?.Dispose();
+                AutoRefreshInitialize();
+            }
+        });
     }
 
-    internal sealed class ProductPriceManager : IProductPriceManager
+    public void EnqueueScan(Guid productId)
     {
-        private readonly IProductRepository _productRepo;
-        private readonly IProductQueryService _productQuery;
-        private readonly IPriceSeeker _priceSeeker;
-        private readonly IEventBus _eventBus;
-        private readonly ISettingsRepository _settingsRepo;
-        private readonly ILogger<ProductPriceManager> _logger;
-
-        private IDisposable _scheduledAutoRefresh;
-        private int _previousAutoRefreshMinutes;
-
-        private readonly TimeSpan RecentPeriod = TimeSpan.FromHours(3);
-
-        public ProductPriceManager(IProductRepository productRepo,
-            IProductQueryService productQuery,
-            IPriceSeeker priceSeeker, IEventBus eventBus,
-            ISettingsRepository settingsRepo,
-            ILogger<ProductPriceManager> logger)
+        var product = _productQuery.FindById(productId);
+        if (product == null)
         {
-            _productRepo = productRepo;
-            _productQuery = productQuery;
-            _priceSeeker = priceSeeker;
-            _eventBus = eventBus;
-            _settingsRepo = settingsRepo;
-            _logger = logger;
+            _logger.LogError("Product with ID '{productId}' was not found.", productId);
+            return;
+        }
 
-            eventBus.WhenFired<SettingsUpdatedEvent>().Subscribe(args => {
-                if (args.Settings.AutoRefreshEnabled && _scheduledAutoRefresh == null
-                    || args.Settings.AutoRefreshMinutes != _previousAutoRefreshMinutes)
+        EnqueueScan(product, ignoreRecentDate: true, CancellationToken.None);
+    }
+
+    public void Dispose()
+    {
+        _scheduledAutoRefresh?.Dispose();
+    }
+
+    public void AutoRefreshInitialize()
+    {
+        _scheduledAutoRefresh?.Dispose();
+        _scheduledAutoRefresh = null;
+
+        if (!_settingsRepo.Get().AutoRefreshEnabled)
+        {
+            return;
+        }
+
+        _previousAutoRefreshMinutes = _settingsRepo.Get().AutoRefreshMinutes;
+
+        _scheduledAutoRefresh = TaskPoolScheduler.Default.ScheduleAsync(
+            TimeSpan.FromMinutes(_previousAutoRefreshMinutes),
+            async (scheduler, cancel) => {
+                _logger.LogInformation("AutoRefresh worker started.");
+                List<Task> tasks = new();
+                if (_settingsRepo.Get().AutoRefreshEnabled)
                 {
-                    _scheduledAutoRefresh?.Dispose();
-                    AutoRefreshInitialize();
+                    var products = _productQuery.GetAll().ToList();
+                    _eventBus.Publish(new ProductAutoScanStartedEvent(products.Count));
+                    foreach (var product in products)
+                        tasks.Add(EnqueueScan(product, ignoreRecentDate: false, cancel));
                 }
+
+                await Task.WhenAll(tasks);
+
+                AutoRefreshInitialize();
             });
-        }
+    }
 
-        public void EnqueueScan(Guid productId)
+    private Task EnqueueScan(Product product, bool ignoreRecentDate, CancellationToken cancel)
+    {
+        return Task.Run(async() =>
         {
-            var product = _productQuery.FindById(productId);
-            if (product == null)
+            try
             {
-                _logger.LogError($"Product with ID '{productId}' was not found.");
-                return;
+                await ScanForPricesAsync(product, ignoreRecentDate, cancel);
             }
-
-            EnqueueScan(product, ignoreRecentDate: true, CancellationToken.None);
-        }
-
-        public void Dispose()
-        {
-            _scheduledAutoRefresh?.Dispose();
-        }
-
-        public void AutoRefreshInitialize()
-        {
-            _scheduledAutoRefresh?.Dispose();
-            _scheduledAutoRefresh = null;
-
-            if (!_settingsRepo.Get().AutoRefreshEnabled)
+            catch (Exception ex)
             {
-                return;
+                _eventBus.Publish(new ProductScanFailedEvent(product, ex.Message));
+                throw;
             }
+        }, cancel);
+    }
 
-            _previousAutoRefreshMinutes = _settingsRepo.Get().AutoRefreshMinutes;
-
-            _scheduledAutoRefresh = TaskPoolScheduler.Default.ScheduleAsync(
-                TimeSpan.FromMinutes(_previousAutoRefreshMinutes),
-                async (scheduler, cancel) => {
-                    _logger.LogInformation("AutoRefresh worker started.");
-                    List<Task> tasks = new();
-                    if (_settingsRepo.Get().AutoRefreshEnabled)
-                    {
-                        var products = _productQuery.GetAll().ToList();
-                        _eventBus.Publish(new ProductAutoScanStartedEvent(products.Count));
-                        foreach (var product in products)
-                            tasks.Add(EnqueueScan(product, ignoreRecentDate: false, cancel));
-                    }
-
-                    await Task.WhenAll(tasks);
-
-                    AutoRefreshInitialize();
-                });
+    private async Task ScanForPricesAsync(Product product, bool ignoreRecentDate, CancellationToken cancel)
+    {
+        if (!ignoreRecentDate && IsTooRecent(product))
+        {
+            _logger.LogTrace("Price scanning '{productName}' cancelled due to recent results", product.Name);
+            //_eventBus.Publish(new ProductScanFailedEvent(product, "Scan cancelled due to recent results"));
+            _eventBus.Publish(new ProductScannedEvent(product, false));
+            return;
         }
 
-        private Task EnqueueScan(Product product, bool ignoreRecentDate, CancellationToken cancel)
+        _eventBus.Publish(new ProductScanStartedEvent(product));
+
+        _logger.LogTrace("Processing '{productName}'", product.Name);
+        var results = await _priceSeeker.SeekAsync(product, cancel);
+        if (!results.Any())
         {
-            return Task.Run(async() =>
-            {
-                try
-                {
-                    await ScanForPricesAsync(product, ignoreRecentDate, cancel);
-                }
-                catch (Exception ex)
-                {
-                    _eventBus.Publish(new ProductScanFailedEvent(product, ex.Message));
-                    throw;
-                }
-            }, cancel);
+            _logger.LogWarning("Price scanning for '{productName}' failed or no results retrieved", product.Name);
+            _eventBus.Publish(new ProductScanFailedEvent(product, "Scan failed or no results retrieved"));
+            return;
         }
 
-        private async Task ScanForPricesAsync(Product product, bool ignoreRecentDate, CancellationToken cancel)
+        product.Recent = LogAndConvert(product, results);
+
+        var lowestPriceUpdated = false;
+        var minPrice = product.Recent.Min(x => x.Price);
+        if (product.Lowest == null || product.Lowest.Price >= minPrice)
         {
-            if (!ignoreRecentDate && IsTooRecent(product))
+            if (product.Lowest != null && product.Lowest.Price > minPrice)
             {
-                _logger.LogTrace($"Price scanning '{product.Name}' cancelled due to recent results");
-                //_eventBus.Publish(new ProductScanFailedEvent(product, "Scan cancelled due to recent results"));
-                _eventBus.Publish(new ProductScannedEvent(product, false));
-                return;
+                lowestPriceUpdated = true;
             }
+            product.Lowest = product.Recent.First(x => x.Price == minPrice);
 
-            _eventBus.Publish(new ProductScanStartedEvent(product));
-
-            _logger.LogTrace($"Processing '{product.Name}'");
-            var results = await _priceSeeker.SeekAsync(product, cancel);
-            if (!results.Any())
-            {
-                _logger.LogWarning($"Price scanning for '{product.Name}' failed or no results retrieved");
-                _eventBus.Publish(new ProductScanFailedEvent(product, "Scan failed or no results retrieved"));
-                return;
-            }
-
-            product.Recent = LogAndConvert(product, results);
-
-            var lowestPriceUpdated = false;
-            var minPrice = product.Recent.Min(x => x.Price);
-            if (product.Lowest == null || product.Lowest.Price >= minPrice)
-            {
-                if (product.Lowest != null && product.Lowest.Price > minPrice)
-                {
-                    lowestPriceUpdated = true;
-                }
-                product.Lowest = product.Recent.First(x => x.Price == minPrice);
-
-                _productRepo.Store(product);
-            }
-
-            _eventBus.Publish(new ProductScannedEvent(product, lowestPriceUpdated));
+            _productRepo.Store(product);
         }
 
-        private bool IsTooRecent(Product product)
+        _eventBus.Publish(new ProductScannedEvent(product, lowestPriceUpdated));
+    }
+
+    private bool IsTooRecent(Product product)
+    {
+        if (product.Recent.Length == 0)
+            return false;
+
+        var recentDate = product.Recent.Max(x => x.FoundDate);
+        return DateTime.Now - recentDate < RecentPeriod;
+    }
+
+    private ProductPrice[] LogAndConvert(Product product, IEnumerable<PriceSeekResult> results)
+    {
+        var converted = results.Select(x => new ProductPrice
         {
-            if (product.Recent.Length == 0)
-                return false;
+            ProductSourceId = x.ProductSourceId,
+            Price = x.Price,
+            FoundDate = DateTime.Now
+        }).ToArray();
 
-            var recentDate = product.Recent.Max(x => x.FoundDate);
-            return DateTime.Now - recentDate < RecentPeriod;
-        }
+        _logger.LogTrace("Results retrieved for '{productName}': {results}",
+            product.Name,
+            string.Join(", ", converted.ToList()));
 
-        private ProductPrice[] LogAndConvert(Product product, IEnumerable<PriceSeekResult> results)
-        {
-            var converted = results.Select(x => new ProductPrice
-            {
-                ProductSourceId = x.ProductSourceId,
-                Price = x.Price,
-                FoundDate = DateTime.Now
-            }).ToArray();
-
-            _logger.LogTrace($"Results retrieved for '{product.Name}': {string.Join(", ", converted.ToList())}");
-
-            return converted;
-        }
+        return converted;
     }
 }

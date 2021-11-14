@@ -3,22 +3,21 @@ using Genius.Atom.Infrastructure.Commands;
 using Genius.PriceChecker.Core.Commands;
 using Genius.PriceChecker.Core.Services;
 
-namespace Genius.PriceChecker.Core.CommandHandlers
+namespace Genius.PriceChecker.Core.CommandHandlers;
+
+internal sealed class ProductEnqueueScanCommandHandler : ICommandHandler<ProductEnqueueScanCommand>
 {
-    internal sealed class ProductEnqueueScanCommandHandler : ICommandHandler<ProductEnqueueScanCommand>
+    private readonly IProductPriceManager _productMng;
+
+    public ProductEnqueueScanCommandHandler(IProductPriceManager productMng)
     {
-        private readonly IProductPriceManager _productMng;
+        _productMng = productMng;
+    }
 
-        public ProductEnqueueScanCommandHandler(IProductPriceManager productMng)
-        {
-            _productMng = productMng;
-        }
+    public Task ProcessAsync(ProductEnqueueScanCommand command)
+    {
+        _productMng.EnqueueScan(command.ProductId);
 
-        public Task ProcessAsync(ProductEnqueueScanCommand command)
-        {
-            _productMng.EnqueueScan(command.ProductId);
-
-            return Task.CompletedTask;
-        }
+        return Task.CompletedTask;
     }
 }

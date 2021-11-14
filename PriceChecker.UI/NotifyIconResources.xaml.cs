@@ -3,20 +3,19 @@ using System.Windows;
 using Genius.PriceChecker.UI.ViewModels;
 using Hardcodet.Wpf.TaskbarNotification;
 
-namespace Genius.PriceChecker.UI
+namespace Genius.PriceChecker.UI;
+
+[ExcludeFromCodeCoverage]
+public partial class NotifyIconResources : ResourceDictionary
 {
-    [ExcludeFromCodeCoverage]
-    public partial class NotifyIconResources : ResourceDictionary
+    public NotifyIconResources()
     {
-        public NotifyIconResources()
-        {
-            InitializeComponent();
+        InitializeComponent();
 
-            var notifyIcon = (TaskbarIcon)this["NotifyIcon"];
-            var viewModel = (NotifyIconViewModel)notifyIcon.DataContext;
+        var notifyIcon = (TaskbarIcon)this["NotifyIcon"];
+        var viewModel = (NotifyIconViewModel)notifyIcon.DataContext;
 
-            viewModel.ShowBalloonTipTriggered += (_, args) =>
-                notifyIcon.ShowBalloonTip(args.Title, args.Message, args.Icon);
-        }
+        viewModel.ShowBalloonTipTriggered += (_, args) =>
+            notifyIcon.ShowBalloonTip(args.Title, args.Message, args.Icon);
     }
 }

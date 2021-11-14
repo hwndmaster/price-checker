@@ -11,85 +11,84 @@ using Microsoft.Extensions.Logging;
 using Moq;
 using Xunit;
 
-namespace Genius.PriceChecker.Core.Tests.Repositories
+namespace Genius.PriceChecker.Core.Tests.Repositories;
+
+public class AgentRepositoryTests
 {
-    public class AgentRepositoryTests
+    private readonly AgentRepository _sut;
+    private readonly Fixture _fixture = new();
+    private readonly Mock<IEventBus> _eventBusMock = new();
+    private readonly Mock<IJsonPersister> _persisterMock = new();
+
+    private readonly List<Agent> _agents = new();
+
+    public AgentRepositoryTests()
     {
-        private readonly AgentRepository _sut;
-        private readonly Fixture _fixture = new();
-        private readonly Mock<IEventBus> _eventBusMock = new();
-        private readonly Mock<IJsonPersister> _persisterMock = new();
+        _agents = _fixture.CreateMany<Agent>().ToList();
 
-        private readonly List<Agent> _agents = new();
+        _persisterMock.Setup(x => x.LoadCollection<Agent>(It.IsAny<string>()))
+            .Returns(_agents.ToArray());
 
-        public AgentRepositoryTests()
-        {
-            _agents = _fixture.CreateMany<Agent>().ToList();
+        _sut = new AgentRepository(_eventBusMock.Object, _persisterMock.Object,
+            Mock.Of<ILogger<AgentRepository>>());
 
-            _persisterMock.Setup(x => x.LoadCollection<Agent>(It.IsAny<string>()))
-                .Returns(_agents.ToArray());
+        _sut.GetAll(); // To trigger the initializer
+    }
 
-            _sut = new AgentRepository(_eventBusMock.Object, _persisterMock.Object,
-                Mock.Of<ILogger<AgentRepository>>());
+    [Fact]
+    public void FindById__Returns_appropriate_agent()
+    {
+        // Arrange
+        var agentToFind = _agents[1];
 
-            _sut.GetAll(); // To trigger the initializer
-        }
+        // Act
+        var result = _sut.FindById(agentToFind.Id);
 
-        [Fact]
-        public void FindById__Returns_appropriate_agent()
-        {
-            // Arrange
-            var agentToFind = _agents[1];
+        // Verify
+        Assert.Equal(agentToFind, result);
+    }
 
-            // Act
-            var result = _sut.FindById(agentToFind.Id);
+    [Fact]
+    public void Delete__Removes_appripriate_agent()
+    {
+        // Arrange
+        var agentToDelete = _agents[1];
 
-            // Verify
-            Assert.Equal(agentToFind, result);
-        }
+        // Act
+        _sut.Delete(agentToDelete.Id);
 
-        [Fact]
-        public void Delete__Removes_appripriate_agent()
-        {
-            // Arrange
-            var agentToDelete = _agents[1];
+        // Verify
+        Assert.Null(_sut.FindById(agentToDelete.Id));
+    }
 
-            // Act
-            _sut.Delete(agentToDelete.Id);
+    [Fact]
+    public void Delete__When_no_agent_found__Breaks_operation()
+    {
+        // Arrange
+        var agentCount = _sut.GetAll().Count();
 
-            // Verify
-            Assert.Null(_sut.FindById(agentToDelete.Id));
-        }
+        // Act
+        _sut.Delete(Guid.NewGuid());
 
-        [Fact]
-        public void Delete__When_no_agent_found__Breaks_operation()
-        {
-            // Arrange
-            var agentCount = _sut.GetAll().Count();
+        // Verify
+        Assert.Equal(agentCount, _sut.GetAll().Count());
+    }
 
-            // Act
-            _sut.Delete(Guid.NewGuid());
+    [Fact]
+    public void Store__Replaces_all_existing_agents_and_updates_cache_and_fires_event()
+    {
+        // Arrange
+        var newAgents = _fixture.CreateMany<Agent>().ToArray();
+        var previousAgents = _sut.GetAll().ToArray();
 
-            // Verify
-            Assert.Equal(agentCount, _sut.GetAll().Count());
-        }
+        // Act
+        _sut.Overwrite(newAgents);
 
-        [Fact]
-        public void Store__Replaces_all_existing_agents_and_updates_cache_and_fires_event()
-        {
-            // Arrange
-            var newAgents = _fixture.CreateMany<Agent>().ToArray();
-            var previousAgents = _sut.GetAll().ToArray();
-
-            // Act
-            _sut.Overwrite(newAgents);
-
-            // Verify
-            Assert.False(_sut.GetAll().Except(newAgents).Any());
-            _persisterMock.Verify(x => x.Store(It.IsAny<string>(),
-                It.Is((List<Agent> p) => p.SequenceEqual(newAgents))));
-            _eventBusMock.Verify(x => x.Publish(It.Is<EntitiesAddedEvent>(e => e.Entities.Count == newAgents.Length)), Times.Once);
-            _eventBusMock.Verify(x => x.Publish(It.Is<EntitiesDeletedEvent>(e => e.Entities.Count == previousAgents.Length)), Times.Once);
-        }
+        // Verify
+        Assert.False(_sut.GetAll().Except(newAgents).Any());
+        _persisterMock.Verify(x => x.Store(It.IsAny<string>(),
+            It.Is((List<Agent> p) => p.SequenceEqual(newAgents))));
+        _eventBusMock.Verify(x => x.Publish(It.Is<EntitiesAddedEvent>(e => e.Entities.Count == newAgents.Length)), Times.Once);
+        _eventBusMock.Verify(x => x.Publish(It.Is<EntitiesDeletedEvent>(e => e.Entities.Count == previousAgents.Length)), Times.Once);
     }
 }

@@ -1,13 +1,12 @@
 using System.Diagnostics.CodeAnalysis;
 
-namespace Genius.PriceChecker.UI.Views
+namespace Genius.PriceChecker.UI.Views;
+
+[ExcludeFromCodeCoverage]
+public partial class Agents
 {
-    [ExcludeFromCodeCoverage]
-    public partial class Agents
+    public Agents()
     {
-        public Agents()
-        {
-            InitializeComponent();
-        }
+        InitializeComponent();
     }
 }

@@ -9,5 +9,12 @@
         "lcov.info"
     ],
     "dotnet-test-explorer.autoWatch": true,
-    "editor.tabSize": 4
+    "editor.tabSize": 4,
+    "cSpell.customDictionaries": {
+        "project-words": {
+            "name": "project-words",
+            "path": "${workspaceRoot}/.vscode/project-words.txt",
+            "addWords": true
+        }
+    }
 }

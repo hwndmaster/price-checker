@@ -9,7 +9,7 @@
         mc:Ignorable="d"
         Header="Add/Edit product"
         Position="Right"
-        Width="500">
+        Width="600">
 
     <StackPanel Orientation="Vertical" Style="{StaticResource FormPanel}">
         <DockPanel>

@@ -1,13 +1,12 @@
-namespace Genius.PriceChecker.Core.Models
+namespace Genius.PriceChecker.Core.Models;
+
+public enum ProductScanStatus
 {
-    public enum ProductScanStatus
-    {
-        NotScanned,
-        Scanning,
-        ScannedOk,
-        ScannedWithErrors,
-        ScannedNewLowest,
-        Outdated,
-        Failed
-    }
+    NotScanned,
+    Scanning,
+    ScannedOk,
+    ScannedWithErrors,
+    ScannedNewLowest,
+    Outdated,
+    Failed
 }

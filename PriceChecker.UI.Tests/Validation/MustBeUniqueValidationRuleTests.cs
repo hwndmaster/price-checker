@@ -6,73 +6,72 @@ using Genius.Atom.UI.Forms;
 using Genius.PriceChecker.UI.Validation;
 using Xunit;
 
-namespace Genius.PriceChecker.UI.Tests.Validation
+namespace Genius.PriceChecker.UI.Tests.Validation;
+
+public class MustBeUniqueValidationRuleTests
 {
-    public class MustBeUniqueValidationRuleTests
+    private readonly Fixture _fixture = new();
+    private readonly MustBeUniqueValidationRule _sut;
+    private readonly TestViewModel _testVm = new();
+
+    public MustBeUniqueValidationRuleTests()
     {
-        private readonly Fixture _fixture = new();
-        private readonly MustBeUniqueValidationRule _sut;
-        private readonly TestViewModel _testVm = new();
+        _sut = new MustBeUniqueValidationRule(_testVm, nameof(TestViewModel.SampleSet));
+    }
 
-        public MustBeUniqueValidationRuleTests()
-        {
-            _sut = new MustBeUniqueValidationRule(_testVm, nameof(TestViewModel.SampleSet));
-        }
+    [Fact]
+    public void Value__Not_string__Returns_valid()
+    {
+        // Act
+        var result = _sut.Validate(new object(), _fixture.Create<CultureInfo>());
 
-        [Fact]
-        public void Value__Not_string__Returns_valid()
-        {
-            // Act
-            var result = _sut.Validate(new object(), _fixture.Create<CultureInfo>());
+        // Verify
+        Assert.True(result.IsValid);
+    }
 
-            // Verify
-            Assert.True(result.IsValid);
-        }
+    [Fact]
+    public void Value__Already_exists_twice_in_collection__Returns_not_valid()
+    {
+        // Arrange
+        _testVm.SampleSet = _fixture.CreateMany<string>().ToList();
+        _testVm.SampleSet.Add(_testVm.SampleSet[1]);
 
-        [Fact]
-        public void Value__Already_exists_twice_in_collection__Returns_not_valid()
-        {
-            // Arrange
-            _testVm.SampleSet = _fixture.CreateMany<string>().ToList();
-            _testVm.SampleSet.Add(_testVm.SampleSet[1]);
+        // Act
+        var result = _sut.Validate(_testVm.SampleSet[1], _fixture.Create<CultureInfo>());
 
-            // Act
-            var result = _sut.Validate(_testVm.SampleSet[1], _fixture.Create<CultureInfo>());
+        // Verify
+        Assert.False(result.IsValid);
+    }
 
-            // Verify
-            Assert.False(result.IsValid);
-        }
+    [Fact]
+    public void Value__Only_one_exists_in_collection__Returns_valid()
+    {
+        // Arrange
+        _testVm.SampleSet = _fixture.CreateMany<string>().ToList();
 
-        [Fact]
-        public void Value__Only_one_exists_in_collection__Returns_valid()
-        {
-            // Arrange
-            _testVm.SampleSet = _fixture.CreateMany<string>().ToList();
+        // Act
+        var result = _sut.Validate(_testVm.SampleSet[1], _fixture.Create<CultureInfo>());
 
-            // Act
-            var result = _sut.Validate(_testVm.SampleSet[1], _fixture.Create<CultureInfo>());
+        // Verify
+        Assert.True(result.IsValid);
+    }
 
-            // Verify
-            Assert.True(result.IsValid);
-        }
+    [Fact]
+    public void Value__Not_exists_in_collection__Returns_valid()
+    {
+        // Arrange
+        _testVm.SampleSet = _fixture.CreateMany<string>().ToList();
+        var valueToValidate = _fixture.Create<string>();
 
-        [Fact]
-        public void Value__Not_exists_in_collection__Returns_valid()
-        {
-            // Arrange
-            _testVm.SampleSet = _fixture.CreateMany<string>().ToList();
-            var valueToValidate = _fixture.Create<string>();
+        // Act
+        var result = _sut.Validate(valueToValidate, _fixture.Create<CultureInfo>());
 
-            // Act
-            var result = _sut.Validate(valueToValidate, _fixture.Create<CultureInfo>());
+        // Verify
+        Assert.True(result.IsValid);
+    }
 
-            // Verify
-            Assert.True(result.IsValid);
-        }
-
-        class TestViewModel : ViewModelBase
-        {
-            public List<string> SampleSet { get; set; }
-        }
+    internal class TestViewModel : ViewModelBase
+    {
+        public List<string> SampleSet { get; set; }
     }
 }

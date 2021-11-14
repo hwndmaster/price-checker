@@ -1,4 +1,3 @@
-using System;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading;
@@ -9,100 +8,100 @@ using Genius.PriceChecker.Core.Messages;
 using Genius.PriceChecker.Core.Models;
 using Microsoft.Extensions.Logging;
 
-namespace Genius.PriceChecker.Core.Services
+namespace Genius.PriceChecker.Core.Services;
+
+public interface IPriceSeeker
 {
-    public interface IPriceSeeker
+    Task<PriceSeekResult[]> SeekAsync(Product product, CancellationToken cancel);
+}
+
+internal sealed class PriceSeeker : IPriceSeeker
+{
+    private readonly ITrickyHttpClient _trickyHttpClient;
+    private readonly IFileService _io;
+    private readonly ILogger<PriceSeeker> _logger;
+
+    private const char DEFAULT_DECIMAL_DELIMITER = '.';
+
+    private static readonly object _locker = new();
+
+    public PriceSeeker(ITrickyHttpClient trickyHttpClient, IFileService io, ILogger<PriceSeeker> logger)
     {
-        Task<PriceSeekResult[]> SeekAsync(Product product, CancellationToken cancel);
+        _trickyHttpClient = trickyHttpClient;
+        _io = io;
+        _logger = logger;
     }
 
-    internal sealed class PriceSeeker : IPriceSeeker
+    public async Task<PriceSeekResult[]> SeekAsync(Product product, CancellationToken cancel)
     {
-        private readonly ITrickyHttpClient _trickyHttpClient;
-        private readonly IFileService _io;
-        private readonly ILogger<PriceSeeker> _logger;
+        var result = product.Sources.AsParallel().Select(async (productSource) =>
+            await Seek(productSource, cancel));
 
-        private const char DEFAULT_DECIMAL_DELIMITER = '.';
+        return await Task.WhenAll(result)
+            .ContinueWith(t => t.Result?
+                    .Where(x => x != null)
+                    .Select(x => x!.Value)
+                    .ToArray() ?? new PriceSeekResult[0],
+                TaskContinuationOptions.OnlyOnRanToCompletion);
+    }
 
-        private static readonly object _locker = new();
-
-        public PriceSeeker(ITrickyHttpClient trickyHttpClient, IFileService io, ILogger<PriceSeeker> logger)
+    private async Task<PriceSeekResult?> Seek(ProductSource productSource, CancellationToken cancel)
+    {
+        var agent = productSource.Agent;
+        var url = string.Format(agent.Url, productSource.AgentArgument);
+        string? content;
+        try
         {
-            _trickyHttpClient = trickyHttpClient;
-            _io = io;
-            _logger = logger;
+            content = await _trickyHttpClient.DownloadContent(url, cancel);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed loading content for source `{productSourceAgentKey}`, url = `{url}`", productSource.AgentKey, url);
+            throw;
+        }
+        if (content is null)
+            return null;
+
+        var re = new Regex(agent.PricePattern);
+        var match = re.Match(content);
+        if (!match.Success)
+        {
+            var dumpFileName = $"dump ({productSource.Id}).log";
+            lock(_locker)
+            {
+                _io.WriteTextToFile(dumpFileName, content);
+            }
+            _logger.LogError("Cannot match price from the given content. File = '{dumpFileName}', Url = '{url}'", dumpFileName, url);
+            return null;
         }
 
-        public async Task<PriceSeekResult[]> SeekAsync(Product product, CancellationToken cancel)
-        {
-            var result = product.Sources.AsParallel().Select(async (productSource) =>
-                await Seek(productSource, cancel));
+        if (!TryParsePrice(match, out var price))
+            return null;
 
-            return await Task.WhenAll(result)
-                .ContinueWith(x => x.Result?.Where(x => x != null).ToArray() ?? new PriceSeekResult[0], TaskContinuationOptions.OnlyOnRanToCompletion);
+        if (price <= 0.0m)
+        {
+            _logger.LogWarning("Price for product '{productSourceAgentArgument}' at '{agentId}' is invalid: {price}",
+                productSource.AgentArgument, agent.Id, price);
+            return null;
         }
 
-        private async Task<PriceSeekResult> Seek(ProductSource productSource, CancellationToken cancel)
+        return new PriceSeekResult(productSource.Id, agent.Key, price);
+
+
+        bool TryParsePrice(Match match, out decimal price)
         {
-            var agent = productSource.Agent;
-            var url = string.Format(agent.Url, productSource.AgentArgument);
-            string content;
-            try
-            {
-                content = await _trickyHttpClient.DownloadContent(url, cancel);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, $"Failed loading content for source `{productSource.AgentKey}`, url = `{url}`");
-                throw;
-            }
-            if (content == null)
-                return null;
+            var priceString = match.Groups["price"].Value;
+            if (agent.DecimalDelimiter != DEFAULT_DECIMAL_DELIMITER)
+                priceString = priceString.Replace(agent.DecimalDelimiter, DEFAULT_DECIMAL_DELIMITER);
 
-            var re = new Regex(agent.PricePattern);
-            var match = re.Match(content);
-            if (!match.Success)
+            var priceConverted = decimal.TryParse(priceString, out price);
+            if (!priceConverted)
             {
-                var dumpFileName = $"dump ({productSource.Id}).log";
-                lock(_locker)
-                {
-                    _io.WriteTextToFile(dumpFileName, content);
-                }
-                _logger.LogError($"Cannot match price from the given content. File = '{dumpFileName}', Url = '{url}'");
-                return null;
+                _logger.LogError("Could not convert the price '{priceString}' to decimal. Url = '{url}'", priceString, url);
+                return false;
             }
 
-            if (!TryParsePrice(match, out var price))
-                return null;
-
-            if (price <= 0.0m)
-            {
-                _logger.LogWarning($"Price for product '{productSource.AgentArgument}' at '{agent.Id}' is invalid: {price}");
-                return null;
-            }
-
-            return new PriceSeekResult {
-                ProductSourceId = productSource.Id,
-                AgentKey = agent.Key,
-                Price = price
-            };
-
-
-            bool TryParsePrice(Match match, out decimal price)
-            {
-                var priceString = match.Groups["price"].Value;
-                if (agent.DecimalDelimiter != DEFAULT_DECIMAL_DELIMITER)
-                    priceString = priceString.Replace(agent.DecimalDelimiter, DEFAULT_DECIMAL_DELIMITER);
-
-                var priceConverted = decimal.TryParse(priceString, out price);
-                if (!priceConverted)
-                {
-                    _logger.LogError($"Could not convert the price '{priceString}' to decimal. Url = '{url}'");
-                    return false;
-                }
-
-                return true;
-            }
+            return true;
         }
     }
 }

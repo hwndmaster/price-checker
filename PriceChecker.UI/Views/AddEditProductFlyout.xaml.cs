@@ -1,13 +1,12 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 
-namespace Genius.PriceChecker.UI.Views
+namespace Genius.PriceChecker.UI.Views;
+
+[ExcludeFromCodeCoverage]
+public partial class AddEditProductFlyout
 {
-    [ExcludeFromCodeCoverage]
-    public partial class AddEditProductFlyout
+    public AddEditProductFlyout()
     {
-        public AddEditProductFlyout()
-        {
-            InitializeComponent();
-        }
+        InitializeComponent();
     }
 }

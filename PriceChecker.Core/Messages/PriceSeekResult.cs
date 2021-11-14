@@ -1,11 +1,6 @@
-using System;
+namespace Genius.PriceChecker.Core.Messages;
 
-namespace Genius.PriceChecker.Core.Messages
-{
-    public sealed class PriceSeekResult
-    {
-        public Guid ProductSourceId { get; set; }
-        public string AgentKey { get; set; }
-        public decimal Price { get; set; }
-    }
-}
+public readonly record struct PriceSeekResult(
+    Guid ProductSourceId,
+    string AgentKey,
+    decimal Price);

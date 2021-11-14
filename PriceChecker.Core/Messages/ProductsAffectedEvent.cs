@@ -1,8 +1,7 @@
 using Genius.Atom.Infrastructure.Events;
 
-namespace Genius.PriceChecker.Core.Messages
+namespace Genius.PriceChecker.Core.Messages;
+
+public sealed class ProductsAffectedEvent : IEventMessage
 {
-    public sealed class ProductsAffectedEvent : IEventMessage
-    {
-    }
 }

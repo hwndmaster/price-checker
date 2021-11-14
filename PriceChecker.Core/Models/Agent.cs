@@ -1,12 +1,11 @@
 using Genius.Atom.Infrastructure.Entities;
 
-namespace Genius.PriceChecker.Core.Models
+namespace Genius.PriceChecker.Core.Models;
+
+public class Agent : EntityBase
 {
-    public class Agent : EntityBase
-    {
-        public string Key { get; set; }
-        public string Url { get; set; }
-        public string PricePattern { get; set; }
-        public char DecimalDelimiter { get; set; }
-    }
+    public string Key { get; set; } = null!;
+    public string Url { get; set; } = null!;
+    public string PricePattern { get; set; } = null!;
+    public char DecimalDelimiter { get; set; }
 }

@@ -1,10 +1,9 @@
-namespace Genius.PriceChecker.UI.Helpers
+namespace Genius.PriceChecker.UI.Helpers;
+
+public enum TrackerScanStatus
 {
-    public enum TrackerScanStatus
-    {
-        NotStarted,
-        InProgress,
-        InProgressWithErrors,
-        Finished
-    }
+    NotStarted,
+    InProgress,
+    InProgressWithErrors,
+    Finished
 }

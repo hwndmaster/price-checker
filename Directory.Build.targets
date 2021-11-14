@@ -1,29 +1,33 @@
 <Project>
+  <PropertyGroup>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
   <ItemGroup>
     <!-- Microsoft common dependencies -->
     <PackageReference Update="System.Reactive" Version="5.0.0" />
-    <PackageReference Update="Microsoft.Extensions.DependencyInjection" Version="5.0.1" />
-    <PackageReference Update="Microsoft.Extensions.DependencyInjection.Abstractions" Version="5.0.0"/>
-    <PackageReference Update="Microsoft.Extensions.Configuration.Json" Version="5.0.0" />
-    <PackageReference Update="Microsoft.Extensions.Logging" Version="5.0.0" />
-    <PackageReference Update="Microsoft.Extensions.Logging.Abstractions" Version="5.0.0" />
+    <PackageReference Update="Microsoft.Extensions.DependencyInjection" Version="6.0.0" />
+    <PackageReference Update="Microsoft.Extensions.DependencyInjection.Abstractions" Version="6.0.0"/>
+    <PackageReference Update="Microsoft.Extensions.Configuration.Json" Version="6.0.0" />
+    <PackageReference Update="Microsoft.Extensions.Logging" Version="6.0.0" />
+    <PackageReference Update="Microsoft.Extensions.Logging.Abstractions" Version="6.0.0" />
 
     <!-- Atom Framework -->
-    <PackageReference Update="Genius.Atom.Infrastructure" Version="0.0.5" />
-    <PackageReference Update="Genius.Atom.UI.Forms" Version="0.0.5" />
-    <PackageReference Update="Genius.Atom.UI.Forms.TestingUtil" Version="0.0.5" />
+    <PackageReference Update="Genius.Atom.Infrastructure" Version="0.0.6" />
+    <PackageReference Update="Genius.Atom.UI.Forms" Version="0.0.6" />
+    <PackageReference Update="Genius.Atom.UI.Forms.TestingUtil" Version="0.0.6" />
 
     <!-- Misc -->
     <PackageReference Update="Hardcodet.NotifyIcon.Wpf" Version="1.1.0" />
     <PackageReference Update="Humanizer.Core" Version="2.11.10" />
-    <PackageReference Update="MahApps.Metro" Version="2.4.7" />
-    <PackageReference Update="ReactiveUI" Version="14.3.1" />
-    <PackageReference Update="ReactiveUI.WPF" Version="14.3.1" />
+    <PackageReference Update="MahApps.Metro" Version="2.4.9" />
+    <PackageReference Update="ReactiveUI" Version="16.3.10" />
+    <PackageReference Update="ReactiveUI.WPF" Version="16.3.10" />
   </ItemGroup>
 
   <!-- Automated Testing components -->
   <ItemGroup Condition="$(ProjectName.EndsWith('.Tests'))">
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.8.3" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.0.0" />
     <PackageReference Include="xunit" Version="2.4.1" />
     <PackageReference Include="xunit.runner.visualstudio" Version="2.4.3">
         <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
