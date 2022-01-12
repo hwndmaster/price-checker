@@ -17,16 +17,14 @@ internal sealed class ProductDropPricesCommandHandler : ICommandHandler<ProductD
         _productQuery = productQuery;
     }
 
-    public Task ProcessAsync(ProductDropPricesCommand command)
+    public async Task ProcessAsync(ProductDropPricesCommand command)
     {
-        var product = _productQuery.FindById(command.ProductId);
-        Guard.AgainstNull(product, nameof(product));
+        var product = await _productQuery.FindByIdAsync(command.ProductId);
+        Guard.NotNull(product);
 
         product.Lowest = null;
         product.Recent = Array.Empty<ProductPrice>();
 
         _productRepo.Store(product);
-
-        return Task.CompletedTask;
     }
 }

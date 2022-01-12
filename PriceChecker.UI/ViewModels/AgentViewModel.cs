@@ -1,9 +1,8 @@
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
 using Genius.PriceChecker.Core.Models;
 using Genius.Atom.UI.Forms;
 using Genius.PriceChecker.UI.Validation;
+using Genius.PriceChecker.Core.AgentHandlers;
 
 namespace Genius.PriceChecker.UI.ViewModels;
 
@@ -18,11 +17,13 @@ public interface IAgentViewModel : IViewModel, IHasDirtyFlag, ISelectable
 
 internal sealed class AgentViewModel : ViewModelBase, IAgentViewModel
 {
+    private readonly IAgentHandlersProvider _agentHandlersProvider;
     private readonly IAgentsViewModel _owner;
     private Agent? _agent;
 
-    public AgentViewModel(IAgentsViewModel owner, Agent? agent)
+    public AgentViewModel(IAgentsViewModel owner, Agent? agent, IAgentHandlersProvider agentHandlersProvider)
     {
+        _agentHandlersProvider = agentHandlersProvider;
         _owner = owner;
         _agent = agent;
 
@@ -31,13 +32,20 @@ internal sealed class AgentViewModel : ViewModelBase, IAgentViewModel
 
     public Agent GetOrCreateEntity()
     {
-        return _agent ??= new Agent {
-            Id = Guid.NewGuid(),
-            Key = Key,
-            Url = Url,
-            PricePattern = PricePattern,
-            DecimalDelimiter = DecimalDelimiter
-        };
+        if (_agent is null)
+        {
+            _agent = new Agent {
+                Id = Guid.NewGuid()
+            };
+        }
+
+        _agent.Key = Key;
+        _agent.Url = Url;
+        _agent.Handler = Handler;
+        _agent.PricePattern = PricePattern;
+        _agent.DecimalDelimiter = DecimalDelimiter;
+
+        return _agent;
     }
 
     public void ResetForm()
@@ -63,6 +71,7 @@ internal sealed class AgentViewModel : ViewModelBase, IAgentViewModel
             Url = _agent?.Url ?? string.Empty;
             PricePattern = _agent?.PricePattern ?? string.Empty;
             DecimalDelimiter = _agent?.DecimalDelimiter ?? '.';
+            Handler = _agent?.Handler ?? _agentHandlersProvider.GetDefaultHandlerName();
         }
     }
 
@@ -86,6 +95,7 @@ internal sealed class AgentViewModel : ViewModelBase, IAgentViewModel
         set => RaiseAndSetIfChanged(value);
     }
 
+    [Greedy]
     [ValidationRule(typeof(ValueCannotBeEmptyValidationRule))]
     public string Url
     {
@@ -93,6 +103,14 @@ internal sealed class AgentViewModel : ViewModelBase, IAgentViewModel
         set => RaiseAndSetIfChanged(value);
     }
 
+    [SelectFromList(nameof(AgentsViewModel.AgentHandlers), fromOwnerContext: true)]
+    public string Handler
+    {
+        get => GetOrDefault(string.Empty);
+        set => RaiseAndSetIfChanged(value);
+    }
+
+    [Greedy]
     [ValidationRule(typeof(ValueCannotBeEmptyValidationRule))]
     public string PricePattern
     {

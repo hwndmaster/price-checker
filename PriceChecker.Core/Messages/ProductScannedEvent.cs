@@ -1,16 +1,16 @@
-using Genius.PriceChecker.Core.Models;
 using Genius.Atom.Infrastructure.Events;
+using Genius.PriceChecker.Core.Models;
 
 namespace Genius.PriceChecker.Core.Messages;
 
 public sealed class ProductScannedEvent : IEventMessage
 {
-    public ProductScannedEvent(Product product, bool lowestPriceUpdated)
+    public ProductScannedEvent(Guid productId, ProductScanStatus status)
     {
-        Product = product;
-        LowestPriceUpdated = lowestPriceUpdated;
+        ProductId = productId;
+        Status = status;
     }
 
-    public Product Product { get; }
-    public bool LowestPriceUpdated { get; }
+    public Guid ProductId { get; }
+    public ProductScanStatus Status { get; }
 }

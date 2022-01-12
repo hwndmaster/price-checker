@@ -20,7 +20,7 @@ internal sealed class ProductStatusProvider : IProductStatusProvider
         if (DateTime.Now - product.Recent.Max(x => x.FoundDate) > OutdatedPeriod)
             return ProductScanStatus.Outdated;
 
-        if (product.Sources.Length != product.Recent.Length)
+        if (product.Recent.Any(x => x.Status != AgentHandlingStatus.Success))
             return ProductScanStatus.ScannedWithErrors;
 
         return ProductScanStatus.ScannedOk;

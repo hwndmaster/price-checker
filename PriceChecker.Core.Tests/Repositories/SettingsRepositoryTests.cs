@@ -1,13 +1,9 @@
-using System;
-using AutoFixture;
+using Genius.Atom.Data.Persistence;
 using Genius.Atom.Infrastructure.Events;
-using Genius.Atom.Infrastructure.Persistence;
 using Genius.PriceChecker.Core.Messages;
 using Genius.PriceChecker.Core.Models;
 using Genius.PriceChecker.Core.Repositories;
 using Microsoft.Extensions.Logging;
-using Moq;
-using Xunit;
 
 namespace Genius.PriceChecker.Core.Tests.Repositories;
 

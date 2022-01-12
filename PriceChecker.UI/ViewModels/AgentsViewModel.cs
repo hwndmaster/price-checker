@@ -1,12 +1,11 @@
 using System.Collections.ObjectModel;
-using System.Linq;
-using Genius.PriceChecker.Core.Models;
-using Genius.PriceChecker.Core.Repositories;
 using Genius.Atom.UI.Forms;
-using Genius.PriceChecker.UI.Helpers;
 using Genius.Atom.Infrastructure.Commands;
 using Genius.PriceChecker.Core.Commands;
-using System.Threading.Tasks;
+using Genius.PriceChecker.Core.Models;
+using Genius.PriceChecker.Core.Repositories;
+using Genius.PriceChecker.UI.Helpers;
+using Genius.PriceChecker.Core.AgentHandlers;
 
 namespace Genius.PriceChecker.UI.ViewModels;
 
@@ -21,12 +20,16 @@ internal sealed class AgentsViewModel : TabViewModelBase, IAgentsViewModel, IHas
     private readonly IViewModelFactory _vmFactory;
 
     public AgentsViewModel(IAgentQueryService agentQuery, IViewModelFactory vmFactory,
-        IUserInteraction ui, ICommandBus commandBus)
+        IUserInteraction ui, ICommandBus commandBus, IAgentHandlersProvider agentHandlersProvider)
     {
         _commandBus = commandBus;
         _vmFactory = vmFactory;
 
-        var agentVms = agentQuery.GetAll().OrderBy(x => x.Key).Select(x => CreateAgentViewModel(x));
+        AgentHandlers = agentHandlersProvider.GetNames().ToList();
+
+        var agentVms = agentQuery.GetAllAsync().GetAwaiter().GetResult()
+            .OrderBy(x => x.Key)
+            .Select(x => CreateAgentViewModel(x));
         Agents.ReplaceItems(agentVms);
 
         AddAgentCommand = new ActionCommand(_ =>
@@ -61,7 +64,7 @@ internal sealed class AgentsViewModel : TabViewModelBase, IAgentsViewModel, IHas
             {
                 agent.ResetForm();
             }
-            IsDirty = false;
+            SetNotDirty();
         }, _ => IsDirty);
     }
 
@@ -83,11 +86,22 @@ internal sealed class AgentsViewModel : TabViewModelBase, IAgentsViewModel, IHas
 
         await _commandBus.SendAsync(new AgentsStoreWithOverwriteCommand(agents));
 
+        SetNotDirty();
+    }
+
+    private void SetNotDirty()
+    {
         IsDirty = false;
+        foreach (var agent in Agents)
+        {
+            agent.IsDirty = false;
+        }
     }
 
     public ObservableCollection<IAgentViewModel> Agents { get; }
         = new TypedObservableList<IAgentViewModel, AgentViewModel>();
+
+    public IReadOnlyCollection<string> AgentHandlers { get; }
 
     public bool IsAddEditAgentVisible
     {
@@ -95,7 +109,11 @@ internal sealed class AgentsViewModel : TabViewModelBase, IAgentsViewModel, IHas
         set => RaiseAndSetIfChanged(value);
     }
 
-    public bool IsDirty { get; set; }
+    public bool IsDirty
+    {
+        get => GetOrDefault(false);
+        set => RaiseAndSetIfChanged(value);
+    }
 
     public override bool HasErrors => Agents.Any(x => x.HasErrors);
 

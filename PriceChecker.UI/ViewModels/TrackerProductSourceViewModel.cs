@@ -1,15 +1,16 @@
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Windows;
-using Genius.PriceChecker.Core.Models;
+using System.Windows.Media.Imaging;
 using Genius.Atom.UI.Forms;
+using Genius.PriceChecker.Core.Models;
 using Genius.PriceChecker.UI.Helpers;
 
 namespace Genius.PriceChecker.UI.ViewModels;
 
 internal sealed class TrackerProductSourceViewModel : ViewModelBase
 {
-    public TrackerProductSourceViewModel(IUserInteraction ui, ProductSource? productSource, decimal? lastPrice)
+    public TrackerProductSourceViewModel(IProductInteraction productInteraction, ProductSource? productSource, decimal? lastPrice)
     {
         InitializeProperties(() => {
             Id = productSource?.Id ?? Guid.NewGuid();
@@ -19,7 +20,7 @@ internal sealed class TrackerProductSourceViewModel : ViewModelBase
         });
 
         ShowInBrowserCommand = new ActionCommand(_ =>
-            ui.ShowProductInBrowser(productSource));
+            productInteraction.ShowProductInBrowser(productSource));
     }
 
     [Browsable(false)]
@@ -32,6 +33,7 @@ internal sealed class TrackerProductSourceViewModel : ViewModelBase
         set => RaiseAndSetIfChanged(value);
     }
 
+    [Greedy]
     public string Argument
     {
         get => GetOrDefault(string.Empty);
@@ -45,6 +47,35 @@ internal sealed class TrackerProductSourceViewModel : ViewModelBase
     {
         get => GetOrDefault<decimal?>();
         set => RaiseAndSetIfChanged(value);
+    }
+
+    [ReadOnly(true)]
+    [IconSource(nameof(StatusIcon), 16d)]
+    public AgentHandlingStatus Status
+    {
+        get => GetOrDefault(AgentHandlingStatus.Unknown);
+        set => RaiseAndSetIfChanged(value, (_, __) => OnPropertyChanged(nameof(StatusIcon)));
+    }
+
+    [Browsable(false)]
+    public BitmapImage? StatusIcon
+    {
+        get
+        {
+            var icon = Status switch
+            {
+                AgentHandlingStatus.Unknown => "Unknown16",
+                AgentHandlingStatus.Success => "DonePink16",
+                AgentHandlingStatus.CouldNotFetch => "Error16",
+                AgentHandlingStatus.CouldNotMatch => "Error16",
+                AgentHandlingStatus.CouldNotParse => "Error16",
+                AgentHandlingStatus.InvalidPrice => "Warning16",
+                {} => null
+            };
+            if (icon is null)
+                return null;
+            return (BitmapImage)App.Current.FindResource(icon);
+        }
     }
 
     [Icon("Trash16")]

@@ -35,17 +35,15 @@ internal sealed class ProductCreateOrUpdateCommandHandler:
         return Task.FromResult(product.Id);
     }
 
-    public Task ProcessAsync(ProductUpdateCommand command)
+    public async Task ProcessAsync(ProductUpdateCommand command)
     {
-        var product = _productQuery.FindById(command.ProductId);
-        Guard.AgainstNull(product, nameof(product));
+        var product = await _productQuery.FindByIdAsync(command.ProductId);
+        Guard.NotNull(product);
 
         UpdateProperties(product, command);
         _productRepo.Store(product);
 
         _eventBus.Publish(new ProductsAffectedEvent());
-
-        return Task.CompletedTask;
     }
 
     private static void UpdateProperties(Product product, ProductUpdatableData command)

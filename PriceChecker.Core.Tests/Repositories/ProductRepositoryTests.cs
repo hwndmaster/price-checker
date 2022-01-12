@@ -1,73 +1,65 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using AutoFixture;
+using Genius.Atom.Data.Persistence;
 using Genius.Atom.Infrastructure.Entities;
 using Genius.Atom.Infrastructure.Events;
-using Genius.Atom.Infrastructure.Persistence;
 using Genius.PriceChecker.Core.Models;
 using Genius.PriceChecker.Core.Repositories;
 using Microsoft.Extensions.Logging;
-using Moq;
-using Xunit;
 
 namespace Genius.PriceChecker.Core.Tests.Repositories;
 
 public class ProductRepositoryTests
 {
     private readonly ProductRepository _sut;
-    private readonly Fixture _fixture = new();
     private readonly Mock<IEventBus> _eventBusMock = new();
     private readonly Mock<IJsonPersister> _persisterMock = new();
     private readonly Mock<IAgentQueryService> _agentQueryMock = new();
 
-    private readonly List<Product> _products = new();
-    private readonly List<Agent> _agents = new();
+    private readonly Product[] _products;
+    private readonly Agent[] _agents;
 
     public ProductRepositoryTests()
     {
-        _products.AddRange(Enumerable.Range(1, 3).Select(_ => CreateProduct()));
-        _agents = _products.SelectMany(x => x.Sources)
-            .Select(x => new Agent { Key = x.AgentKey }).ToList();
+        _products = ModelHelpers.SampleManyProducts().ToArray();
+        _agents = ModelHelpers.SampleManyAgents(_products).ToArray();
 
         foreach (var agent in _agents)
             _agentQueryMock.Setup(x => x.FindByKey(agent.Key)).Returns(agent);
 
         _persisterMock.Setup(x => x.LoadCollection<Product>(It.IsAny<string>()))
-            .Returns(_products.ToArray());
+            .Returns(_products);
 
         _sut = new ProductRepository(_eventBusMock.Object, _persisterMock.Object,
             _agentQueryMock.Object,
             Mock.Of<ILogger<ProductRepository>>());
 
-        _sut.GetAll(); // To trigger the initializer
+        _sut.GetAllAsync().GetAwaiter().GetResult(); // To trigger the initializer
     }
 
     [Fact]
-    public void GetAll__Returns_all_loaded_products()
+    public async Task GetAll__Returns_all_loaded_products()
     {
         // Act
-        var result = _sut.GetAll();
+        var result = await _sut.GetAllAsync();
 
         // Verify
         Assert.Equal(_products, result);
     }
 
     [Fact]
-    public void FindById__Returns_appropriate_product()
+    public async Task FindById__Returns_appropriate_product()
     {
         // Arrange
         var productToFind = _products[1];
 
         // Act
-        var result = _sut.FindById(productToFind.Id);
+        var result = await _sut.FindByIdAsync(productToFind.Id);
 
         // Verify
         Assert.Equal(productToFind, result);
     }
 
     [Fact]
-    public void Delete__Removes_appripriate_product()
+    public async Task Delete__Removes_appripriate_product()
     {
         // Arrange
         var productToDelete = _products[1];
@@ -76,20 +68,20 @@ public class ProductRepositoryTests
         _sut.Delete(productToDelete.Id);
 
         // Verify
-        Assert.Null(_sut.FindById(productToDelete.Id));
+        Assert.Null(await _sut.FindByIdAsync(productToDelete.Id));
     }
 
     [Fact]
-    public void Delete__When_no_product_found__Breaks_operation()
+    public async Task Delete__When_no_product_found__Breaks_operation()
     {
         // Arrange
-        var productCount = _sut.GetAll().Count();
+        var productCount = (await _sut.GetAllAsync()).Count();
 
         // Act
         _sut.Delete(Guid.NewGuid());
 
         // Verify
-        Assert.Equal(productCount, _sut.GetAll().Count());
+        Assert.Equal(productCount, (await _sut.GetAllAsync()).Count());
     }
 
     [Fact]
@@ -104,15 +96,15 @@ public class ProductRepositoryTests
         // Verify
         _persisterMock.Verify(x => x.Store(It.IsAny<string>(),
             It.Is((List<Product> p) => p.SequenceEqual(_products))));
-        _eventBusMock.Verify(x => x.Publish(It.Is<EntitiesUpdatedEvent>(e => e.Entities.First().Value == product)), Times.Once);
+        _eventBusMock.Verify(x => x.Publish(It.Is<EntitiesUpdatedEvent>(e => e.Entities.First() == product.Id)), Times.Once);
     }
 
     [Fact]
-    public void Store__For_nonexisting_product__Adds_it_and_fires_event()
+    public async Task Store__For_nonexisting_product__Adds_it_and_fires_event()
     {
         // Arrange
-        var product = CreateProduct();
-        var productCount = _sut.GetAll().Count();
+        var product = ModelHelpers.SampleProduct(_agents);
+        var productCount = (await _sut.GetAllAsync()).Count();
 
         // Act
         _sut.Store(product);
@@ -121,24 +113,24 @@ public class ProductRepositoryTests
         var expectedProducts = _products.Concat(new [] { product });
         _persisterMock.Verify(x => x.Store(It.IsAny<string>(),
             It.Is((List<Product> p) => p.SequenceEqual(expectedProducts))));
-        _eventBusMock.Verify(x => x.Publish(It.Is<EntitiesAddedEvent>(e => e.Entities.First().Value == product)), Times.Once);
-        Assert.Equal(productCount + 1, _sut.GetAll().Count());
+        _eventBusMock.Verify(x => x.Publish(It.Is<EntitiesAddedEvent>(e => e.Entities.First() == product.Id)), Times.Once);
+        Assert.Equal(productCount + 1, (await _sut.GetAllAsync()).Count());
     }
 
     [Fact]
-    public void Store__When_id_is_empty__Adds_product_with_autogenerated_id()
+    public async Task Store__When_id_is_empty__Adds_product_with_autogenerated_id()
     {
         // Arrange
-        var product = CreateProduct();
+        var product = ModelHelpers.SampleProduct(_agents);
         product.Id = Guid.Empty;
-        var productCount = _sut.GetAll().Count();
+        var productCount = (await _sut.GetAllAsync()).Count();
 
         // Act
         _sut.Store(product);
 
         // Verify
         Assert.NotEqual(Guid.Empty, product.Id);
-        Assert.Equal(productCount + 1, _sut.GetAll().Count());
+        Assert.Equal(productCount + 1, (await _sut.GetAllAsync()).Count());
     }
 
     [Fact]
@@ -159,13 +151,5 @@ public class ProductRepositoryTests
                 Assert.Equal(product.Sources.First(x => x.Id == price.ProductSourceId), price.ProductSource);
             }
         }
-    }
-
-    private Product CreateProduct()
-    {
-        var product = _fixture.Create<Product>();
-        foreach (var (first, second) in product.Recent.Zip(product.Sources))
-            first.ProductSourceId = second.Id;
-        return product;
     }
 }

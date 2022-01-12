@@ -1,10 +1,6 @@
-using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
-using AutoFixture;
 using Genius.Atom.UI.Forms;
 using Genius.PriceChecker.UI.Validation;
-using Xunit;
 
 namespace Genius.PriceChecker.UI.Tests.Validation;
 
@@ -72,6 +68,6 @@ public class MustBeUniqueValidationRuleTests
 
     internal class TestViewModel : ViewModelBase
     {
-        public List<string> SampleSet { get; set; }
+        public List<string> SampleSet { get; set; } = new();
     }
 }

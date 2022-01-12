@@ -16,12 +16,12 @@ internal sealed class SettingsViewModel : TabViewModelBase, ISettingsViewModel
 
         AutoRefreshMinuteOptions = new [] {
 #if DEBUG
-            new AutoRefreshOption { Name = "1 minute (DEBUG ONLY)", Value = 1 },
+            new AutoRefreshOption("1 minute (DEBUG ONLY)", 1),
 #endif
-            new AutoRefreshOption { Name = "1 hour", Value = 60 },
-            new AutoRefreshOption { Name = "3 hours", Value = 180 },
-            new AutoRefreshOption { Name = "8 hours", Value = 480 },
-            new AutoRefreshOption { Name = "1 day", Value = 1440 }
+            new AutoRefreshOption("1 hour", 60),
+            new AutoRefreshOption("3 hours", 180),
+            new AutoRefreshOption("8 hours", 480),
+            new AutoRefreshOption("1 day", 1440)
         };
 
         AutoRefreshEnabled = settings.AutoRefreshEnabled;
@@ -54,9 +54,5 @@ internal sealed class SettingsViewModel : TabViewModelBase, ISettingsViewModel
     }
 
 
-    public class AutoRefreshOption
-    {
-        public string Name { get; init; }
-        public int Value { get; init; }
-    }
+    public record AutoRefreshOption(string Name, int Value);
 }

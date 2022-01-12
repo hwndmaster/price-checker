@@ -1,11 +1,8 @@
-using System;
 using System.Reactive.Subjects;
-using AutoFixture;
 using Genius.Atom.UI.Forms.TestingUtil;
 using Genius.PriceChecker.Core.Messages;
 using Genius.PriceChecker.Core.Models;
 using Genius.PriceChecker.UI.Helpers;
-using Xunit;
 
 namespace Genius.PriceChecker.UI.Tests.Helpers;
 

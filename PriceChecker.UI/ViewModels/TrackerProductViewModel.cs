@@ -1,10 +1,8 @@
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
+using System.Reactive.Disposables;
 using System.Reactive.Linq;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media.Imaging;
 using Genius.Atom.Infrastructure.Commands;
@@ -21,12 +19,12 @@ using ReactiveUI;
 
 namespace Genius.PriceChecker.UI.ViewModels;
 
-public interface ITrackerProductViewModel : IViewModel, ISelectable
+public interface ITrackerProductViewModel : IViewModel, ISelectable, IDisposable
 {
-    void Reconcile(bool lowestPriceUpdated);
+    void Reconcile(ProductScanStatus status);
     void SetFailed(string errorMessage);
 
-    Guid Id { get; }
+    Guid? Id { get; }
     string Name { get; }
     ProductScanStatus Status { get; set; }
     IActionCommand CommitProductCommand { get; }
@@ -41,6 +39,8 @@ internal sealed class TrackerProductViewModel : ViewModelBase, ITrackerProductVi
     private readonly IProductStatusProvider _statusProvider;
     private readonly ICommandBus _commandBus;
     private readonly IUserInteraction _ui;
+    private readonly IProductInteraction _productInteraction;
+    private readonly CompositeDisposable _disposables = new();
 
     private Product? _product;
 
@@ -48,7 +48,8 @@ internal sealed class TrackerProductViewModel : ViewModelBase, ITrackerProductVi
         ICommandBus commandBus,
         IAgentQueryService agentQuery,
         IProductQueryService productQuery, IProductStatusProvider statusProvider,
-        IUserInteraction ui)
+        IUserInteraction ui,
+        IProductInteraction productInteraction)
     {
         _agentQuery = agentQuery;
         _productQuery = productQuery;
@@ -56,23 +57,24 @@ internal sealed class TrackerProductViewModel : ViewModelBase, ITrackerProductVi
         _commandBus = commandBus;
         _product = product;
         _ui = ui;
+        _productInteraction = productInteraction;
 
-        InitializeProperties(() =>
+        InitializeProperties(async () =>
         {
-            RefreshAgents();
-            RefreshCategories();
+            await RefreshAgentsAsync();
+            await RefreshCategoriesAsync();
 
-            if (_product != null)
+            if (_product is not null)
             {
                 ResetForm();
-                Reconcile(false);
+                Reconcile(_statusProvider.DetermineStatus(_product));
             }
         });
 
         CommitProductCommand = new ActionCommand(_ => CommitProduct());
 
         ShowInBrowserCommand = new ActionCommand(_ =>
-            ui.ShowProductInBrowser(_product?.Lowest?.ProductSource));
+            productInteraction.ShowProductInBrowser(_product?.Lowest?.ProductSource));
 
         AddSourceCommand = new ActionCommand(_ =>
             Sources.Add(CreateSourceViewModel(null)));
@@ -84,43 +86,45 @@ internal sealed class TrackerProductViewModel : ViewModelBase, ITrackerProductVi
             if (!_ui.AskForConfirmation("Are you sure?", "Prices drop confirmation"))
                 return;
             await commandBus.SendAsync(new ProductDropPricesCommand(_product!.Id));
-            Reconcile(true);
+            Reconcile(ProductScanStatus.NotScanned);
         }, _ => _product is not null);
 
         RefreshPriceCommand = new ActionCommand(async _ =>
         {
             if (Status == ProductScanStatus.Scanning)
                 return;
-            await commandBus.SendAsync(new ProductEnqueueScanCommand(product.Id));
-        }, _ => Status != ProductScanStatus.Scanning);
+            await commandBus.SendAsync(new ProductEnqueueScanCommand(product!.Id));
+        }, _ => _product is not null && Status != ProductScanStatus.Scanning);
 
         eventBus.WhenFired<AgentsAffectedEvent>()
             .ObserveOn(RxApp.MainThreadScheduler)
-            .Subscribe(_ =>
-                RefreshAgents()
-            );
+            .Subscribe(async _ =>
+                await RefreshAgentsAsync()
+            )
+            .DisposeWith(_disposables);
         eventBus.WhenFired<ProductsAffectedEvent>()
             .ObserveOn(RxApp.MainThreadScheduler)
-            .Subscribe(_ =>
-                RefreshCategories()
-            );
+            .Subscribe(async _ =>
+                await RefreshCategoriesAsync()
+            )
+            .DisposeWith(_disposables);
     }
 
-    public void Reconcile(bool lowestPriceUpdated)
+    public void Reconcile(ProductScanStatus status)
     {
         Product product = _product.NotNull();
         var previousLowestPrice = LowestPrice;
         LowestPrice = product.Lowest?.Price;
         LowestFoundOn = product.Lowest?.FoundDate;
-        RecentPrice = product.Recent.Any()
-            ? product.Recent.Min(x => x.Price)
-            : null;
-        Status = lowestPriceUpdated && product.Lowest != null ?
-            ProductScanStatus.ScannedNewLowest :
-            _statusProvider.DetermineStatus(product);
+        RecentPrice = product.MinPrice()?.Price;
+        Status = status switch {
+            ProductScanStatus.ScannedOk => _statusProvider.DetermineStatus(product),
+            _ => status
+        };
         LastUpdated = null;
 
-        if (lowestPriceUpdated && LowestPrice.HasValue && previousLowestPrice.HasValue)
+        if (status == ProductScanStatus.ScannedNewLowest
+            && LowestPrice.HasValue && previousLowestPrice.HasValue)
         {
             var x = (1 - LowestPrice.Value / previousLowestPrice) * 100;
             StatusText = $"The new price is by {x:0}% less than by previous scan ({LowestPrice.Value:#,##0.00} vs {previousLowestPrice.Value:#,##0.00})";
@@ -138,12 +142,19 @@ internal sealed class TrackerProductViewModel : ViewModelBase, ITrackerProductVi
         {
             LastUpdated = product.Recent.Max(x => x.FoundDate);
 
-            var pricesDict = product.Recent.ToDictionary(x => x.ProductSourceId, x => x.Price);
+            var pricesDict = product.Recent.ToDictionary(x => x.ProductSourceId);
             foreach (var source in Sources)
             {
-                source.LastPrice = pricesDict.ContainsKey(source.Id) ?
-                    pricesDict[source.Id] :
-                    null;
+                if (pricesDict.TryGetValue(source.Id, out var priceValue))
+                {
+                    source.LastPrice = priceValue.Price;
+                    source.Status = priceValue.Status;
+                }
+                else
+                {
+                    source.LastPrice = null;
+                    source.Status = AgentHandlingStatus.Unknown;
+                }
             }
         }
         else
@@ -179,7 +190,7 @@ internal sealed class TrackerProductViewModel : ViewModelBase, ITrackerProductVi
         if (_product is null)
         {
             var productId = await _commandBus.SendAsync(new ProductCreateCommand(Name, Category, Description, sources));
-            _product = _productQuery.FindById(productId);
+            _product = await _productQuery.FindByIdAsync(productId);
         }
         else
         {
@@ -192,21 +203,22 @@ internal sealed class TrackerProductViewModel : ViewModelBase, ITrackerProductVi
         var lastPrice = productSource is null || _product?.Recent is null
             ? null
             : _product.Recent.FirstOrDefault(x => x.ProductSourceId == productSource.Id)?.Price;
-        var vm = new TrackerProductSourceViewModel(_ui, productSource, lastPrice);
-        vm.DeleteCommand.Executed.Subscribe(_ =>
-            Sources.Remove(vm));
+        var vm = new TrackerProductSourceViewModel(_productInteraction, productSource, lastPrice);
+        vm.DeleteCommand.Executed
+            .Subscribe(_ => Sources.Remove(vm))
+            .DisposeWith(_disposables);
         return vm;
     }
 
-    private void RefreshAgents()
+    private async Task RefreshAgentsAsync()
     {
-        Agents = _agentQuery.GetAll().Select(x => x.Key).ToList();
+        Agents = (await _agentQuery.GetAllAsync()).Select(x => x.Key).ToList();
     }
 
-    private void RefreshCategories()
+    private async Task RefreshCategoriesAsync()
     {
-        Categories.ReplaceItems(
-            _productQuery.GetAll()
+        Categories.AppendItems(
+            (await _productQuery.GetAllAsync())
                 .Where(x => x.Category is not null)
                 .Select(x => x.Category!).Distinct());
     }
@@ -222,7 +234,12 @@ internal sealed class TrackerProductViewModel : ViewModelBase, ITrackerProductVi
         Sources.ReplaceItems(productSourceVms);
     }
 
-    public Guid Id => _product.NotNull().Id;
+    public void Dispose()
+    {
+        _disposables.Dispose();
+    }
+
+    public Guid? Id => _product?.Id;
 
     public IReadOnlyCollection<string> Agents { get; private set; } = new List<string>();
 

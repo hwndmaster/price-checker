@@ -1,15 +1,9 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using AutoFixture;
+using Genius.Atom.Data.Persistence;
 using Genius.Atom.Infrastructure.Entities;
 using Genius.Atom.Infrastructure.Events;
-using Genius.Atom.Infrastructure.Persistence;
 using Genius.PriceChecker.Core.Models;
 using Genius.PriceChecker.Core.Repositories;
 using Microsoft.Extensions.Logging;
-using Moq;
-using Xunit;
 
 namespace Genius.PriceChecker.Core.Tests.Repositories;
 
@@ -32,24 +26,24 @@ public class AgentRepositoryTests
         _sut = new AgentRepository(_eventBusMock.Object, _persisterMock.Object,
             Mock.Of<ILogger<AgentRepository>>());
 
-        _sut.GetAll(); // To trigger the initializer
+        _sut.GetAllAsync().GetAwaiter().GetResult(); // To trigger the initializer
     }
 
     [Fact]
-    public void FindById__Returns_appropriate_agent()
+    public async Task FindById__Returns_appropriate_agent()
     {
         // Arrange
         var agentToFind = _agents[1];
 
         // Act
-        var result = _sut.FindById(agentToFind.Id);
+        var result = await _sut.FindByIdAsync(agentToFind.Id);
 
         // Verify
         Assert.Equal(agentToFind, result);
     }
 
     [Fact]
-    public void Delete__Removes_appripriate_agent()
+    public async Task Delete__Removes_appripriate_agent()
     {
         // Arrange
         var agentToDelete = _agents[1];
@@ -58,34 +52,35 @@ public class AgentRepositoryTests
         _sut.Delete(agentToDelete.Id);
 
         // Verify
-        Assert.Null(_sut.FindById(agentToDelete.Id));
+        Assert.Null(await _sut.FindByIdAsync(agentToDelete.Id));
     }
 
     [Fact]
-    public void Delete__When_no_agent_found__Breaks_operation()
+    public async Task Delete__When_no_agent_found__Breaks_operation()
     {
         // Arrange
-        var agentCount = _sut.GetAll().Count();
+        var agents = await _sut.GetAllAsync();
+        var agentCount = agents.Count();
 
         // Act
         _sut.Delete(Guid.NewGuid());
 
         // Verify
-        Assert.Equal(agentCount, _sut.GetAll().Count());
+        Assert.Equal(agentCount, (await _sut.GetAllAsync()).Count());
     }
 
     [Fact]
-    public void Store__Replaces_all_existing_agents_and_updates_cache_and_fires_event()
+    public async Task Store__Replaces_all_existing_agents_and_updates_cache_and_fires_event()
     {
         // Arrange
         var newAgents = _fixture.CreateMany<Agent>().ToArray();
-        var previousAgents = _sut.GetAll().ToArray();
+        var previousAgents = (await _sut.GetAllAsync()).ToArray();
 
         // Act
         _sut.Overwrite(newAgents);
 
         // Verify
-        Assert.False(_sut.GetAll().Except(newAgents).Any());
+        Assert.False((await _sut.GetAllAsync()).Except(newAgents).Any());
         _persisterMock.Verify(x => x.Store(It.IsAny<string>(),
             It.Is((List<Agent> p) => p.SequenceEqual(newAgents))));
         _eventBusMock.Verify(x => x.Publish(It.Is<EntitiesAddedEvent>(e => e.Entities.Count == newAgents.Length)), Times.Once);

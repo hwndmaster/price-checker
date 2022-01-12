@@ -1,9 +1,5 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Reactive;
 using System.Reactive.Subjects;
-using AutoFixture;
 using Genius.Atom.Infrastructure.Commands;
 using Genius.Atom.UI.Forms;
 using Genius.Atom.UI.Forms.TestingUtil;
@@ -13,8 +9,6 @@ using Genius.PriceChecker.Core.Models;
 using Genius.PriceChecker.Core.Repositories;
 using Genius.PriceChecker.UI.Helpers;
 using Genius.PriceChecker.UI.ViewModels;
-using Moq;
-using Xunit;
 
 namespace Genius.PriceChecker.UI.Tests.ViewModels;
 
@@ -55,7 +49,7 @@ public class TrackerViewModelTests : TestBase
 
         // Verify
         Assert.NotEmpty(sut.RefreshOptions);
-        Assert.Equal(products.Select(x => x.Id), sut.Products.Select(x => x.Id));
+        Assert.Equal(products, sut.Products.Select(x => x.Id.Value));
     }
 
     [Fact]
@@ -141,11 +135,11 @@ public class TrackerViewModelTests : TestBase
         sut.OpenAddProductFlyoutCommand.Execute(null); // trigger to open flyout
 
         // Act
-        ((Subject<Unit>)sut.EditingProduct.CommitProductCommand.Executed).OnNext(Unit.Default);
+        ((Subject<Unit>)sut.EditingProduct!.CommitProductCommand.Executed).OnNext(Unit.Default);
 
         // Verify
         Assert.False(sut.IsAddEditProductVisible);
-        _productQueryMock.Verify(x => x.GetAll(), Times.Exactly(2));
+        _productQueryMock.Verify(x => x.GetAllAsync(), Times.Exactly(2));
     }
 
     [Fact]
@@ -164,7 +158,7 @@ public class TrackerViewModelTests : TestBase
         // Verify
         Assert.True(sut.IsAddEditProductVisible);
         Assert.NotNull(sut.EditingProduct);
-        Assert.Equal(products.First().Id, sut.EditingProduct!.Id);
+        Assert.Equal(products.First(), sut.EditingProduct!.Id);
     }
 
     [Fact]
@@ -192,7 +186,7 @@ public class TrackerViewModelTests : TestBase
         sut.OpenEditProductFlyoutCommand.Execute(null); // trigger to open flyout
 
         // Act
-        ((Subject<Unit>)sut.EditingProduct.CommitProductCommand.Executed).OnNext(Unit.Default);
+        ((Subject<Unit>)sut.EditingProduct!.CommitProductCommand.Executed).OnNext(Unit.Default);
 
         // Verify
         Assert.False(sut.IsAddEditProductVisible);
@@ -212,7 +206,7 @@ public class TrackerViewModelTests : TestBase
         sut.DeleteProductCommand.Execute(null);
 
         // Verify
-        var deletedProductId = products.ElementAt(1).Id;
+        var deletedProductId = products.ElementAt(1);
         Assert.False(sut.IsAddEditProductVisible);
         Assert.DoesNotContain(sut.Products, x => x.Id == deletedProductId);
         Assert.Equal(products.Count - 1, sut.Products.Count);
@@ -233,7 +227,7 @@ public class TrackerViewModelTests : TestBase
         sut.DeleteProductCommand.Execute(null);
 
         // Verify
-        var deletingProductId = products.ElementAt(1).Id;
+        var deletingProductId = products.ElementAt(1);
         Assert.False(sut.IsAddEditProductVisible);
         Assert.Contains(sut.Products, x => x.Id == deletingProductId);
         Assert.Equal(products.Count, sut.Products.Count);
@@ -279,14 +273,14 @@ public class TrackerViewModelTests : TestBase
         // Arrange
         var products = SampleProducts();
         var sut = CreateSystemUnderTest();
-        var lowestUpdated = Fixture.Create<bool>();
+        var status = Fixture.Create<ProductScanStatus>();
         const int productScannedIndex = 1;
 
         // Act
-        _productScannedEventSubject.OnNext(new ProductScannedEvent(products.ElementAt(productScannedIndex), lowestUpdated));
+        _productScannedEventSubject.OnNext(new ProductScannedEvent(products.ElementAt(productScannedIndex), status));
 
         // Verify
-        Mock.Get(sut.Products[productScannedIndex]).Verify(x => x.Reconcile(lowestUpdated), Times.Once);
+        Mock.Get(sut.Products[productScannedIndex]).Verify(x => x.Reconcile(status), Times.Once);
     }
 
     [Fact]
@@ -344,10 +338,10 @@ public class TrackerViewModelTests : TestBase
             _commandBusMock.Object);
     }
 
-    private ICollection<Product> SampleProducts()
+    private ICollection<Guid> SampleProducts()
     {
         var products = Fixture.CreateMany<Product>().ToList();
-        _productQueryMock.Setup(x => x.GetAll()).Returns(products);
-        return products;
+        _productQueryMock.Setup(x => x.GetAllAsync()).Returns(Task.FromResult(products.AsEnumerable()));
+        return products.ConvertAll(x => x.Id);
     }
 }

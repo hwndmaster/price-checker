@@ -1,6 +1,7 @@
 <Project>
   <PropertyGroup>
     <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
 
   <ItemGroup>
@@ -13,9 +14,10 @@
     <PackageReference Update="Microsoft.Extensions.Logging.Abstractions" Version="6.0.0" />
 
     <!-- Atom Framework -->
-    <PackageReference Update="Genius.Atom.Infrastructure" Version="0.0.6" />
-    <PackageReference Update="Genius.Atom.UI.Forms" Version="0.0.6" />
-    <PackageReference Update="Genius.Atom.UI.Forms.TestingUtil" Version="0.0.6" />
+    <PackageReference Update="Genius.Atom.Data" Version="0.0.8" />
+    <PackageReference Update="Genius.Atom.Infrastructure" Version="0.0.8" />
+    <PackageReference Update="Genius.Atom.UI.Forms" Version="0.0.8" />
+    <PackageReference Update="Genius.Atom.UI.Forms.TestingUtil" Version="0.0.8" />
 
     <!-- Misc -->
     <PackageReference Update="Hardcodet.NotifyIcon.Wpf" Version="1.1.0" />
@@ -26,6 +28,11 @@
   </ItemGroup>
 
   <!-- Automated Testing components -->
+  <ItemGroup Condition="$(ProjectName.EndsWith('.Tests'))">
+    <Using Include="AutoFixture" />
+    <Using Include="Moq" />
+    <Using Include="Xunit" />
+  </ItemGroup>
   <ItemGroup Condition="$(ProjectName.EndsWith('.Tests'))">
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.0.0" />
     <PackageReference Include="xunit" Version="2.4.1" />

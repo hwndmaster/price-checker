@@ -1,5 +1,4 @@
-﻿global using System;
-global using Genius.Atom.Infrastructure;
+﻿global using Genius.Atom.Infrastructure;
 
 using System.Diagnostics.CodeAnalysis;
 using System.Windows;
@@ -15,9 +14,10 @@ namespace Genius.PriceChecker.UI;
 [ExcludeFromCodeCoverage]
 public partial class App : Application
 {
+#pragma warning disable CS8618 // These fields are being initialized in OnStartup() method.
     private TaskbarIcon _notifyIcon;
-
     public static IServiceProvider ServiceProvider { get; private set; }
+#pragma warning restore CS8618
 
     protected override void OnStartup(StartupEventArgs e)
     {
@@ -50,7 +50,9 @@ public partial class App : Application
 
     private static void ConfigureServices(IServiceCollection services)
     {
+        Atom.Data.Module.Configure(services);
         Atom.Infrastructure.Module.Configure(services);
+        Atom.UI.Forms.Module.Configure(services);
         Core.Module.Configure(services);
 
         // Framework:
@@ -68,7 +70,7 @@ public partial class App : Application
         services.AddTransient<ILogsViewModel, LogsViewModel>();
 
         // Services and Helpers:
-        services.AddTransient<IUserInteraction, UserInteraction>();
+        services.AddTransient<IProductInteraction, ProductInteraction>();
         services.AddSingleton<ITrackerScanContext, TrackerScanContext>();
     }
 

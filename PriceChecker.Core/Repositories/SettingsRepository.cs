@@ -1,5 +1,5 @@
+using Genius.Atom.Data.Persistence;
 using Genius.Atom.Infrastructure.Events;
-using Genius.Atom.Infrastructure.Persistence;
 using Genius.PriceChecker.Core.Messages;
 using Genius.PriceChecker.Core.Models;
 using Microsoft.Extensions.Logging;

@@ -1,14 +1,13 @@
-using Genius.PriceChecker.Core.Models;
 using Genius.Atom.Infrastructure.Events;
 
 namespace Genius.PriceChecker.Core.Messages;
 
 public sealed class ProductScanStartedEvent : IEventMessage
 {
-    public ProductScanStartedEvent(Product product)
+    public ProductScanStartedEvent(Guid productId)
     {
-        Product = product;
+        ProductId = productId;
     }
 
-    public Product Product { get; }
+    public Guid ProductId { get; }
 }

@@ -1,7 +1,5 @@
 using System.Globalization;
-using AutoFixture;
 using Genius.PriceChecker.UI.Validation;
-using Xunit;
 
 namespace Genius.PriceChecker.UI.Tests.Validation;
 

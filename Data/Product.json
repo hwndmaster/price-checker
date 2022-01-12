@@ -12,14 +12,16 @@
     ],
     "Lowest": {
       "ProductSourceId": "60b9ceed-b34c-45ad-a142-af0ec5491d91",
+      "Status": 1,
       "Price": 15.90,
-      "FoundDate": "2021-09-29T20:55:22.756699+02:00"
+      "FoundDate": "2022-01-12T16:38:23.5065248+01:00"
     },
     "Recent": [
       {
         "ProductSourceId": "60b9ceed-b34c-45ad-a142-af0ec5491d91",
+        "Status": 1,
         "Price": 15.90,
-        "FoundDate": "2021-09-29T20:55:22.756699+02:00"
+        "FoundDate": "2022-01-12T16:38:23.5065248+01:00"
       }
     ],
     "Id": "6a52bd42-d19e-4572-9295-28e01e7e7417"
@@ -42,19 +44,22 @@
     ],
     "Lowest": {
       "ProductSourceId": "ebeaa98d-aedb-4bb8-b539-1de7e1ee25cc",
-      "Price": 655.2,
-      "FoundDate": "2021-09-29T20:55:17.8470223+02:00"
+      "Status": 1,
+      "Price": 699,
+      "FoundDate": "2022-01-12T11:47:19.3724935+01:00"
     },
     "Recent": [
       {
         "ProductSourceId": "4753f887-5b20-41de-a06b-3c159262a273",
-        "Price": 679,
-        "FoundDate": "2021-09-29T20:55:17.8470177+02:00"
+        "Status": 1,
+        "Price": 749,
+        "FoundDate": "2022-01-12T11:47:19.3724893+01:00"
       },
       {
         "ProductSourceId": "ebeaa98d-aedb-4bb8-b539-1de7e1ee25cc",
-        "Price": 655.2,
-        "FoundDate": "2021-09-29T20:55:17.8470223+02:00"
+        "Status": 1,
+        "Price": 699,
+        "FoundDate": "2022-01-12T11:47:19.3724935+01:00"
       }
     ],
     "Id": "5486193d-b417-4936-b71c-be250317dc81"
@@ -71,7 +76,7 @@
       },
       {
         "Id": "d786a796-b93c-468b-8fda-a2892d72802a",
-        "AgentKey": "amazon.de",
+        "AgentKey": "amazon.de_alt",
         "AgentArgument": "B07SR4R8K1"
       },
       {
@@ -82,19 +87,28 @@
     ],
     "Lowest": {
       "ProductSourceId": "d786a796-b93c-468b-8fda-a2892d72802a",
-      "Price": 159.0,
-      "FoundDate": "2021-09-29T20:55:18.0914128+02:00"
+      "Status": 1,
+      "Price": 139.99,
+      "FoundDate": "2022-01-12T16:39:00.6305374+01:00"
     },
     "Recent": [
       {
-        "ProductSourceId": "3b27b7fc-369d-4f90-ba4c-f209c1a0153b",
-        "Price": 176.95,
-        "FoundDate": "2021-09-29T20:55:18.0914075+02:00"
+        "ProductSourceId": "d786a796-b93c-468b-8fda-a2892d72802a",
+        "Status": 1,
+        "Price": 139.99,
+        "FoundDate": "2022-01-12T16:39:00.6305374+01:00"
       },
       {
-        "ProductSourceId": "d786a796-b93c-468b-8fda-a2892d72802a",
-        "Price": 159.0,
-        "FoundDate": "2021-09-29T20:55:18.0914128+02:00"
+        "ProductSourceId": "1778e5f5-b73d-418b-b3b8-06412828f54f",
+        "Status": 3,
+        "Price": null,
+        "FoundDate": "2022-01-12T16:39:00.6305405+01:00"
+      },
+      {
+        "ProductSourceId": "3b27b7fc-369d-4f90-ba4c-f209c1a0153b",
+        "Status": 1,
+        "Price": 179,
+        "FoundDate": "2022-01-12T16:39:00.6305407+01:00"
       }
     ],
     "Id": "e10533c4-8e07-443c-b751-52020da1e7ee"
@@ -111,25 +125,28 @@
       },
       {
         "Id": "923b83ed-3fcb-43ca-80b0-0e9e717ec9c6",
-        "AgentKey": "amazon.de",
+        "AgentKey": "amazon.de_alt",
         "AgentArgument": "B00BMKLVJ6"
       }
     ],
     "Lowest": {
       "ProductSourceId": "923b83ed-3fcb-43ca-80b0-0e9e717ec9c6",
-      "Price": 429.0,
-      "FoundDate": "2021-06-20T20:55:36.6045305+02:00"
+      "Status": 1,
+      "Price": 519.80,
+      "FoundDate": "2022-01-12T16:40:36.1338264+01:00"
     },
     "Recent": [
       {
         "ProductSourceId": "5f5a72a4-d6ad-4cab-9fb9-9d5839fa2a03",
-        "Price": 474.95,
-        "FoundDate": "2021-09-29T20:55:15.5162843+02:00"
+        "Status": 3,
+        "Price": null,
+        "FoundDate": "2022-01-12T16:40:36.1338221+01:00"
       },
       {
         "ProductSourceId": "923b83ed-3fcb-43ca-80b0-0e9e717ec9c6",
-        "Price": 449.9,
-        "FoundDate": "2021-09-29T20:55:15.5162897+02:00"
+        "Status": 1,
+        "Price": 519.80,
+        "FoundDate": "2022-01-12T16:40:36.1338264+01:00"
       }
     ],
     "Id": "1b60bf08-2d90-4f85-99ce-3d26d19bb696"
@@ -146,20 +163,23 @@
       },
       {
         "Id": "ab80a6f9-c175-4c10-8f69-aee23e7efc64",
-        "AgentKey": "amazon.de",
+        "AgentKey": "amazon.de_alt",
         "AgentArgument": "B08QDVWY4T"
       }
     ],
-    "Lowest": {
-      "ProductSourceId": "ab80a6f9-c175-4c10-8f69-aee23e7efc64",
-      "Price": 442.47,
-      "FoundDate": "2021-06-04T18:57:59.398364+02:00"
-    },
+    "Lowest": null,
     "Recent": [
       {
         "ProductSourceId": "cbb43572-35b9-4408-9e52-09f934b97336",
-        "Price": 611.78,
-        "FoundDate": "2021-08-13T22:17:53.0693481+02:00"
+        "Status": 3,
+        "Price": null,
+        "FoundDate": "2022-01-12T16:41:33.6760236+01:00"
+      },
+      {
+        "ProductSourceId": "ab80a6f9-c175-4c10-8f69-aee23e7efc64",
+        "Status": 3,
+        "Price": null,
+        "FoundDate": "2022-01-12T16:41:33.6760279+01:00"
       }
     ],
     "Id": "fa6bca3a-0e5b-4efd-acc0-b20fc07fd269"
@@ -171,7 +191,7 @@
     "Sources": [
       {
         "Id": "aa039437-a86f-4cf7-9283-90c63a95e142",
-        "AgentKey": "amazon.de",
+        "AgentKey": "amazon.de_alt",
         "AgentArgument": "B01K4CYV58"
       },
       {
@@ -181,15 +201,23 @@
       }
     ],
     "Lowest": {
-      "ProductSourceId": "aa039437-a86f-4cf7-9283-90c63a95e142",
-      "Price": 389.95,
-      "FoundDate": "2021-09-05T12:43:05.9642497+02:00"
+      "ProductSourceId": "b129f9f2-416b-493e-af3c-ff0f255a66e9",
+      "Status": 1,
+      "Price": 499.99,
+      "FoundDate": "2022-01-12T16:41:36.2769149+01:00"
     },
     "Recent": [
       {
+        "ProductSourceId": "b129f9f2-416b-493e-af3c-ff0f255a66e9",
+        "Status": 1,
+        "Price": 499.99,
+        "FoundDate": "2022-01-12T16:41:36.2769149+01:00"
+      },
+      {
         "ProductSourceId": "aa039437-a86f-4cf7-9283-90c63a95e142",
-        "Price": 389.95,
-        "FoundDate": "2021-09-05T12:43:05.9642497+02:00"
+        "Status": 3,
+        "Price": null,
+        "FoundDate": "2022-01-12T16:41:36.2769184+01:00"
       }
     ],
     "Id": "76ed6168-fbae-4fb3-a572-bc70c4d1e567"
@@ -201,20 +229,22 @@
     "Sources": [
       {
         "Id": "831217bc-0784-4d57-a6a5-d71bf6b2bd19",
-        "AgentKey": "amazon.nl",
+        "AgentKey": "amazon.nl_div100",
         "AgentArgument": "B06XS5XFSP"
       }
     ],
     "Lowest": {
       "ProductSourceId": "831217bc-0784-4d57-a6a5-d71bf6b2bd19",
-      "Price": 236.80,
-      "FoundDate": "2021-06-20T19:58:56.4396029+02:00"
+      "Status": 1,
+      "Price": 367.64,
+      "FoundDate": "2022-01-12T11:47:18.4194776+01:00"
     },
     "Recent": [
       {
         "ProductSourceId": "831217bc-0784-4d57-a6a5-d71bf6b2bd19",
-        "Price": 236.80,
-        "FoundDate": "2021-06-20T19:58:56.4396029+02:00"
+        "Status": 1,
+        "Price": 367.64,
+        "FoundDate": "2022-01-12T11:47:18.4194776+01:00"
       }
     ],
     "Id": "40467c0b-d5ff-45d6-b1b7-30d8ab344dc8"
@@ -232,14 +262,16 @@
     ],
     "Lowest": {
       "ProductSourceId": "65f0f16f-a64c-4244-bd3b-ea58c27740ed",
+      "Status": 1,
       "Price": 349.99,
-      "FoundDate": "2021-08-13T22:18:13.1946227+02:00"
+      "FoundDate": "2022-01-12T11:47:13.0207865+01:00"
     },
     "Recent": [
       {
         "ProductSourceId": "65f0f16f-a64c-4244-bd3b-ea58c27740ed",
+        "Status": 1,
         "Price": 349.99,
-        "FoundDate": "2021-08-13T22:18:13.1946227+02:00"
+        "FoundDate": "2022-01-12T11:47:13.0207865+01:00"
       }
     ],
     "Id": "9f051b51-640a-4dd5-8a5b-1fb9996e7f91"
@@ -251,20 +283,22 @@
     "Sources": [
       {
         "Id": "c33f08c8-854e-4a60-8eff-bd900cffe134",
-        "AgentKey": "amazon.de",
+        "AgentKey": "amazon.de_alt",
         "AgentArgument": "B07GSVDFTQ"
       }
     ],
     "Lowest": {
       "ProductSourceId": "c33f08c8-854e-4a60-8eff-bd900cffe134",
-      "Price": 279.99,
-      "FoundDate": "2021-08-13T22:17:08.7208269+02:00"
+      "Status": 1,
+      "Price": 899.00,
+      "FoundDate": "2022-01-12T16:42:59.8757693+01:00"
     },
     "Recent": [
       {
         "ProductSourceId": "c33f08c8-854e-4a60-8eff-bd900cffe134",
-        "Price": 279.99,
-        "FoundDate": "2021-08-13T22:17:08.7208269+02:00"
+        "Status": 1,
+        "Price": 899.00,
+        "FoundDate": "2022-01-12T16:42:59.8757693+01:00"
       }
     ],
     "Id": "e115a648-8c10-42b5-a7d2-d304ee13b65c"
@@ -276,20 +310,22 @@
     "Sources": [
       {
         "Id": "64f76755-0839-4c6c-9a7c-e28e4cf1e670",
-        "AgentKey": "amazon.de",
+        "AgentKey": "amazon.de_alt",
         "AgentArgument": "B07YGSXVB8"
       }
     ],
     "Lowest": {
       "ProductSourceId": "64f76755-0839-4c6c-9a7c-e28e4cf1e670",
-      "Price": 298.44,
-      "FoundDate": "2021-06-04T18:20:57.556876+02:00"
+      "Status": 1,
+      "Price": 315.99,
+      "FoundDate": "2022-01-12T16:42:44.2979185+01:00"
     },
     "Recent": [
       {
         "ProductSourceId": "64f76755-0839-4c6c-9a7c-e28e4cf1e670",
-        "Price": 299.99,
-        "FoundDate": "2021-09-05T12:42:30.0347677+02:00"
+        "Status": 1,
+        "Price": 315.99,
+        "FoundDate": "2022-01-12T16:42:44.2979185+01:00"
       }
     ],
     "Id": "2a1ee1b8-aab3-4f08-b81f-ab5479e690ee"
@@ -301,7 +337,7 @@
     "Sources": [
       {
         "Id": "e4b4c4d2-d318-4304-af16-3b97a18509f7",
-        "AgentKey": "amazon.de",
+        "AgentKey": "amazon.de_alt",
         "AgentArgument": "B08G2HBBB6"
       },
       {
@@ -312,19 +348,22 @@
     ],
     "Lowest": {
       "ProductSourceId": "05b5f419-0ace-4ba7-b35a-4eb571c5ecc6",
-      "Price": 365,
-      "FoundDate": "2021-09-05T12:42:35.4458115+02:00"
+      "Status": 1,
+      "Price": 379.99,
+      "FoundDate": "2022-01-12T16:43:31.8929741+01:00"
     },
     "Recent": [
       {
         "ProductSourceId": "e4b4c4d2-d318-4304-af16-3b97a18509f7",
-        "Price": 399.0,
-        "FoundDate": "2021-09-05T12:42:35.4458073+02:00"
+        "Status": 1,
+        "Price": 395.99,
+        "FoundDate": "2022-01-12T16:43:31.8929701+01:00"
       },
       {
         "ProductSourceId": "05b5f419-0ace-4ba7-b35a-4eb571c5ecc6",
-        "Price": 365,
-        "FoundDate": "2021-09-05T12:42:35.4458115+02:00"
+        "Status": 1,
+        "Price": 379.99,
+        "FoundDate": "2022-01-12T16:43:31.8929741+01:00"
       }
     ],
     "Id": "cf9d930f-081e-4d86-b037-8623917619f5"
@@ -336,20 +375,17 @@
     "Sources": [
       {
         "Id": "e593c859-0dff-491d-a9ad-1a2f74a7f6f6",
-        "AgentKey": "amazon.de",
+        "AgentKey": "amazon.de_alt",
         "AgentArgument": "B07RJMK2GV"
       }
     ],
-    "Lowest": {
-      "ProductSourceId": "e593c859-0dff-491d-a9ad-1a2f74a7f6f6",
-      "Price": 229.0,
-      "FoundDate": "2021-06-20T19:58:57.2717981+02:00"
-    },
+    "Lowest": null,
     "Recent": [
       {
         "ProductSourceId": "e593c859-0dff-491d-a9ad-1a2f74a7f6f6",
-        "Price": 239.0,
-        "FoundDate": "2021-09-05T12:42:40.2080246+02:00"
+        "Status": 3,
+        "Price": null,
+        "FoundDate": "2022-01-12T16:43:41.0946223+01:00"
       }
     ],
     "Id": "f7e83340-1fc1-45b5-b6b5-c449c7ddcb0a"
@@ -366,12 +402,12 @@
       },
       {
         "Id": "f29d4d3a-e932-48d5-b979-3d9f91689137",
-        "AgentKey": "amazon.de",
+        "AgentKey": "amazon.de_alt",
         "AgentArgument": "B095DNPH4R"
       },
       {
         "Id": "af8a851b-a524-4849-857c-0af66bb8f404",
-        "AgentKey": "amazon.nl",
+        "AgentKey": "amazon.nl_div100",
         "AgentArgument": "B095DNPH4R"
       },
       {
@@ -381,30 +417,35 @@
       }
     ],
     "Lowest": {
-      "ProductSourceId": "f29d4d3a-e932-48d5-b979-3d9f91689137",
-      "Price": 277.0,
-      "FoundDate": "2021-09-29T20:55:08.2090506+02:00"
+      "ProductSourceId": "66a75039-0fcf-4407-8dc6-1065ad4ae925",
+      "Status": 1,
+      "Price": 249,
+      "FoundDate": "2022-01-12T16:44:03.854276+01:00"
     },
     "Recent": [
       {
         "ProductSourceId": "66a75039-0fcf-4407-8dc6-1065ad4ae925",
-        "Price": 279,
-        "FoundDate": "2021-09-29T20:55:08.2090437+02:00"
+        "Status": 1,
+        "Price": 249,
+        "FoundDate": "2022-01-12T16:44:03.854276+01:00"
       },
       {
         "ProductSourceId": "f29d4d3a-e932-48d5-b979-3d9f91689137",
-        "Price": 277.0,
-        "FoundDate": "2021-09-29T20:55:08.2090506+02:00"
+        "Status": 1,
+        "Price": 249.00,
+        "FoundDate": "2022-01-12T16:44:03.8542787+01:00"
       },
       {
         "ProductSourceId": "af8a851b-a524-4849-857c-0af66bb8f404",
-        "Price": 279.00,
-        "FoundDate": "2021-09-29T20:55:08.2090513+02:00"
+        "Status": 1,
+        "Price": 249,
+        "FoundDate": "2022-01-12T16:44:03.8542789+01:00"
       },
       {
         "ProductSourceId": "9417f567-36ee-421c-acd3-d2428d60076f",
-        "Price": 279.00,
-        "FoundDate": "2021-09-29T20:55:08.2090518+02:00"
+        "Status": 1,
+        "Price": 249.00,
+        "FoundDate": "2022-01-12T16:44:03.8542791+01:00"
       }
     ],
     "Id": "19ebfdd9-7870-4169-a357-876430934f53"
@@ -422,16 +463,208 @@
     ],
     "Lowest": {
       "ProductSourceId": "87fc8175-1b49-49e1-af9f-cdaeb9ad3a39",
-      "Price": 399,
-      "FoundDate": "2021-09-29T21:57:50.980999+02:00"
+      "Status": 1,
+      "Price": 349,
+      "FoundDate": "2022-01-12T11:48:14.7575848+01:00"
     },
     "Recent": [
       {
         "ProductSourceId": "87fc8175-1b49-49e1-af9f-cdaeb9ad3a39",
-        "Price": 399,
-        "FoundDate": "2021-09-29T21:57:50.980999+02:00"
+        "Status": 1,
+        "Price": 349,
+        "FoundDate": "2022-01-12T11:48:14.7575848+01:00"
       }
     ],
     "Id": "99f1c51b-588f-48e3-ae0f-a53d94ffaf48"
+  },
+  {
+    "Category": "Household",
+    "Name": "AEG AXP26U338BW",
+    "Description": "Mobile air conditioner",
+    "Sources": [
+      {
+        "Id": "281a09b0-4e6e-4b30-a016-92d02a459303",
+        "AgentKey": "coolblue",
+        "AgentArgument": "841524/aeg-axp26u338bw"
+      }
+    ],
+    "Lowest": {
+      "ProductSourceId": "281a09b0-4e6e-4b30-a016-92d02a459303",
+      "Status": 1,
+      "Price": 499,
+      "FoundDate": "2022-01-12T11:47:12.1233434+01:00"
+    },
+    "Recent": [
+      {
+        "ProductSourceId": "281a09b0-4e6e-4b30-a016-92d02a459303",
+        "Status": 1,
+        "Price": 499,
+        "FoundDate": "2022-01-12T11:47:12.1233434+01:00"
+      }
+    ],
+    "Id": "115d3cd7-ce8e-4058-ab7c-451d23385607"
+  },
+  {
+    "Category": "Car",
+    "Name": "SEVERIN KB 2922 Electric cool box",
+    "Description": "Coolbox",
+    "Sources": [
+      {
+        "Id": "ebac9915-2f1f-4dc2-affa-d6d16eeb9fbc",
+        "AgentKey": "amazon.de_alt",
+        "AgentArgument": "B00TZXVBPG"
+      }
+    ],
+    "Lowest": {
+      "ProductSourceId": "ebac9915-2f1f-4dc2-affa-d6d16eeb9fbc",
+      "Status": 1,
+      "Price": 79.99,
+      "FoundDate": "2022-01-12T16:38:47.9170131+01:00"
+    },
+    "Recent": [
+      {
+        "ProductSourceId": "ebac9915-2f1f-4dc2-affa-d6d16eeb9fbc",
+        "Status": 1,
+        "Price": 79.99,
+        "FoundDate": "2022-01-12T16:38:47.9170131+01:00"
+      }
+    ],
+    "Id": "3ce265ce-4edc-49d1-ace5-7733ba8430ee"
+  },
+  {
+    "Category": "Phone",
+    "Name": "Samsung S21 256GB",
+    "Description": null,
+    "Sources": [
+      {
+        "Id": "cd9b3a20-ab3e-4d14-83e4-ba9be5136a3e",
+        "AgentKey": "bol.com",
+        "AgentArgument": "samsung-galaxy-s21-5g-256gb-phantom-gray/9300000020732464"
+      },
+      {
+        "Id": "5ca3cb64-7add-4ef6-bb3a-cca753bbc8ae",
+        "AgentKey": "amazon.de_alt",
+        "AgentArgument": "B08QZSV8CC"
+      }
+    ],
+    "Lowest": {
+      "ProductSourceId": "cd9b3a20-ab3e-4d14-83e4-ba9be5136a3e",
+      "Status": 1,
+      "Price": 779.00,
+      "FoundDate": "2022-01-12T16:46:48.154568+01:00"
+    },
+    "Recent": [
+      {
+        "ProductSourceId": "5ca3cb64-7add-4ef6-bb3a-cca753bbc8ae",
+        "Status": 1,
+        "Price": 859,
+        "FoundDate": "2022-01-12T16:46:48.1545649+01:00"
+      },
+      {
+        "ProductSourceId": "cd9b3a20-ab3e-4d14-83e4-ba9be5136a3e",
+        "Status": 1,
+        "Price": 779.00,
+        "FoundDate": "2022-01-12T16:46:48.154568+01:00"
+      }
+    ],
+    "Id": "dcf19168-4395-4830-936b-bb65156807b9"
+  },
+  {
+    "Category": "Phone",
+    "Name": "Samsung S21 Ultra 256GB",
+    "Description": null,
+    "Sources": [
+      {
+        "Id": "5052f4b2-477a-4559-bea7-d78dad67ae51",
+        "AgentKey": "bol.com_alt",
+        "AgentArgument": "samsung-galaxy-s21-ultra-5g-256gb-phantom-black/9300000020732478"
+      },
+      {
+        "Id": "28074490-4050-4882-9260-b0684ef9b015",
+        "AgentKey": "amazon.de_alt",
+        "AgentArgument": "B08QZV985V"
+      }
+    ],
+    "Lowest": {
+      "ProductSourceId": "28074490-4050-4882-9260-b0684ef9b015",
+      "Status": 1,
+      "Price": 1279.99,
+      "FoundDate": "2022-01-12T16:46:37.0774911+01:00"
+    },
+    "Recent": [
+      {
+        "ProductSourceId": "5052f4b2-477a-4559-bea7-d78dad67ae51",
+        "Status": 3,
+        "Price": null,
+        "FoundDate": "2022-01-12T16:46:37.0774883+01:00"
+      },
+      {
+        "ProductSourceId": "28074490-4050-4882-9260-b0684ef9b015",
+        "Status": 1,
+        "Price": 1279.99,
+        "FoundDate": "2022-01-12T16:46:37.0774911+01:00"
+      }
+    ],
+    "Id": "027c475a-f07e-4343-b9cc-7d3ef7af9cb8"
+  },
+  {
+    "Category": "Phone",
+    "Name": "Samsung S21 Plus 256GB",
+    "Description": null,
+    "Sources": [
+      {
+        "Id": "af8d112e-3ed3-4ad5-9962-e1a5ea437b5d",
+        "AgentKey": "amazon.de_alt",
+        "AgentArgument": "B08QZSL3LB"
+      }
+    ],
+    "Lowest": {
+      "ProductSourceId": "af8d112e-3ed3-4ad5-9962-e1a5ea437b5d",
+      "Status": 1,
+      "Price": 1279.99,
+      "FoundDate": "2022-01-12T16:46:43.7757295+01:00"
+    },
+    "Recent": [
+      {
+        "ProductSourceId": "af8d112e-3ed3-4ad5-9962-e1a5ea437b5d",
+        "Status": 1,
+        "Price": 1279.99,
+        "FoundDate": "2022-01-12T16:46:43.7757295+01:00"
+      }
+    ],
+    "Id": "12cccb67-c1d8-47d7-9168-8d956dd83bef"
+  },
+  {
+    "Category": "Lego",
+    "Name": "Lego Mindstorms 51515",
+    "Description": null,
+    "Sources": [
+      {
+        "Id": "511e7ef2-ba34-444d-b8d5-35ab3ccb7e67",
+        "AgentKey": "bol.com",
+        "AgentArgument": "lego-mindstorms-robot-uitvinder-51515/9300000000485466"
+      },
+      {
+        "Id": "f1c56af5-3385-4337-991d-c39bbcc4e529",
+        "AgentKey": "amazon.de_alt",
+        "AgentArgument": "B082WD5YV9"
+      }
+    ],
+    "Lowest": null,
+    "Recent": [
+      {
+        "ProductSourceId": "511e7ef2-ba34-444d-b8d5-35ab3ccb7e67",
+        "Status": 3,
+        "Price": null,
+        "FoundDate": "2022-01-12T16:40:45.8696497+01:00"
+      },
+      {
+        "ProductSourceId": "f1c56af5-3385-4337-991d-c39bbcc4e529",
+        "Status": 3,
+        "Price": null,
+        "FoundDate": "2022-01-12T16:40:45.8696535+01:00"
+      }
+    ],
+    "Id": "b2392eeb-f7d2-4bca-b8ce-e1b9ee9698d8"
   }
 ]

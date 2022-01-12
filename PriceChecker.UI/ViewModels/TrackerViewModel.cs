@@ -1,6 +1,4 @@
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
 using System.Reactive.Linq;
 using System.Windows.Input;
 using Genius.PriceChecker.Core.Messages;
@@ -11,18 +9,20 @@ using Genius.PriceChecker.UI.Helpers;
 using ReactiveUI;
 using Genius.Atom.Infrastructure.Commands;
 using Genius.PriceChecker.Core.Commands;
+using System.Reactive.Disposables;
 
 namespace Genius.PriceChecker.UI.ViewModels;
 
 public interface ITrackerViewModel : ITabViewModel
 { }
 
-internal sealed class TrackerViewModel : TabViewModelBase, ITrackerViewModel
+internal sealed class TrackerViewModel : TabViewModelBase, ITrackerViewModel, IDisposable
 {
     private readonly IEventBus _eventBus;
     private readonly IProductQueryService _productQuery;
     private readonly IViewModelFactory _vmFactory;
     private readonly ITrackerScanContext _scanContext;
+    private readonly CompositeDisposable _disposables = new();
 
     public TrackerViewModel(IEventBus eventBus,
         IProductQueryService productQuery,
@@ -51,24 +51,27 @@ internal sealed class TrackerViewModel : TabViewModelBase, ITrackerViewModel
                 EditingProduct = vmFactory.CreateTrackerProduct(null);
                 EditingProduct.CommitProductCommand.Executed
                     .Take(1)
-                    .Subscribe(_ => {
+                    .Subscribe(async _ => {
                         IsAddEditProductVisible = false;
-                        ReloadList();
-                    });
+                        await ReloadListAsync();
+                    })
+                    .DisposeWith(_disposables);
             }
         });
         OpenEditProductFlyoutCommand = new ActionCommand(_ => {
+            DisposeEditingProductIfNeeded();
             EditingProduct = Products.FirstOrDefault(x => x.IsSelected);
             EditingProduct?.CommitProductCommand.Executed
                 .Take(1)
-                .Subscribe(_ => IsAddEditProductVisible = false);
-            IsAddEditProductVisible = EditingProduct != null;
+                .Subscribe(_ => IsAddEditProductVisible = false)
+                .DisposeWith(_disposables);
+            IsAddEditProductVisible = EditingProduct is not null;
         });
 
         DeleteProductCommand = new ActionCommand(async _ => {
             IsAddEditProductVisible = false;
             var selectedProduct = Products.FirstOrDefault(x => x.IsSelected);
-            if (selectedProduct == null)
+            if (selectedProduct is null)
             {
                 ui.ShowWarning("No product selected.");
                 return;
@@ -77,30 +80,44 @@ internal sealed class TrackerViewModel : TabViewModelBase, ITrackerViewModel
                 return;
 
             Products.Remove(selectedProduct);
-            await commandBus.SendAsync(new ProductDeleteCommand(selectedProduct.Id));
+
+            if (selectedProduct.Id is not null)
+            {
+                await commandBus.SendAsync(new ProductDeleteCommand(selectedProduct.Id.Value));
+            }
         });
 
         _eventBus.WhenFired<ProductScanStartedEvent>()
             .ObserveOn(RxApp.MainThreadScheduler)
             .Subscribe(ev =>
-                Products.First(x => x.Id == ev.Product.Id).Status = Core.Models.ProductScanStatus.Scanning
-            );
+                Products.First(x => x.Id == ev.ProductId).Status = Core.Models.ProductScanStatus.Scanning
+            )
+            .DisposeWith(_disposables);
         _eventBus.WhenFired<ProductScannedEvent>()
             .Subscribe(ev =>
-                Products.First(x => x.Id == ev.Product.Id).Reconcile(ev.LowestPriceUpdated));
+                Products.First(x => x.Id == ev.ProductId).Reconcile(ev.Status))
+            .DisposeWith(_disposables);
         _eventBus.WhenFired<ProductScanFailedEvent>()
             .Subscribe(ev =>
-                Products.First(x => x.Id == ev.Product.Id).SetFailed(ev.ErrorMessage));
+                Products.First(x => x.Id == ev.ProductId).SetFailed(ev.ErrorMessage))
+            .DisposeWith(_disposables);
 
-        Deactivated.Executed.Subscribe(_ =>
-            IsAddEditProductVisible = false);
+        Deactivated.Executed
+            .Subscribe(_ => IsAddEditProductVisible = false)
+            .DisposeWith(_disposables);
 
         RefreshOptions = new List<DropDownMenuItem> {
             new DropDownMenuItem("Refresh all", RefreshAllCommand),
             new DropDownMenuItem("Refresh selected", RefreshSelectedCommand),
         };
 
-        ReloadList();
+        ReloadListAsync();
+    }
+
+    public void Dispose()
+    {
+        DisposeEditingProductIfNeeded();
+        _disposables.Dispose();
     }
 
     private void EnqueueScan(ICollection<ITrackerProductViewModel> products)
@@ -112,10 +129,10 @@ internal sealed class TrackerViewModel : TabViewModelBase, ITrackerViewModel
         }
     }
 
-    private void ReloadList()
+    private async Task ReloadListAsync()
     {
         IsAddEditProductVisible = false;
-        var productVms = _productQuery.GetAll()
+        var productVms = (await _productQuery.GetAllAsync())
             .Select(x => _vmFactory.CreateTrackerProduct(x))
             .ToList();
         foreach (var productVm in productVms)
@@ -124,6 +141,15 @@ internal sealed class TrackerViewModel : TabViewModelBase, ITrackerViewModel
                 _scanContext.NotifyProgressChange(status));
         }
         Products.ReplaceItems(productVms);
+    }
+
+    private void DisposeEditingProductIfNeeded()
+    {
+        if (EditingProduct is not null && EditingProduct.Id is null)
+        {
+            EditingProduct.Dispose();
+            EditingProduct = null;
+        }
     }
 
     public List<DropDownMenuItem> RefreshOptions { get; }

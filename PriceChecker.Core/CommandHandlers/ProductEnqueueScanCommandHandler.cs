@@ -16,7 +16,7 @@ internal sealed class ProductEnqueueScanCommandHandler : ICommandHandler<Product
 
     public Task ProcessAsync(ProductEnqueueScanCommand command)
     {
-        _productMng.EnqueueScan(command.ProductId);
+        _productMng.EnqueueScanAsync(command.ProductId);
 
         return Task.CompletedTask;
     }

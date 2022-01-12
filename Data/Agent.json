@@ -2,14 +2,16 @@
   {
     "Key": "amazon.de",
     "Url": "https://www.amazon.de/gp/product/{0}?psc=1",
-    "PricePattern": "\u0022attach-base-product-price\u0022\\svalue=\u0022(?\u003Cprice\u003E[\\d\\.]\u002B)\u0022",
+    "PricePattern": "priceBlockBuyingPriceString\u0022\u003E\u20AC\\s(?\u003Cprice\u003E[\\d,]\u002B)\u003C",
+    "Handler": "SimpleRegex",
     "DecimalDelimiter": ".",
     "Id": "6f35fbc4-4e3b-4734-a32e-66bdcc904d15"
   },
   {
-    "Key": "amazon.de_alt",
+    "Key": "amazon.de_div100",
     "Url": "https://www.amazon.de/gp/product/{0}?psc=1",
-    "PricePattern": "\u0022priceblock_ourprice\u0022[^\u003E]\u002B\u003E[$\u20AC]*(?\u003Cprice\u003E[\\d\\,]\u002B)[\\s$\u20AC]*\u003C",
+    "PricePattern": "id=\u0022twister-plus-price-data-price\u0022 value=\u0022(?\u003Cprice\u003E\\d\u002B)\u0022",
+    "Handler": "SimpleRegexDivideBy100",
     "DecimalDelimiter": ",",
     "Id": "ea10e90c-9e27-4d54-aea9-bc0bacabc355"
   },
@@ -17,6 +19,7 @@
     "Key": "amazon.nl",
     "Url": "https://www.amazon.nl/dp/product/{0}?psc=1",
     "PricePattern": "priceBlockBuyingPriceString\u0022\u003E\u20AC\\s(?\u003Cprice\u003E[\\d,]\u002B)\u003C",
+    "Handler": "SimpleRegex",
     "DecimalDelimiter": ",",
     "Id": "7d713fc5-bf5d-4153-8d0e-cf88dd28f0cd"
   },
@@ -24,13 +27,23 @@
     "Key": "bol.com",
     "Url": "https://www.bol.com/nl/p/{0}",
     "PricePattern": "\u0022price\u0022:\u0022(?\u003Cprice\u003E[\\d\\,]\u002B)\u0022",
+    "Handler": "SimpleRegex",
     "DecimalDelimiter": ",",
     "Id": "02281014-9450-49fc-8c19-3b7bbfc7d5d8"
+  },
+  {
+    "Key": "bol.com_alt",
+    "Url": "https://www.bol.com/nl/p/{0}",
+    "PricePattern": "\u0022price\u0022:\u0022(?\u003Cprice\u003E[\\d\\,]\u002B)\u0022",
+    "Handler": "SimpleRegex",
+    "DecimalDelimiter": ",",
+    "Id": "d7d7f237-46bc-43b4-88cd-ec953e06db35"
   },
   {
     "Key": "hafo.nl",
     "Url": "https://www.hafo.nl/product/{0}",
     "PricePattern": "\u0022price\u0022:\u0022(?\u003Cprice\u003E[\\d\\.]\u002B)\u0022",
+    "Handler": "SimpleRegex",
     "DecimalDelimiter": ".",
     "Id": "4253e578-bb97-4f3f-8ba4-ae1ad30e861d"
   },
@@ -38,6 +51,7 @@
     "Key": "tweakers.net",
     "Url": "https://tweakers.net/pricewatch/{0}",
     "PricePattern": "\u0022lowPrice\u0022:(?\u003Cprice\u003E[\\d\\.]\u002B),",
+    "Handler": "SimpleRegex",
     "DecimalDelimiter": ".",
     "Id": "e6426204-97cd-450d-86c0-4761e42eb0dc"
   },
@@ -45,7 +59,32 @@
     "Key": "viofo.nl",
     "Url": "https://www.viofo.nl/en/collections/viofo-dashcams/products/{0}",
     "PricePattern": "\u0022og:price:amount\u0022 content=\u0022(?\u003Cprice\u003E[\\d,]\u002B)\u0022\u003E",
+    "Handler": "SimpleRegex",
     "DecimalDelimiter": ",",
     "Id": "58e347bc-f5d5-41cd-a4d9-9d0da5c71c12"
+  },
+  {
+    "Key": "coolblue",
+    "Url": "https://www.coolblue.nl/product/{0}",
+    "PricePattern": "\u0022price\u0022:\\s?\u0022(?\u003Cprice\u003E[\\d\\.]\u002B)\u0022",
+    "Handler": "SimpleRegex",
+    "DecimalDelimiter": ".",
+    "Id": "4488154a-d6ca-4ffe-8e4a-94a8d7fdfc13"
+  },
+  {
+    "Key": "amazon.nl_div100",
+    "Url": "https://www.amazon.nl/gp/product/{0}?psc=1",
+    "PricePattern": "id=\u0022twister-plus-price-data-price\u0022 value=\u0022(?\u003Cprice\u003E\\d\u002B)\u0022",
+    "Handler": "SimpleRegexDivideBy100",
+    "DecimalDelimiter": ",",
+    "Id": "11600235-a75e-48c0-98a2-70ac07166902"
+  },
+  {
+    "Key": "amazon.de_alt",
+    "Url": "https://www.amazon.de/gp/product/{0}?psc=1",
+    "PricePattern": "(displayString\u0026quot;:\u0026quot;\u20AC|\u0022twister-plus-price-data-price\u0022\\svalue=\u0022)(?\u003Cprice\u003E[\\d\\.]\u002B)[\u0026\u0022]",
+    "Handler": "SimpleRegex",
+    "DecimalDelimiter": ".",
+    "Id": "c5ef88a5-ba1c-410d-be89-0712009c8b33"
   }
 ]

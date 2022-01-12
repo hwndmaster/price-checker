@@ -1,8 +1,8 @@
-global using System;
 global using Genius.Atom.Infrastructure;
 
 using System.Diagnostics.CodeAnalysis;
 using Genius.Atom.Infrastructure.Commands;
+using Genius.PriceChecker.Core.AgentHandlers;
 using Genius.PriceChecker.Core.CommandHandlers;
 using Genius.PriceChecker.Core.Commands;
 using Genius.PriceChecker.Core.Repositories;
@@ -31,6 +31,12 @@ public static class Module
         services.AddTransient<IPriceSeeker, PriceSeeker>();
         services.AddTransient<IProductStatusProvider, ProductStatusProvider>();
         services.AddSingleton<IProductPriceManager, ProductPriceManager>();
+
+        // Agent Handlers
+        services.AddSingleton<IAgentHandlersProvider, AgentHandlersProvider>();
+        services.AddTransient<SimpleRegex, SimpleRegex>();
+        services.AddTransient<IAgentHandler, SimpleRegex>();
+        services.AddTransient<IAgentHandler, SimpleRegexDivideBy100>();
 
         // Command Handlers
         services.AddScoped<ICommandHandler<AgentDeleteCommand>, AgentDeleteCommandHandler>();

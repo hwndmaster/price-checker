@@ -1,8 +1,4 @@
-using System.Collections.Generic;
-using System.Linq;
 using System.Reactive.Concurrency;
-using System.Threading;
-using System.Threading.Tasks;
 using Genius.PriceChecker.Core.Messages;
 using Genius.PriceChecker.Core.Models;
 using Genius.PriceChecker.Core.Repositories;
@@ -13,7 +9,7 @@ namespace Genius.PriceChecker.Core.Services;
 
 public interface IProductPriceManager : IDisposable
 {
-    void EnqueueScan(Guid productId);
+    Task EnqueueScanAsync(Guid productId);
     void AutoRefreshInitialize();
 }
 
@@ -54,16 +50,16 @@ internal sealed class ProductPriceManager : IProductPriceManager
         });
     }
 
-    public void EnqueueScan(Guid productId)
+    public async Task EnqueueScanAsync(Guid productId)
     {
-        var product = _productQuery.FindById(productId);
+        var product = await _productQuery.FindByIdAsync(productId);
         if (product == null)
         {
             _logger.LogError("Product with ID '{productId}' was not found.", productId);
             return;
         }
 
-        EnqueueScan(product, ignoreRecentDate: true, CancellationToken.None);
+        await EnqueueScan(product, ignoreRecentDate: true, CancellationToken.None);
     }
 
     public void Dispose()
@@ -90,7 +86,7 @@ internal sealed class ProductPriceManager : IProductPriceManager
                 List<Task> tasks = new();
                 if (_settingsRepo.Get().AutoRefreshEnabled)
                 {
-                    var products = _productQuery.GetAll().ToList();
+                    var products = (await _productQuery.GetAllAsync()).ToList();
                     _eventBus.Publish(new ProductAutoScanStartedEvent(products.Count));
                     foreach (var product in products)
                         tasks.Add(EnqueueScan(product, ignoreRecentDate: false, cancel));
@@ -112,7 +108,7 @@ internal sealed class ProductPriceManager : IProductPriceManager
             }
             catch (Exception ex)
             {
-                _eventBus.Publish(new ProductScanFailedEvent(product, ex.Message));
+                _eventBus.Publish(new ProductScanFailedEvent(product.Id, ex.Message));
                 throw;
             }
         }, cancel);
@@ -123,38 +119,45 @@ internal sealed class ProductPriceManager : IProductPriceManager
         if (!ignoreRecentDate && IsTooRecent(product))
         {
             _logger.LogTrace("Price scanning '{productName}' cancelled due to recent results", product.Name);
-            //_eventBus.Publish(new ProductScanFailedEvent(product, "Scan cancelled due to recent results"));
-            _eventBus.Publish(new ProductScannedEvent(product, false));
+            //_eventBus.Publish(new ProductScanFailedEvent(product.Id, "Scan cancelled due to recent results"));
+            _eventBus.Publish(new ProductScannedEvent(product.Id, ProductScanStatus.ScannedOk));
             return;
         }
 
-        _eventBus.Publish(new ProductScanStartedEvent(product));
+        _eventBus.Publish(new ProductScanStartedEvent(product.Id));
 
         _logger.LogTrace("Processing '{productName}'", product.Name);
         var results = await _priceSeeker.SeekAsync(product, cancel);
         if (!results.Any())
         {
             _logger.LogWarning("Price scanning for '{productName}' failed or no results retrieved", product.Name);
-            _eventBus.Publish(new ProductScanFailedEvent(product, "Scan failed or no results retrieved"));
+            _eventBus.Publish(new ProductScanFailedEvent(product.Id, "Scan failed or no results retrieved"));
             return;
         }
 
         product.Recent = LogAndConvert(product, results);
 
-        var lowestPriceUpdated = false;
-        var minPrice = product.Recent.Min(x => x.Price);
-        if (product.Lowest == null || product.Lowest.Price >= minPrice)
+        var lowest = product.MinPrice();
+        var status = ProductScanStatus.ScannedOk;
+        if (!product.Recent.Any())
         {
-            if (product.Lowest != null && product.Lowest.Price > minPrice)
-            {
-                lowestPriceUpdated = true;
-            }
-            product.Lowest = product.Recent.First(x => x.Price == minPrice);
-
-            _productRepo.Store(product);
+            status = ProductScanStatus.Failed;
         }
+        else if (product.Lowest is not null
+            && lowest is not null
+            && product.Lowest.Price > lowest.Price)
+        {
+            status = ProductScanStatus.ScannedNewLowest;
+        }
+        else if (product.Recent.Any(x => x.Status != AgentHandlingStatus.Success))
+        {
+            status = ProductScanStatus.ScannedWithErrors;
+        }
+        product.Lowest = lowest;
 
-        _eventBus.Publish(new ProductScannedEvent(product, lowestPriceUpdated));
+        _productRepo.Store(product);
+
+        _eventBus.Publish(new ProductScannedEvent(product.Id, status));
     }
 
     private bool IsTooRecent(Product product)
@@ -171,6 +174,7 @@ internal sealed class ProductPriceManager : IProductPriceManager
         var converted = results.Select(x => new ProductPrice
         {
             ProductSourceId = x.ProductSourceId,
+            Status = x.Status,
             Price = x.Price,
             FoundDate = DateTime.Now
         }).ToArray();
