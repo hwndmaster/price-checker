@@ -13,15 +13,15 @@
     "Lowest": {
       "ProductSourceId": "60b9ceed-b34c-45ad-a142-af0ec5491d91",
       "Status": 1,
-      "Price": 15.90,
-      "FoundDate": "2022-01-12T16:38:23.5065248+01:00"
+      "Price": 15.9,
+      "FoundDate": "2022-01-17T22:11:38.0596893+01:00"
     },
     "Recent": [
       {
         "ProductSourceId": "60b9ceed-b34c-45ad-a142-af0ec5491d91",
         "Status": 1,
-        "Price": 15.90,
-        "FoundDate": "2022-01-12T16:38:23.5065248+01:00"
+        "Price": 15.9,
+        "FoundDate": "2022-01-17T22:11:38.0596893+01:00"
       }
     ],
     "Id": "6a52bd42-d19e-4572-9295-28e01e7e7417"
@@ -46,20 +46,20 @@
       "ProductSourceId": "ebeaa98d-aedb-4bb8-b539-1de7e1ee25cc",
       "Status": 1,
       "Price": 699,
-      "FoundDate": "2022-01-12T11:47:19.3724935+01:00"
+      "FoundDate": "2022-01-17T22:11:30.3167162+01:00"
     },
     "Recent": [
       {
         "ProductSourceId": "4753f887-5b20-41de-a06b-3c159262a273",
         "Status": 1,
         "Price": 749,
-        "FoundDate": "2022-01-12T11:47:19.3724893+01:00"
+        "FoundDate": "2022-01-17T22:11:30.3167121+01:00"
       },
       {
         "ProductSourceId": "ebeaa98d-aedb-4bb8-b539-1de7e1ee25cc",
         "Status": 1,
         "Price": 699,
-        "FoundDate": "2022-01-12T11:47:19.3724935+01:00"
+        "FoundDate": "2022-01-17T22:11:30.3167162+01:00"
       }
     ],
     "Id": "5486193d-b417-4936-b71c-be250317dc81"
@@ -88,27 +88,27 @@
     "Lowest": {
       "ProductSourceId": "d786a796-b93c-468b-8fda-a2892d72802a",
       "Status": 1,
-      "Price": 139.99,
-      "FoundDate": "2022-01-12T16:39:00.6305374+01:00"
+      "Price": 149,
+      "FoundDate": "2022-01-17T22:15:35.0988116+01:00"
     },
     "Recent": [
       {
+        "ProductSourceId": "3b27b7fc-369d-4f90-ba4c-f209c1a0153b",
+        "Status": 1,
+        "Price": 179,
+        "FoundDate": "2022-01-17T22:15:35.0988087+01:00"
+      },
+      {
         "ProductSourceId": "d786a796-b93c-468b-8fda-a2892d72802a",
         "Status": 1,
-        "Price": 139.99,
-        "FoundDate": "2022-01-12T16:39:00.6305374+01:00"
+        "Price": 149,
+        "FoundDate": "2022-01-17T22:15:35.0988116+01:00"
       },
       {
         "ProductSourceId": "1778e5f5-b73d-418b-b3b8-06412828f54f",
         "Status": 3,
         "Price": null,
-        "FoundDate": "2022-01-12T16:39:00.6305405+01:00"
-      },
-      {
-        "ProductSourceId": "3b27b7fc-369d-4f90-ba4c-f209c1a0153b",
-        "Status": 1,
-        "Price": 179,
-        "FoundDate": "2022-01-12T16:39:00.6305407+01:00"
+        "FoundDate": "2022-01-17T22:15:35.0988117+01:00"
       }
     ],
     "Id": "e10533c4-8e07-443c-b751-52020da1e7ee"
@@ -132,21 +132,21 @@
     "Lowest": {
       "ProductSourceId": "923b83ed-3fcb-43ca-80b0-0e9e717ec9c6",
       "Status": 1,
-      "Price": 519.80,
-      "FoundDate": "2022-01-12T16:40:36.1338264+01:00"
+      "Price": 519.8,
+      "FoundDate": "2022-01-17T22:15:31.6599739+01:00"
     },
     "Recent": [
       {
         "ProductSourceId": "5f5a72a4-d6ad-4cab-9fb9-9d5839fa2a03",
         "Status": 3,
         "Price": null,
-        "FoundDate": "2022-01-12T16:40:36.1338221+01:00"
+        "FoundDate": "2022-01-17T22:15:31.6599714+01:00"
       },
       {
         "ProductSourceId": "923b83ed-3fcb-43ca-80b0-0e9e717ec9c6",
         "Status": 1,
-        "Price": 519.80,
-        "FoundDate": "2022-01-12T16:40:36.1338264+01:00"
+        "Price": 519.8,
+        "FoundDate": "2022-01-17T22:15:31.6599739+01:00"
       }
     ],
     "Id": "1b60bf08-2d90-4f85-99ce-3d26d19bb696"
@@ -173,13 +173,13 @@
         "ProductSourceId": "cbb43572-35b9-4408-9e52-09f934b97336",
         "Status": 3,
         "Price": null,
-        "FoundDate": "2022-01-12T16:41:33.6760236+01:00"
+        "FoundDate": "2022-01-17T22:14:25.9009655+01:00"
       },
       {
         "ProductSourceId": "ab80a6f9-c175-4c10-8f69-aee23e7efc64",
         "Status": 3,
         "Price": null,
-        "FoundDate": "2022-01-12T16:41:33.6760279+01:00"
+        "FoundDate": "2022-01-17T22:14:25.9009746+01:00"
       }
     ],
     "Id": "fa6bca3a-0e5b-4efd-acc0-b20fc07fd269"
@@ -204,20 +204,20 @@
       "ProductSourceId": "b129f9f2-416b-493e-af3c-ff0f255a66e9",
       "Status": 1,
       "Price": 499.99,
-      "FoundDate": "2022-01-12T16:41:36.2769149+01:00"
+      "FoundDate": "2022-01-17T22:14:24.1309443+01:00"
     },
     "Recent": [
-      {
-        "ProductSourceId": "b129f9f2-416b-493e-af3c-ff0f255a66e9",
-        "Status": 1,
-        "Price": 499.99,
-        "FoundDate": "2022-01-12T16:41:36.2769149+01:00"
-      },
       {
         "ProductSourceId": "aa039437-a86f-4cf7-9283-90c63a95e142",
         "Status": 3,
         "Price": null,
-        "FoundDate": "2022-01-12T16:41:36.2769184+01:00"
+        "FoundDate": "2022-01-17T22:14:24.1309405+01:00"
+      },
+      {
+        "ProductSourceId": "b129f9f2-416b-493e-af3c-ff0f255a66e9",
+        "Status": 1,
+        "Price": 499.99,
+        "FoundDate": "2022-01-17T22:14:24.1309443+01:00"
       }
     ],
     "Id": "76ed6168-fbae-4fb3-a572-bc70c4d1e567"
@@ -236,15 +236,15 @@
     "Lowest": {
       "ProductSourceId": "831217bc-0784-4d57-a6a5-d71bf6b2bd19",
       "Status": 1,
-      "Price": 367.64,
-      "FoundDate": "2022-01-12T11:47:18.4194776+01:00"
+      "Price": 360.94,
+      "FoundDate": "2022-01-17T22:11:58.4706763+01:00"
     },
     "Recent": [
       {
         "ProductSourceId": "831217bc-0784-4d57-a6a5-d71bf6b2bd19",
         "Status": 1,
-        "Price": 367.64,
-        "FoundDate": "2022-01-12T11:47:18.4194776+01:00"
+        "Price": 360.94,
+        "FoundDate": "2022-01-17T22:11:58.4706763+01:00"
       }
     ],
     "Id": "40467c0b-d5ff-45d6-b1b7-30d8ab344dc8"
@@ -492,14 +492,14 @@
       "ProductSourceId": "281a09b0-4e6e-4b30-a016-92d02a459303",
       "Status": 1,
       "Price": 499,
-      "FoundDate": "2022-01-12T11:47:12.1233434+01:00"
+      "FoundDate": "2022-01-17T22:11:27.5942189+01:00"
     },
     "Recent": [
       {
         "ProductSourceId": "281a09b0-4e6e-4b30-a016-92d02a459303",
         "Status": 1,
         "Price": 499,
-        "FoundDate": "2022-01-12T11:47:12.1233434+01:00"
+        "FoundDate": "2022-01-17T22:11:27.5942189+01:00"
       }
     ],
     "Id": "115d3cd7-ce8e-4058-ab7c-451d23385607"
@@ -519,14 +519,14 @@
       "ProductSourceId": "ebac9915-2f1f-4dc2-affa-d6d16eeb9fbc",
       "Status": 1,
       "Price": 79.99,
-      "FoundDate": "2022-01-12T16:38:47.9170131+01:00"
+      "FoundDate": "2022-01-17T22:11:34.1555861+01:00"
     },
     "Recent": [
       {
         "ProductSourceId": "ebac9915-2f1f-4dc2-affa-d6d16eeb9fbc",
         "Status": 1,
         "Price": 79.99,
-        "FoundDate": "2022-01-12T16:38:47.9170131+01:00"
+        "FoundDate": "2022-01-17T22:11:34.1555861+01:00"
       }
     ],
     "Id": "3ce265ce-4edc-49d1-ace5-7733ba8430ee"
@@ -650,19 +650,24 @@
         "AgentArgument": "B082WD5YV9"
       }
     ],
-    "Lowest": null,
+    "Lowest": {
+      "ProductSourceId": "f1c56af5-3385-4337-991d-c39bbcc4e529",
+      "Status": 1,
+      "Price": 339.99,
+      "FoundDate": "2022-01-17T22:15:29.2184901+01:00"
+    },
     "Recent": [
       {
         "ProductSourceId": "511e7ef2-ba34-444d-b8d5-35ab3ccb7e67",
         "Status": 3,
         "Price": null,
-        "FoundDate": "2022-01-12T16:40:45.8696497+01:00"
+        "FoundDate": "2022-01-17T22:15:29.2184846+01:00"
       },
       {
         "ProductSourceId": "f1c56af5-3385-4337-991d-c39bbcc4e529",
-        "Status": 3,
-        "Price": null,
-        "FoundDate": "2022-01-12T16:40:45.8696535+01:00"
+        "Status": 1,
+        "Price": 339.99,
+        "FoundDate": "2022-01-17T22:15:29.2184901+01:00"
       }
     ],
     "Id": "b2392eeb-f7d2-4bca-b8ce-e1b9ee9698d8"

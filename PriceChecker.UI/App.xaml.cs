@@ -1,7 +1,7 @@
-﻿global using Genius.Atom.Infrastructure;
+﻿global using System.Windows;
+global using Genius.Atom.Infrastructure;
 
 using System.Diagnostics.CodeAnalysis;
-using System.Windows;
 using Genius.PriceChecker.Core.Services;
 using Genius.PriceChecker.UI.Helpers;
 using Genius.PriceChecker.UI.ViewModels;
@@ -67,7 +67,6 @@ public partial class App : Application
         services.AddTransient<IAgentsViewModel, AgentsViewModel>();
         services.AddTransient<IAgentViewModel, AgentViewModel>();
         services.AddTransient<ISettingsViewModel, SettingsViewModel>();
-        services.AddTransient<ILogsViewModel, LogsViewModel>();
 
         // Services and Helpers:
         services.AddTransient<IProductInteraction, ProductInteraction>();

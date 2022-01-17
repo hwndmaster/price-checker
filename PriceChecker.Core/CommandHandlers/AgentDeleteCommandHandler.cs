@@ -1,4 +1,3 @@
-using System.Threading.Tasks;
 using Genius.Atom.Infrastructure.Commands;
 using Genius.Atom.Infrastructure.Events;
 using Genius.PriceChecker.Core.Commands;
@@ -18,12 +17,10 @@ internal sealed class AgentDeleteCommandHandler : ICommandHandler<AgentDeleteCom
         _eventBus = eventBus;
     }
 
-    public Task ProcessAsync(AgentDeleteCommand command)
+    public async Task ProcessAsync(AgentDeleteCommand command)
     {
-        _agentRepo.Delete(command.AgentId);
+        await _agentRepo.DeleteAsync(command.AgentId);
 
         _eventBus.Publish(new AgentsAffectedEvent());
-
-        return Task.CompletedTask;
     }
 }

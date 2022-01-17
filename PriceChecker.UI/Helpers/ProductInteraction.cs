@@ -7,7 +7,7 @@ namespace Genius.PriceChecker.UI.Helpers;
 
 public interface IProductInteraction
 {
-    void ShowProductInBrowser(ProductSource? productSource);
+    Task ShowProductInBrowserAsync(ProductSource? productSource);
 }
 
 [ExcludeFromCodeCoverage]
@@ -20,17 +20,17 @@ public class ProductInteraction : IProductInteraction
         _agentQuery = agentQuery;
     }
 
-    public void ShowProductInBrowser(ProductSource? productSource)
+    public async Task ShowProductInBrowserAsync(ProductSource? productSource)
     {
         if (productSource == null)
             return;
 
-        var agentUrl = _agentQuery.FindByKey(productSource.AgentKey)?.Url;
-        if (agentUrl is null)
+        var agent = await _agentQuery.FindByKeyAsync(productSource.AgentKey);
+        if (agent?.Url is null)
         {
             return;
         }
-        var url = string.Format(agentUrl, productSource.AgentArgument);
+        var url = string.Format(agent.Url, productSource.AgentArgument);
 
         url = url.Replace("&", "^&");
         Process.Start(new ProcessStartInfo("cmd", $"/c start {url}") { CreateNoWindow = true });

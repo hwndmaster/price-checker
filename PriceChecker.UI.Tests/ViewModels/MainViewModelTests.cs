@@ -2,6 +2,7 @@ using System.Reactive.Subjects;
 using System.Windows.Shell;
 using Genius.Atom.UI.Forms;
 using Genius.Atom.UI.Forms.TestingUtil;
+using Genius.Atom.UI.Forms.ViewModels;
 using Genius.PriceChecker.UI.Helpers;
 using Genius.PriceChecker.UI.ViewModels;
 
@@ -12,7 +13,7 @@ public class MainViewModelTests : TestBase
     private readonly TabMock<ITrackerViewModel> _trackerMock = new();
     private readonly TabMock<IAgentsViewModel> _agentsMock = new();
     private readonly TabMock<ISettingsViewModel> _settingsMock = new();
-    private readonly TabMock<ILogsViewModel> _logsMock = new();
+    private readonly TabMock<ILogsTabViewModel> _logsMock = new();
     private readonly Mock<ITrackerScanContext> _scanContextMock = new();
     private readonly Mock<INotifyIconViewModel> _notifyViewModelMock = new();
 

@@ -14,10 +14,10 @@
     <PackageReference Update="Microsoft.Extensions.Logging.Abstractions" Version="6.0.0" />
 
     <!-- Atom Framework -->
-    <PackageReference Update="Genius.Atom.Data" Version="0.0.8" />
-    <PackageReference Update="Genius.Atom.Infrastructure" Version="0.0.8" />
-    <PackageReference Update="Genius.Atom.UI.Forms" Version="0.0.8" />
-    <PackageReference Update="Genius.Atom.UI.Forms.TestingUtil" Version="0.0.8" />
+    <PackageReference Update="Genius.Atom.Data" Version="0.0.9" />
+    <PackageReference Update="Genius.Atom.Infrastructure" Version="0.0.9" />
+    <PackageReference Update="Genius.Atom.UI.Forms" Version="0.0.9" />
+    <PackageReference Update="Genius.Atom.UI.Forms.TestingUtil" Version="0.0.9" />
 
     <!-- Misc -->
     <PackageReference Update="Hardcodet.NotifyIcon.Wpf" Version="1.1.0" />

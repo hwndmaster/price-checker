@@ -8,7 +8,7 @@ namespace Genius.PriceChecker.Core.Repositories;
 
 public interface IAgentQueryService : IQueryService<Agent>
 {
-    Agent? FindByKey(string agentKey);
+    Task<Agent?> FindByKeyAsync(string agentKey);
 }
 
 public interface IAgentRepository : IRepository<Agent>
@@ -22,22 +22,18 @@ internal sealed class AgentRepository : RepositoryBase<Agent>, IAgentRepository,
     {
     }
 
-    public Task<Agent?> FindByIdAsync(Guid entityId)
+    public new Task<Agent?> FindByIdAsync(Guid entityId)
+        => base.FindByIdAsync(entityId);
+
+    public async Task<Agent?> FindByKeyAsync(string agentKey)
     {
-        return Task.FromResult(base.FindById(entityId));
+        return (await GetAllAsync()).FirstOrDefault(x => x.Key == agentKey);
     }
 
-    public Agent? FindByKey(string agentKey)
-    {
-        return GetAll().FirstOrDefault(x => x.Key == agentKey);
-    }
+    public new Task<IEnumerable<Agent>> GetAllAsync()
+        => base.GetAllAsync();
 
-    public Task<IEnumerable<Agent>> GetAllAsync()
-    {
-        return Task.FromResult(base.GetAll());
-    }
-
-    protected override void FillUpRelations(Agent entity)
+    protected override Task FillUpRelationsAsync(Agent entity)
     {
         // Backwards compatibility
         if (string.IsNullOrEmpty(entity.Handler))
@@ -45,6 +41,6 @@ internal sealed class AgentRepository : RepositoryBase<Agent>, IAgentRepository,
             entity.Handler = nameof(AgentHandlers.SimpleRegex);
         }
 
-        base.FillUpRelations(entity);
+        return Task.CompletedTask;
     }
 }

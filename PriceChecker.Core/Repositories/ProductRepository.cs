@@ -26,24 +26,20 @@ internal sealed class ProductRepository : RepositoryBase<Product>, IProductRepos
         _agentRepo = agentQuery;
     }
 
-    public Task<Product?> FindByIdAsync(Guid entityId)
-    {
-        return Task.FromResult(base.FindById(entityId));
-    }
+    public new Task<Product?> FindByIdAsync(Guid entityId)
+        => base.FindByIdAsync(entityId);
 
-    public Task<IEnumerable<Product>> GetAllAsync()
-    {
-        return Task.FromResult(base.GetAll());
-    }
+    public new Task<IEnumerable<Product>> GetAllAsync()
+        => base.GetAllAsync();
 
-    protected override void FillUpRelations(Product product)
+    protected override async Task FillUpRelationsAsync(Product product)
     {
         var sourcesDict = product.Sources.ToDictionary(x => x.Id);
 
         foreach (var productSource in product.Sources)
         {
             productSource.Product = product;
-            productSource.Agent = _agentRepo.FindByKey(productSource.AgentKey).NotNull();
+            productSource.Agent = (await _agentRepo.FindByKeyAsync(productSource.AgentKey)).NotNull();
         }
         foreach (var productPrice in product.Recent)
         {

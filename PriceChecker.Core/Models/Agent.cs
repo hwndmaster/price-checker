@@ -14,6 +14,7 @@ public class Agent : EntityBase, ICloneable
     {
         return new Agent()
         {
+            Id = Id,
             Key = Key,
             Url = Url,
             PricePattern = PricePattern,

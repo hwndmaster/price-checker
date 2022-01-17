@@ -1,6 +1,6 @@
-using System.Collections.Generic;
 using System.Windows.Shell;
 using Genius.Atom.UI.Forms;
+using Genius.Atom.UI.Forms.ViewModels;
 using Genius.PriceChecker.UI.Helpers;
 using Hardcodet.Wpf.TaskbarNotification;
 
@@ -19,7 +19,7 @@ internal sealed class MainViewModel : ViewModelBase, IMainViewModel
         ITrackerViewModel tracker,
         IAgentsViewModel agents,
         ISettingsViewModel settings,
-        ILogsViewModel logs,
+        ILogsTabViewModel logs,
         ITrackerScanContext scanContext,
         INotifyIconViewModel notifyViewModel)
     {

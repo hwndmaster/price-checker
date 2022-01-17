@@ -155,7 +155,7 @@ internal sealed class ProductPriceManager : IProductPriceManager
         }
         product.Lowest = lowest;
 
-        _productRepo.Store(product);
+        await _productRepo.StoreAsync(product);
 
         _eventBus.Publish(new ProductScannedEvent(product.Id, status));
     }

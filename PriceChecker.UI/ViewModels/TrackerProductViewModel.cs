@@ -73,8 +73,8 @@ internal sealed class TrackerProductViewModel : ViewModelBase, ITrackerProductVi
 
         CommitProductCommand = new ActionCommand(_ => CommitProduct());
 
-        ShowInBrowserCommand = new ActionCommand(_ =>
-            productInteraction.ShowProductInBrowser(_product?.Lowest?.ProductSource));
+        ShowInBrowserCommand = new ActionCommand(async _ =>
+            await productInteraction.ShowProductInBrowserAsync(_product?.Lowest?.ProductSource));
 
         AddSourceCommand = new ActionCommand(_ =>
             Sources.Add(CreateSourceViewModel(null)));

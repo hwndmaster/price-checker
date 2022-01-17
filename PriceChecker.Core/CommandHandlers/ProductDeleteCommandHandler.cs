@@ -1,4 +1,3 @@
-using System.Threading.Tasks;
 using Genius.Atom.Infrastructure.Commands;
 using Genius.Atom.Infrastructure.Events;
 using Genius.PriceChecker.Core.Commands;
@@ -18,12 +17,10 @@ internal sealed class ProductDeleteCommandHandler : ICommandHandler<ProductDelet
         _eventBus = eventBus;
     }
 
-    public Task ProcessAsync(ProductDeleteCommand command)
+    public async Task ProcessAsync(ProductDeleteCommand command)
     {
-        _productRepo.Delete(command.ProductId);
+        await _productRepo.DeleteAsync(command.ProductId);
 
         _eventBus.Publish(new ProductsAffectedEvent());
-
-        return Task.CompletedTask;
     }
 }

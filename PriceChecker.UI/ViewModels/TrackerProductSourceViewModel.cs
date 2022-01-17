@@ -1,6 +1,5 @@
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
-using System.Windows;
 using System.Windows.Media.Imaging;
 using Genius.Atom.UI.Forms;
 using Genius.PriceChecker.Core.Models;
@@ -19,8 +18,8 @@ internal sealed class TrackerProductSourceViewModel : ViewModelBase
             LastPrice = lastPrice;
         });
 
-        ShowInBrowserCommand = new ActionCommand(_ =>
-            productInteraction.ShowProductInBrowser(productSource));
+        ShowInBrowserCommand = new ActionCommand(async _ =>
+            await productInteraction.ShowProductInBrowserAsync(productSource));
     }
 
     [Browsable(false)]

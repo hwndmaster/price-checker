@@ -23,7 +23,7 @@ public class ProductRepositoryTests
         _agents = ModelHelpers.SampleManyAgents(_products).ToArray();
 
         foreach (var agent in _agents)
-            _agentQueryMock.Setup(x => x.FindByKey(agent.Key)).Returns(agent);
+            _agentQueryMock.Setup(x => x.FindByKeyAsync(agent.Key)).ReturnsAsync(agent);
 
         _persisterMock.Setup(x => x.LoadCollection<Product>(It.IsAny<string>()))
             .Returns(_products);
@@ -59,13 +59,13 @@ public class ProductRepositoryTests
     }
 
     [Fact]
-    public async Task Delete__Removes_appripriate_product()
+    public async Task Delete__Removes_appropriate_product()
     {
         // Arrange
         var productToDelete = _products[1];
 
         // Act
-        _sut.Delete(productToDelete.Id);
+        await _sut.DeleteAsync(productToDelete.Id);
 
         // Verify
         Assert.Null(await _sut.FindByIdAsync(productToDelete.Id));
@@ -78,25 +78,25 @@ public class ProductRepositoryTests
         var productCount = (await _sut.GetAllAsync()).Count();
 
         // Act
-        _sut.Delete(Guid.NewGuid());
+        await _sut.DeleteAsync(Guid.NewGuid());
 
         // Verify
         Assert.Equal(productCount, (await _sut.GetAllAsync()).Count());
     }
 
     [Fact]
-    public void Store__For_existing_product__Saves_it_and_fires_event()
+    public async Task Store__For_existing_product__Saves_it_and_fires_event()
     {
         // Arrange
         var product = _products[1];
 
         // Act
-        _sut.Store(product);
+        await _sut.StoreAsync(product);
 
         // Verify
         _persisterMock.Verify(x => x.Store(It.IsAny<string>(),
             It.Is((List<Product> p) => p.SequenceEqual(_products))));
-        _eventBusMock.Verify(x => x.Publish(It.Is<EntitiesUpdatedEvent>(e => e.Entities.First() == product.Id)), Times.Once);
+        _eventBusMock.Verify(x => x.Publish(It.Is<EntitiesAffectedEvent>(e => e.Updated.First().Key == product.Id)), Times.Once);
     }
 
     [Fact]
@@ -107,13 +107,13 @@ public class ProductRepositoryTests
         var productCount = (await _sut.GetAllAsync()).Count();
 
         // Act
-        _sut.Store(product);
+        await _sut.StoreAsync(product);
 
         // Verify
         var expectedProducts = _products.Concat(new [] { product });
         _persisterMock.Verify(x => x.Store(It.IsAny<string>(),
             It.Is((List<Product> p) => p.SequenceEqual(expectedProducts))));
-        _eventBusMock.Verify(x => x.Publish(It.Is<EntitiesAddedEvent>(e => e.Entities.First() == product.Id)), Times.Once);
+        _eventBusMock.Verify(x => x.Publish(It.Is<EntitiesAffectedEvent>(e => e.Added.First().Key == product.Id)), Times.Once);
         Assert.Equal(productCount + 1, (await _sut.GetAllAsync()).Count());
     }
 
@@ -126,7 +126,7 @@ public class ProductRepositoryTests
         var productCount = (await _sut.GetAllAsync()).Count();
 
         // Act
-        _sut.Store(product);
+        await _sut.StoreAsync(product);
 
         // Verify
         Assert.NotEqual(Guid.Empty, product.Id);

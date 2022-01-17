@@ -34,7 +34,7 @@ public class AgentsStoreWithOverwriteCommandHandlerTests
         await _sut.ProcessAsync(command);
 
         // Verify
-        _agentRepoMock.Verify(x => x.Overwrite(It.IsAny<Agent[]>()), Times.Once);
+        _agentRepoMock.Verify(x => x.OverwriteAsync(It.IsAny<Agent[]>()), Times.Once);
         _eventBusMock.Verify(x => x.Publish(It.IsAny<AgentsAffectedEvent>()), Times.Once);
     }
 
@@ -59,9 +59,9 @@ public class AgentsStoreWithOverwriteCommandHandlerTests
             products[1].Id  // renaming and removing
         };
         Agent[] agentsUpdated = Array.Empty<Agent>();
-        _agentRepoMock.Setup(x => x.Overwrite(It.IsAny<Agent[]>()))
+        _agentRepoMock.Setup(x => x.OverwriteAsync(It.IsAny<Agent[]>()))
             .Callback<Agent[]>(x => agentsUpdated = x);
-        _agentQueryMock.Setup(x => x.GetAllAsync()).ReturnsAsync(agentsUpdated);
+        _agentQueryMock.Setup(x => x.GetAllAsync()).ReturnsAsync(() => agentsUpdated);
 
         // Pre-Assert
         Assert.Equal(agents[1].Key, products[0].Sources[1].AgentKey);
@@ -72,12 +72,12 @@ public class AgentsStoreWithOverwriteCommandHandlerTests
         await _sut.ProcessAsync(command);
 
         // Verify
-        _productRepoMock.Verify(x => x.Overwrite(It.Is<Product[]>(y =>
+        _productRepoMock.Verify(x => x.OverwriteAsync(It.Is<Product[]>(y =>
             y[0].Sources[1].AgentKey.Equals(agentsToUpdate[1].Key)
             && y[1].Sources[1].AgentKey.Equals(agentsToUpdate[4].Key)
             && y[1].Sources.Length == 2
             )), Times.Once);
-        _eventBusMock.Verify(x => x.Publish(It.Is<EntitiesUpdatedEvent>(y =>
-            y.Entities.SequenceEqual(affectedProductIds))), Times.Once);
+        _eventBusMock.Verify(x => x.Publish(It.Is<EntitiesAffectedEvent>(y =>
+            y.Updated.Keys.SequenceEqual(affectedProductIds))), Times.Once);
     }
 }

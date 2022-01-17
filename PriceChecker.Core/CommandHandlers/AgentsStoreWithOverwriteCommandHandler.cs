@@ -1,9 +1,9 @@
-using System.Threading.Tasks;
 using Genius.Atom.Infrastructure.Commands;
 using Genius.Atom.Infrastructure.Entities;
 using Genius.Atom.Infrastructure.Events;
 using Genius.PriceChecker.Core.Commands;
 using Genius.PriceChecker.Core.Messages;
+using Genius.PriceChecker.Core.Models;
 using Genius.PriceChecker.Core.Repositories;
 
 namespace Genius.PriceChecker.Core.CommandHandlers;
@@ -29,7 +29,7 @@ internal sealed class AgentsStoreWithOverwriteCommandHandler : ICommandHandler<A
 
     public async Task ProcessAsync(AgentsStoreWithOverwriteCommand command)
     {
-        _agentRepo.Overwrite(command.Agents);
+        await _agentRepo.OverwriteAsync(command.Agents);
         _eventBus.Publish(new AgentsAffectedEvent());
 
         await RefineProductSources();
@@ -67,7 +67,7 @@ internal sealed class AgentsStoreWithOverwriteCommandHandler : ICommandHandler<A
         if (!affectedProductsIds.Any())
             return;
 
-        _productRepo.Overwrite(products);
-        _eventBus.Publish(new EntitiesUpdatedEvent(affectedProductsIds));
+        await _productRepo.OverwriteAsync(products);
+        _eventBus.Publish(new EntitiesAffectedEvent(typeof(Product), EntityAffectedEventType.Updated, affectedProductsIds.ToArray()));
     }
 }

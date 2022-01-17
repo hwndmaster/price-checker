@@ -49,7 +49,7 @@ public class AgentRepositoryTests
         var agentToDelete = _agents[1];
 
         // Act
-        _sut.Delete(agentToDelete.Id);
+        await _sut.DeleteAsync(agentToDelete.Id);
 
         // Verify
         Assert.Null(await _sut.FindByIdAsync(agentToDelete.Id));
@@ -63,7 +63,7 @@ public class AgentRepositoryTests
         var agentCount = agents.Count();
 
         // Act
-        _sut.Delete(Guid.NewGuid());
+        await _sut.DeleteAsync(Guid.NewGuid());
 
         // Verify
         Assert.Equal(agentCount, (await _sut.GetAllAsync()).Count());
@@ -77,13 +77,13 @@ public class AgentRepositoryTests
         var previousAgents = (await _sut.GetAllAsync()).ToArray();
 
         // Act
-        _sut.Overwrite(newAgents);
+        await _sut.OverwriteAsync(newAgents);
 
         // Verify
         Assert.False((await _sut.GetAllAsync()).Except(newAgents).Any());
         _persisterMock.Verify(x => x.Store(It.IsAny<string>(),
             It.Is((List<Agent> p) => p.SequenceEqual(newAgents))));
-        _eventBusMock.Verify(x => x.Publish(It.Is<EntitiesAddedEvent>(e => e.Entities.Count == newAgents.Length)), Times.Once);
-        _eventBusMock.Verify(x => x.Publish(It.Is<EntitiesDeletedEvent>(e => e.Entities.Count == previousAgents.Length)), Times.Once);
+        _eventBusMock.Verify(x => x.Publish(It.Is<EntitiesAffectedEvent>(e => e.Added.Count == newAgents.Length
+            && e.Deleted.Count == previousAgents.Length)), Times.Once);
     }
 }

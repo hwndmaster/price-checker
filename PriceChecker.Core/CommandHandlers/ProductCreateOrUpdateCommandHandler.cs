@@ -24,15 +24,15 @@ internal sealed class ProductCreateOrUpdateCommandHandler:
         _eventBus = eventBus;
     }
 
-    public Task<Guid> ProcessAsync(ProductCreateCommand command)
+    public async Task<Guid> ProcessAsync(ProductCreateCommand command)
     {
         var product = new Product();
         UpdateProperties(product, command);
-        _productRepo.Store(product);
+        await _productRepo.StoreAsync(product);
 
         _eventBus.Publish(new ProductsAffectedEvent());
 
-        return Task.FromResult(product.Id);
+        return product.Id;
     }
 
     public async Task ProcessAsync(ProductUpdateCommand command)
@@ -41,7 +41,7 @@ internal sealed class ProductCreateOrUpdateCommandHandler:
         Guard.NotNull(product);
 
         UpdateProperties(product, command);
-        _productRepo.Store(product);
+        await _productRepo.StoreAsync(product);
 
         _eventBus.Publish(new ProductsAffectedEvent());
     }

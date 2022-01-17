@@ -1,4 +1,3 @@
-using System.Threading.Tasks;
 using Genius.Atom.Infrastructure.Commands;
 using Genius.PriceChecker.Core.Commands;
 using Genius.PriceChecker.Core.Models;
@@ -25,6 +24,6 @@ internal sealed class ProductDropPricesCommandHandler : ICommandHandler<ProductD
         product.Lowest = null;
         product.Recent = Array.Empty<ProductPrice>();
 
-        _productRepo.Store(product);
+        await _productRepo.StoreAsync(product);
     }
 }
