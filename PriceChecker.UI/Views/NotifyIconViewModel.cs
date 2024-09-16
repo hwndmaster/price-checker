@@ -1,9 +1,8 @@
-﻿using System.Windows;
-using System.Windows.Input;
+﻿using System.Windows.Input;
 using Genius.Atom.UI.Forms;
 using Hardcodet.Wpf.TaskbarNotification;
 
-namespace Genius.PriceChecker.UI.ViewModels;
+namespace Genius.PriceChecker.UI.Views;
 
 public interface INotifyIconViewModel
 {

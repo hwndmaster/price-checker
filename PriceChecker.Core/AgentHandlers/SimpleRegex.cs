@@ -48,7 +48,7 @@ internal sealed class SimpleRegex : IAgentHandler
         var priceConverted = decimal.TryParse(priceString, out var priceValue);
         if (!priceConverted)
         {
-            _logger.LogError("Could not convert the price '{priceString}' to decimal.", priceString);
+            _logger.LogError("Could not convert the price '{PriceString}' to decimal.", priceString);
             price = null;
             return false;
         }

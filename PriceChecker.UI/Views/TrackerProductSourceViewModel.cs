@@ -5,12 +5,15 @@ using Genius.Atom.UI.Forms;
 using Genius.PriceChecker.Core.Models;
 using Genius.PriceChecker.UI.Helpers;
 
-namespace Genius.PriceChecker.UI.ViewModels;
+namespace Genius.PriceChecker.UI.Views;
 
 internal sealed class TrackerProductSourceViewModel : ViewModelBase
 {
     public TrackerProductSourceViewModel(IProductInteraction productInteraction, ProductSource? productSource, decimal? lastPrice)
     {
+        Guard.NotNull(productInteraction);
+
+        // Member initialization:
         InitializeProperties(() => {
             Id = productSource?.Id ?? Guid.NewGuid();
             AgentKey = productSource?.AgentKey ?? string.Empty;
@@ -18,6 +21,7 @@ internal sealed class TrackerProductSourceViewModel : ViewModelBase
             LastPrice = lastPrice;
         });
 
+        // Actions:
         ShowInBrowserCommand = new ActionCommand(async _ =>
             await productInteraction.ShowProductInBrowserAsync(productSource));
     }

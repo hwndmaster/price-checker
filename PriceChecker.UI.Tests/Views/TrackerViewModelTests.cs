@@ -1,6 +1,10 @@
+using System.ComponentModel;
 using System.Reactive;
 using System.Reactive.Subjects;
 using Genius.Atom.Infrastructure.Commands;
+using Genius.Atom.Infrastructure.TestingUtil.Commands;
+using Genius.Atom.Infrastructure.TestingUtil.Events;
+using Genius.Atom.Infrastructure.Threading;
 using Genius.Atom.UI.Forms;
 using Genius.Atom.UI.Forms.TestingUtil;
 using Genius.PriceChecker.Core.Commands;
@@ -8,34 +12,44 @@ using Genius.PriceChecker.Core.Messages;
 using Genius.PriceChecker.Core.Models;
 using Genius.PriceChecker.Core.Repositories;
 using Genius.PriceChecker.UI.Helpers;
-using Genius.PriceChecker.UI.ViewModels;
+using Genius.PriceChecker.UI.Views;
+using WinRT;
 
-namespace Genius.PriceChecker.UI.Tests.ViewModels;
+namespace Genius.PriceChecker.UI.Tests.Views;
 
-public class TrackerViewModelTests : TestBase
+public class TrackerViewModelTests
 {
-    private readonly Mock<IProductQueryService> _productQueryMock = new();
-    private readonly Mock<UI.ViewModels.IViewModelFactory> _vmFactoryMock = new();
-    private readonly Mock<IUserInteraction> _uiMock = new();
-    private readonly Mock<ITrackerScanContext> _scanContextMock = new();
-    private readonly Mock<ICommandBus> _commandBusMock = new();
-
-    // Session values:
-    private readonly Subject<ProductScanStartedEvent> _productScanStartedEventSubject;
-    private readonly Subject<ProductScannedEvent> _productScannedEventSubject;
-    private readonly Subject<ProductScanFailedEvent> _productScanFailedEventSubject;
+    private readonly Fixture _fixture = new();
+    private readonly FakeEventBus _eventBus = new();
+    private readonly IProductQueryService _fakeProductQuery = A.Fake<IProductQueryService>();
+    private readonly IViewModelFactory _fakeVmFactory = A.Fake<IViewModelFactory>();
+    private readonly IUserInteraction _fakeUi = A.Fake<IUserInteraction>();
+    private readonly ITrackerScanContext _fakeScanContext = A.Fake<ITrackerScanContext>();
+    private readonly FakeCommandBus _commandBus = new();
 
     public TrackerViewModelTests()
     {
-        _productScanStartedEventSubject = CreateEventSubject<ProductScanStartedEvent>();
-        _productScannedEventSubject = CreateEventSubject<ProductScannedEvent>();
-        _productScanFailedEventSubject = CreateEventSubject<ProductScanFailedEvent>();
+        A.CallTo(() => _fakeVmFactory.CreateTrackerProduct(A<Product>.Ignored))
+            .ReturnsLazily((Product p) => {
+                var commitProductCommand = A.Fake<IActionCommand>();
+                A.CallTo(() => commitProductCommand.Executed).Returns(new Subject<bool>());
 
-        _vmFactoryMock.Setup(x => x.CreateTrackerProduct(It.IsAny<Product>()))
-            .Returns((Product p) => Mock.Of<ITrackerProductViewModel>(x =>
-                x.Id == (p == null ? Guid.Empty : p.Id) &&
-                x.RefreshPriceCommand == Mock.Of<IActionCommand>() &&
-                x.CommitProductCommand == Mock.Of<IActionCommand>(c => c.Executed == new Subject<Unit>())));
+                var vm = A.Fake<ITrackerProductViewModel>();
+                A.CallTo(() => vm.Id).Returns(p == null ? Guid.Empty : p.Id);
+                A.CallTo(() => vm.RefreshPriceCommand).Returns(A.Fake<IActionCommand>());
+                A.CallTo(() => vm.CommitProductCommand).Returns(commitProductCommand);
+                A.CallToSet(() => vm.Status)
+                    .Invokes((ProductScanStatus status) =>
+                    {
+                        object? statusObj;
+                        A.CallTo(() => vm.Status).Returns(status);
+                        A.CallTo(() => vm.TryGetPropertyValue(nameof(vm.Status), out statusObj))
+                            .Returns(true)
+                            .AssignsOutAndRefParameters(status);
+                        vm.PropertyChanged += Raise.FreeForm.With(vm, new PropertyChangedEventArgs(nameof(vm.Status)));
+                    });
+                return vm;
+            });
     }
 
     [Fact]
@@ -45,11 +59,11 @@ public class TrackerViewModelTests : TestBase
         var products = SampleProducts();
 
         // Act
-        var sut = CreateSystemUnderTest();
+        using var sut = CreateSystemUnderTest();
 
         // Verify
         Assert.NotEmpty(sut.RefreshOptions);
-        Assert.Equal(products, sut.Products.Select(x => x.Id.Value));
+        Assert.Equal(products, sut.Products.Select(x => x.Id!.Value));
     }
 
     [Fact]
@@ -57,7 +71,7 @@ public class TrackerViewModelTests : TestBase
     {
         // Arrange
         var products = SampleProducts();
-        var sut = CreateSystemUnderTest();
+        using var sut = CreateSystemUnderTest();
         sut.IsAddEditProductVisible = true;
 
         // Act
@@ -65,10 +79,10 @@ public class TrackerViewModelTests : TestBase
 
         // Verify
         Assert.False(sut.IsAddEditProductVisible);
-        _scanContextMock.Verify(x => x.NotifyStarted(products.Count));
+        A.CallTo(() => _fakeScanContext.NotifyStarted(products.Count)).MustHaveHappenedOnceExactly();
         foreach (var product in sut.Products)
         {
-            Mock.Get(product.RefreshPriceCommand).Verify(x => x.Execute(null), Times.Once);
+            A.CallTo(() => product.RefreshPriceCommand.Execute(null)).MustHaveHappenedOnceExactly();
         }
     }
 
@@ -76,8 +90,8 @@ public class TrackerViewModelTests : TestBase
     public void RefreshAllCommand__Enqueues_selected_products_for_scan()
     {
         // Arrange
-        var products = SampleProducts();
-        var sut = CreateSystemUnderTest();
+        SampleProducts();
+        using var sut = CreateSystemUnderTest();
         sut.Products[0].IsSelected = true;
         sut.Products[2].IsSelected = true;
 
@@ -85,11 +99,11 @@ public class TrackerViewModelTests : TestBase
         sut.RefreshSelectedCommand.Execute(null);
 
         // Verify
-        _scanContextMock.Verify(x => x.NotifyStarted(2));
+        A.CallTo(() => _fakeScanContext.NotifyStarted(2)).MustHaveHappenedOnceExactly();
         foreach (var product in sut.Products)
         {
-            var times = product == sut.Products[0] || product == sut.Products[2] ? Times.Once() : Times.Never();
-            Mock.Get(product.RefreshPriceCommand).Verify(x => x.Execute(null), times);
+            var times = product == sut.Products[0] || product == sut.Products[2] ? 1 : 0;
+            A.CallTo(() => product.RefreshPriceCommand.Execute(null)).MustHaveHappened(times, Times.Exactly);
         }
     }
 
@@ -98,7 +112,7 @@ public class TrackerViewModelTests : TestBase
     {
         // Arrange
         SampleProducts();
-        var sut = CreateSystemUnderTest();
+        using var sut = CreateSystemUnderTest();
         sut.IsAddEditProductVisible = false;
         sut.EditingProduct = null;
 
@@ -116,7 +130,7 @@ public class TrackerViewModelTests : TestBase
     {
         // Arrange
         SampleProducts();
-        var sut = CreateSystemUnderTest();
+        using var sut = CreateSystemUnderTest();
         sut.IsAddEditProductVisible = true;
 
         // Act
@@ -130,16 +144,18 @@ public class TrackerViewModelTests : TestBase
     public void OpenAddProductFlyoutCommand__Product_committed__List_reloaded_and_flyout_closed()
     {
         // Arrange
-        var products = SampleProducts();
-        var sut = CreateSystemUnderTest();
+        TestModule.Initialize();
+        SampleProducts();
+        using var sut = CreateSystemUnderTest();
         sut.OpenAddProductFlyoutCommand.Execute(null); // trigger to open flyout
 
         // Act
-        ((Subject<Unit>)sut.EditingProduct!.CommitProductCommand.Executed).OnNext(Unit.Default);
+        sut.EditingProduct!.CommitProductCommand.Execute(null);
+        ((Subject<bool>)sut.EditingProduct!.CommitProductCommand.Executed).OnNext(true);
 
         // Verify
         Assert.False(sut.IsAddEditProductVisible);
-        _productQueryMock.Verify(x => x.GetAllAsync(), Times.Exactly(2));
+        A.CallTo(() => _fakeProductQuery.GetAllAsync()).MustHaveHappenedTwiceExactly();
     }
 
     [Fact]
@@ -147,7 +163,7 @@ public class TrackerViewModelTests : TestBase
     {
         // Arrange
         var products = SampleProducts();
-        var sut = CreateSystemUnderTest();
+        using var sut = CreateSystemUnderTest();
         sut.IsAddEditProductVisible = false;
         sut.Products[0].IsSelected = true;
         sut.EditingProduct = null;
@@ -166,7 +182,7 @@ public class TrackerViewModelTests : TestBase
     {
         // Arrange
         SampleProducts();
-        var sut = CreateSystemUnderTest();
+        using var sut = CreateSystemUnderTest();
         sut.IsAddEditProductVisible = true;
 
         // Act
@@ -181,12 +197,12 @@ public class TrackerViewModelTests : TestBase
     {
         // Arrange
         SampleProducts();
-        var sut = CreateSystemUnderTest();
+        using var sut = CreateSystemUnderTest();
         sut.Products[0].IsSelected = true;
         sut.OpenEditProductFlyoutCommand.Execute(null); // trigger to open flyout
 
         // Act
-        ((Subject<Unit>)sut.EditingProduct!.CommitProductCommand.Executed).OnNext(Unit.Default);
+        ((Subject<bool>)sut.EditingProduct!.CommitProductCommand.Executed).OnNext(true);
 
         // Verify
         Assert.False(sut.IsAddEditProductVisible);
@@ -197,10 +213,10 @@ public class TrackerViewModelTests : TestBase
     {
         // Arrange
         var products = SampleProducts();
-        var sut = CreateSystemUnderTest();
+        using var sut = CreateSystemUnderTest();
         sut.Products[1].IsSelected = true;
         sut.IsAddEditProductVisible = true;
-        _uiMock.Setup(x => x.AskForConfirmation(It.IsAny<string>(), It.IsAny<string>())).Returns(true);
+        A.CallTo(() => _fakeUi.AskForConfirmation(A<string>.Ignored, A<string>.Ignored)).Returns(true);
 
         // Act
         sut.DeleteProductCommand.Execute(null);
@@ -210,7 +226,7 @@ public class TrackerViewModelTests : TestBase
         Assert.False(sut.IsAddEditProductVisible);
         Assert.DoesNotContain(sut.Products, x => x.Id == deletedProductId);
         Assert.Equal(products.Count - 1, sut.Products.Count);
-        _commandBusMock.Verify(x => x.SendAsync(It.Is<ProductDeleteCommand>(c => c.ProductId == deletedProductId)));
+        _commandBus.AssertSingleCommand<ProductDeleteCommand>(x => x.ProductId == deletedProductId);
     }
 
     [Fact]
@@ -218,10 +234,10 @@ public class TrackerViewModelTests : TestBase
     {
         // Arrange
         var products = SampleProducts();
-        var sut = CreateSystemUnderTest();
+        using var sut = CreateSystemUnderTest();
         sut.Products[1].IsSelected = true;
         sut.IsAddEditProductVisible = true;
-        _uiMock.Setup(x => x.AskForConfirmation(It.IsAny<string>(), It.IsAny<string>())).Returns(false);
+        A.CallTo(() => _fakeUi.AskForConfirmation(A<string>.Ignored, A<string>.Ignored)).Returns(false);
 
         // Act
         sut.DeleteProductCommand.Execute(null);
@@ -231,7 +247,7 @@ public class TrackerViewModelTests : TestBase
         Assert.False(sut.IsAddEditProductVisible);
         Assert.Contains(sut.Products, x => x.Id == deletingProductId);
         Assert.Equal(products.Count, sut.Products.Count);
-        _commandBusMock.Verify(x => x.SendAsync(It.IsAny<ProductDeleteCommand>()), Times.Never);
+        _commandBus.AssertNoCommandOfType<ProductDeleteCommand>();
     }
 
     [Fact]
@@ -239,7 +255,7 @@ public class TrackerViewModelTests : TestBase
     {
         // Arrange
         var products = SampleProducts();
-        var sut = CreateSystemUnderTest();
+        using var sut = CreateSystemUnderTest();
         sut.IsAddEditProductVisible = true;
 
         // Act
@@ -248,8 +264,8 @@ public class TrackerViewModelTests : TestBase
         // Verify
         Assert.False(sut.IsAddEditProductVisible);
         Assert.Equal(products.Count, sut.Products.Count);
-        _commandBusMock.Verify(x => x.SendAsync(It.IsAny<ProductDeleteCommand>()), Times.Never);
-        _uiMock.Verify(x => x.AskForConfirmation(It.IsAny<string>(), It.IsAny<string>()), Times.Never);
+        _commandBus.AssertNoCommandOfType<ProductDeleteCommand>();
+        A.CallTo(() => _fakeUi.AskForConfirmation(A<string>.Ignored, A<string>.Ignored)).MustNotHaveHappened();
     }
 
     [Fact]
@@ -257,11 +273,11 @@ public class TrackerViewModelTests : TestBase
     {
         // Arrange
         var products = SampleProducts();
-        var sut = CreateSystemUnderTest();
+        using var sut = CreateSystemUnderTest();
         const int productScanningIndex = 1;
 
         // Act
-        _productScanStartedEventSubject.OnNext(new ProductScanStartedEvent(products.ElementAt(productScanningIndex)));
+        _eventBus.Publish(new ProductScanStartedEvent(products.ElementAt(productScanningIndex)));
 
         // Verify
         Assert.Equal(ProductScanStatus.Scanning, sut.Products[productScanningIndex].Status);
@@ -272,15 +288,15 @@ public class TrackerViewModelTests : TestBase
     {
         // Arrange
         var products = SampleProducts();
-        var sut = CreateSystemUnderTest();
-        var status = Fixture.Create<ProductScanStatus>();
+        using var sut = CreateSystemUnderTest();
+        var status = _fixture.Create<ProductScanStatus>();
         const int productScannedIndex = 1;
 
         // Act
-        _productScannedEventSubject.OnNext(new ProductScannedEvent(products.ElementAt(productScannedIndex), status));
+        _eventBus.Publish(new ProductScannedEvent(products.ElementAt(productScannedIndex), status));
 
         // Verify
-        Mock.Get(sut.Products[productScannedIndex]).Verify(x => x.Reconcile(status), Times.Once);
+        A.CallTo(() => sut.Products[productScannedIndex].Reconcile(status)).MustHaveHappenedOnceExactly();
     }
 
     [Fact]
@@ -288,15 +304,15 @@ public class TrackerViewModelTests : TestBase
     {
         // Arrange
         var products = SampleProducts();
-        var sut = CreateSystemUnderTest();
+        using var sut = CreateSystemUnderTest();
         const int productFailedIndex = 1;
-        var errorMessage = Fixture.Create<string>();
+        var errorMessage = _fixture.Create<string>();
 
         // Act
-        _productScanFailedEventSubject.OnNext(new ProductScanFailedEvent(products.ElementAt(productFailedIndex), errorMessage));
+        _eventBus.Publish(new ProductScanFailedEvent(products.ElementAt(productFailedIndex), errorMessage));
 
         // Verify
-        Mock.Get(sut.Products[productFailedIndex]).Verify(x => x.SetFailed(errorMessage), Times.Once);
+        A.CallTo(() => sut.Products[productFailedIndex].SetFailed(errorMessage)).MustHaveHappenedOnceExactly();
     }
 
     [Fact]
@@ -304,7 +320,7 @@ public class TrackerViewModelTests : TestBase
     {
         // Arrange
         SampleProducts();
-        var sut = CreateSystemUnderTest();
+        using var sut = CreateSystemUnderTest();
         sut.IsAddEditProductVisible = true;
 
         // Act
@@ -318,30 +334,29 @@ public class TrackerViewModelTests : TestBase
     public void Product_status_changed__Scan_context_notified()
     {
         // Arrange
-        var products = SampleProducts();
-        var sut = CreateSystemUnderTest();
+        SampleProducts();
+        using var sut = CreateSystemUnderTest();
         var product = sut.Products[1];
-        var status = Fixture.Create<Generator<ProductScanStatus>>()
+        var status = _fixture.Create<Generator<ProductScanStatus>>()
             .First(x => x != product.Status);
 
         // Act
-        RaisePropertyChanged(Mock.Get(product), x => x.Status, status);
+        product.Status = status;
 
         // Verify
-        _scanContextMock.Verify(x => x.NotifyProgressChange(status));
+        A.CallTo(() => _fakeScanContext.NotifyProgressChange(status)).MustHaveHappenedOnceExactly();
     }
 
     private TrackerViewModel CreateSystemUnderTest()
     {
-        return new TrackerViewModel(EventBusMock.Object, _productQueryMock.Object,
-            _vmFactoryMock.Object, _uiMock.Object, _scanContextMock.Object,
-            _commandBusMock.Object);
+        return new TrackerViewModel(_eventBus, _fakeProductQuery,
+            _fakeVmFactory, new FakeUiDispatcher(), _fakeUi, _fakeScanContext, _commandBus);
     }
 
     private ICollection<Guid> SampleProducts()
     {
-        var products = Fixture.CreateMany<Product>().ToList();
-        _productQueryMock.Setup(x => x.GetAllAsync()).Returns(Task.FromResult(products.AsEnumerable()));
+        var products = _fixture.CreateMany<Product>().ToList();
+        A.CallTo(() => _fakeProductQuery.GetAllAsync()).Returns(products.AsEnumerable());
         return products.ConvertAll(x => x.Id);
     }
 }

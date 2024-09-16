@@ -1,5 +1,5 @@
 ﻿using System.Diagnostics.CodeAnalysis;
-using Genius.PriceChecker.UI.ViewModels;
+using Genius.PriceChecker.UI.Views;
 using MahApps.Metro.Controls;
 
 namespace Genius.PriceChecker.UI.Views;

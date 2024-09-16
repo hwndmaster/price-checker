@@ -8,7 +8,7 @@ using Genius.PriceChecker.Core.Services;
 using Genius.PriceChecker.Core.AgentHandlers;
 using Genius.PriceChecker.UI.Helpers;
 
-namespace Genius.PriceChecker.UI.ViewModels;
+namespace Genius.PriceChecker.UI.Views;
 
 public interface IViewModelFactory
 {
@@ -36,14 +36,14 @@ internal sealed class ViewModelFactory : IViewModelFactory
         IAgentHandlersProvider agentHandlersProvider,
         IProductInteraction productInteraction)
     {
-        _eventBus = eventBus;
-        _commandBus = commandBus;
-        _agentQuery = agentQuery;
-        _productQuery = productQuery;
-        _statusProvider = statusProvider;
-        _ui = ui;
-        _agentHandlersProvider = agentHandlersProvider;
-        _productInteraction = productInteraction;
+        _eventBus = eventBus.NotNull();
+        _commandBus = commandBus.NotNull();
+        _agentQuery = agentQuery.NotNull();
+        _productQuery = productQuery.NotNull();
+        _statusProvider = statusProvider.NotNull();
+        _ui = ui.NotNull();
+        _agentHandlersProvider = agentHandlersProvider.NotNull();
+        _productInteraction = productInteraction.NotNull();
     }
 
     public IAgentViewModel CreateAgent(IAgentsViewModel owner, Agent? agent)

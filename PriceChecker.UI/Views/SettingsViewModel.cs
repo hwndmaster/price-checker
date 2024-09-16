@@ -1,8 +1,7 @@
-using System.Linq;
 using Genius.PriceChecker.Core.Repositories;
 using Genius.Atom.UI.Forms;
 
-namespace Genius.PriceChecker.UI.ViewModels;
+namespace Genius.PriceChecker.UI.Views;
 
 public interface ISettingsViewModel : ITabViewModel
 {
@@ -12,9 +11,12 @@ internal sealed class SettingsViewModel : TabViewModelBase, ISettingsViewModel
 {
     public SettingsViewModel(ISettingsRepository repo)
     {
+        Guard.NotNull(repo);
+
+        // Member initialization:
         var settings = repo.Get();
 
-        AutoRefreshMinuteOptions = new [] {
+        AutoRefreshMinuteOptions = [
 #if DEBUG
             new AutoRefreshOption("1 minute (DEBUG ONLY)", 1),
 #endif
@@ -22,13 +24,14 @@ internal sealed class SettingsViewModel : TabViewModelBase, ISettingsViewModel
             new AutoRefreshOption("3 hours", 180),
             new AutoRefreshOption("8 hours", 480),
             new AutoRefreshOption("1 day", 1440)
-        };
+        ];
 
         AutoRefreshEnabled = settings.AutoRefreshEnabled;
         AutoRefreshMinutes = AutoRefreshMinuteOptions.FirstOrDefault(x => x.Value == settings.AutoRefreshMinutes)
             ?? AutoRefreshMinuteOptions[0];
 
-        this.PropertyChanged += (sender, args) => {
+        // Subscriptions:
+        PropertyChanged += (sender, args) => {
             settings.AutoRefreshEnabled = AutoRefreshEnabled;
             settings.AutoRefreshMinutes = AutoRefreshMinutes.Value;
             repo.Store(settings);

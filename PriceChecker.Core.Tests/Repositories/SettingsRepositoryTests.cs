@@ -1,5 +1,6 @@
 using Genius.Atom.Data.Persistence;
-using Genius.Atom.Infrastructure.Events;
+using Genius.Atom.Infrastructure.TestingUtil;
+using Genius.Atom.Infrastructure.TestingUtil.Events;
 using Genius.PriceChecker.Core.Messages;
 using Genius.PriceChecker.Core.Models;
 using Genius.PriceChecker.Core.Repositories;
@@ -10,8 +11,8 @@ namespace Genius.PriceChecker.Core.Tests.Repositories;
 public class SettingsRepositoryTests
 {
     private readonly Fixture _fixture = new();
-    private readonly Mock<IEventBus> _eventBusMock = new();
-    private readonly Mock<IJsonPersister> _persisterMock = new();
+    private readonly FakeEventBus _eventBus = new();
+    private readonly IJsonPersister _persisterMock = A.Fake<IJsonPersister>();
 
     [Fact]
     public void Constructor__Previous_settings_exist__Loaded()
@@ -77,15 +78,14 @@ public class SettingsRepositoryTests
 
         // Verify
         Assert.Equal(newSettings, sut.Get());
-        _persisterMock.Verify(x => x.Store(It.IsAny<string>(), newSettings));
-        _eventBusMock.Verify(x => x.Publish(It.Is<SettingsUpdatedEvent>(e => e.Settings == newSettings)), Times.Once);
+        A.CallTo(() => _persisterMock.Store(A<string>._, newSettings)).MustHaveHappenedOnceExactly();
+        _eventBus.AssertSingleEvent<SettingsUpdatedEvent>(e => e.Settings == newSettings);
     }
 
     private SettingsRepository CreateSystemUnderTest(Settings? settings = null)
     {
-        _persisterMock.Setup(x => x.Load<Settings>(It.IsAny<string>()))
-            .Returns(settings!);
-        return new SettingsRepository(_eventBusMock.Object, _persisterMock.Object,
-            Mock.Of<ILogger<SettingsRepository>>());
+        A.CallTo(() => _persisterMock.Load<Settings>(A<string>._)).Returns(settings);
+
+        return new SettingsRepository(_eventBus, _persisterMock, new FakeLogger<SettingsRepository>());
     }
 }

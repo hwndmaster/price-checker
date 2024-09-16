@@ -4,7 +4,7 @@ using Genius.Atom.UI.Forms;
 using Genius.PriceChecker.UI.Validation;
 using Genius.PriceChecker.Core.AgentHandlers;
 
-namespace Genius.PriceChecker.UI.ViewModels;
+namespace Genius.PriceChecker.UI.Views;
 
 public interface IAgentViewModel : IViewModel, IHasDirtyFlag, ISelectable
 {
@@ -23,8 +23,8 @@ internal sealed class AgentViewModel : ViewModelBase, IAgentViewModel
 
     public AgentViewModel(IAgentsViewModel owner, Agent? agent, IAgentHandlersProvider agentHandlersProvider)
     {
-        _agentHandlersProvider = agentHandlersProvider;
-        _owner = owner;
+        _agentHandlersProvider = agentHandlersProvider.NotNull();
+        _owner = owner.NotNull();
         _agent = agent;
 
         ResetForm(true);

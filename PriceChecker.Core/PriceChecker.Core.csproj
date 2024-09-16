@@ -1,35 +1,19 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
-    <RootNamespace>Genius.PriceChecker.Core</RootNamespace>
-  </PropertyGroup>
-
-  <ItemGroup>
-    <InternalsVisibleTo Include="PriceChecker.Core.Tests" />
-    <InternalsVisibleTo Include="DynamicProxyGenAssembly2" />
-  </ItemGroup>
-
   <ItemGroup>
     <None Include="..\Data\**" CopyToOutputDirectory="PreserveNewest" LinkBase="Data" />
   </ItemGroup>
+
+  <PropertyGroup>
+    <ReferenceAtomData>true</ReferenceAtomData>
+    <ReferenceAtomInfrastructure>true</ReferenceAtomInfrastructure>
+  </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="System.Reactive" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" />
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" />
+    <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" />
   </ItemGroup>
 
-  <ItemGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|AnyCPU'">
-    <Reference Include="Genius.Atom.Data">
-      <HintPath>..\..\atom\Atom.Data\bin\Debug\net6.0\Genius.Atom.Data.dll</HintPath>
-    </Reference>
-    <Reference Include="Genius.Atom.Infrastructure">
-      <HintPath>..\..\atom\Atom.Infrastructure\bin\Debug\net6.0\Genius.Atom.Infrastructure.dll</HintPath>
-    </Reference>
-  </ItemGroup>
-  <ItemGroup Condition="'$(Configuration)|$(Platform)' == 'Release|AnyCPU'">
-    <PackageReference Include="Genius.Atom.Data" />
-    <PackageReference Include="Genius.Atom.Infrastructure" />
-  </ItemGroup>
 </Project>

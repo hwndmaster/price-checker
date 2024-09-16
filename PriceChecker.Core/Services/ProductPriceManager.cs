@@ -15,6 +15,7 @@ public interface IProductPriceManager : IDisposable
 
 internal sealed class ProductPriceManager : IProductPriceManager
 {
+    private readonly IDateTime _dateTime;
     private readonly IProductRepository _productRepo;
     private readonly IProductQueryService _productQuery;
     private readonly IPriceSeeker _priceSeeker;
@@ -25,20 +26,23 @@ internal sealed class ProductPriceManager : IProductPriceManager
     private IDisposable? _scheduledAutoRefresh;
     private int _previousAutoRefreshMinutes;
 
-    private readonly TimeSpan RecentPeriod = TimeSpan.FromHours(3);
+    private readonly TimeSpan _recentPeriod = TimeSpan.FromHours(3);
 
-    public ProductPriceManager(IProductRepository productRepo,
+    public ProductPriceManager(
+        IDateTime dateTime,
+        IProductRepository productRepo,
         IProductQueryService productQuery,
         IPriceSeeker priceSeeker, IEventBus eventBus,
         ISettingsRepository settingsRepo,
         ILogger<ProductPriceManager> logger)
     {
-        _productRepo = productRepo;
-        _productQuery = productQuery;
-        _priceSeeker = priceSeeker;
-        _eventBus = eventBus;
-        _settingsRepo = settingsRepo;
-        _logger = logger;
+        _dateTime = dateTime.NotNull();
+        _productRepo = productRepo.NotNull();
+        _productQuery = productQuery.NotNull();
+        _priceSeeker = priceSeeker.NotNull();
+        _eventBus = eventBus.NotNull();
+        _settingsRepo = settingsRepo.NotNull();
+        _logger = logger.NotNull();
 
         eventBus.WhenFired<SettingsUpdatedEvent>().Subscribe(args => {
             if (args.Settings.AutoRefreshEnabled && _scheduledAutoRefresh is null
@@ -55,11 +59,11 @@ internal sealed class ProductPriceManager : IProductPriceManager
         var product = await _productQuery.FindByIdAsync(productId);
         if (product == null)
         {
-            _logger.LogError("Product with ID '{productId}' was not found.", productId);
+            _logger.LogError("Product with ID '{ProductId}' was not found.", productId);
             return;
         }
 
-        await EnqueueScan(product, ignoreRecentDate: true, CancellationToken.None);
+        await EnqueueScanAsync(product, ignoreRecentDate: true, CancellationToken.None);
     }
 
     public void Dispose()
@@ -89,7 +93,7 @@ internal sealed class ProductPriceManager : IProductPriceManager
                     var products = (await _productQuery.GetAllAsync()).ToList();
                     _eventBus.Publish(new ProductAutoScanStartedEvent(products.Count));
                     foreach (var product in products)
-                        tasks.Add(EnqueueScan(product, ignoreRecentDate: false, cancel));
+                        tasks.Add(EnqueueScanAsync(product, ignoreRecentDate: false, cancel));
                 }
 
                 await Task.WhenAll(tasks);
@@ -98,7 +102,7 @@ internal sealed class ProductPriceManager : IProductPriceManager
             });
     }
 
-    private Task EnqueueScan(Product product, bool ignoreRecentDate, CancellationToken cancel)
+    private Task EnqueueScanAsync(Product product, bool ignoreRecentDate, CancellationToken cancel)
     {
         return Task.Run(async() =>
         {
@@ -118,19 +122,18 @@ internal sealed class ProductPriceManager : IProductPriceManager
     {
         if (!ignoreRecentDate && IsTooRecent(product))
         {
-            _logger.LogTrace("Price scanning '{productName}' cancelled due to recent results", product.Name);
-            //_eventBus.Publish(new ProductScanFailedEvent(product.Id, "Scan cancelled due to recent results"));
+            _logger.LogTrace("Price scanning '{ProductName}' cancelled due to recent results", product.Name);
             _eventBus.Publish(new ProductScannedEvent(product.Id, ProductScanStatus.ScannedOk));
             return;
         }
 
         _eventBus.Publish(new ProductScanStartedEvent(product.Id));
 
-        _logger.LogTrace("Processing '{productName}'", product.Name);
+        _logger.LogTrace("Processing '{ProductName}'", product.Name);
         var results = await _priceSeeker.SeekAsync(product, cancel);
         if (!results.Any())
         {
-            _logger.LogWarning("Price scanning for '{productName}' failed or no results retrieved", product.Name);
+            _logger.LogWarning("Price scanning for '{ProductName}' failed or no results retrieved", product.Name);
             _eventBus.Publish(new ProductScanFailedEvent(product.Id, "Scan failed or no results retrieved"));
             return;
         }
@@ -166,7 +169,7 @@ internal sealed class ProductPriceManager : IProductPriceManager
             return false;
 
         var recentDate = product.Recent.Max(x => x.FoundDate);
-        return DateTime.Now - recentDate < RecentPeriod;
+        return _dateTime.NowUtc - recentDate < _recentPeriod;
     }
 
     private ProductPrice[] LogAndConvert(Product product, IEnumerable<PriceSeekResult> results)
@@ -176,10 +179,10 @@ internal sealed class ProductPriceManager : IProductPriceManager
             ProductSourceId = x.ProductSourceId,
             Status = x.Status,
             Price = x.Price,
-            FoundDate = DateTime.Now
+            FoundDate = _dateTime.NowUtc
         }).ToArray();
 
-        _logger.LogTrace("Results retrieved for '{productName}': {results}",
+        _logger.LogTrace("Results retrieved for '{ProductName}': {Results}",
             product.Name,
             string.Join(", ", converted.ToList()));
 

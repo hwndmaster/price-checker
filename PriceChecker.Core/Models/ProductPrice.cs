@@ -9,6 +9,10 @@ public class ProductPrice
     public ProductSource ProductSource { get; set; } = null!; // Is being initialized in `repo.FillUpRelations`
     public AgentHandlingStatus Status { get; set; }
     public decimal? Price { get; set; }
+
+    /// <summary>
+    ///   Date when the price was found, in UTC time.
+    /// </summary>
     public DateTime FoundDate { get; set; }
 
     public override string ToString()

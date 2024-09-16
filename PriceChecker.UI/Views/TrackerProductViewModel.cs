@@ -17,7 +17,7 @@ using Genius.PriceChecker.UI.Helpers;
 using Genius.PriceChecker.UI.ValueConverters;
 using ReactiveUI;
 
-namespace Genius.PriceChecker.UI.ViewModels;
+namespace Genius.PriceChecker.UI.Views;
 
 public interface ITrackerProductViewModel : IViewModel, ISelectable, IDisposable
 {
@@ -51,14 +51,17 @@ internal sealed class TrackerProductViewModel : ViewModelBase, ITrackerProductVi
         IUserInteraction ui,
         IProductInteraction productInteraction)
     {
-        _agentQuery = agentQuery;
-        _productQuery = productQuery;
-        _statusProvider = statusProvider;
-        _commandBus = commandBus;
-        _product = product;
-        _ui = ui;
-        _productInteraction = productInteraction;
+        // Dependencies:
+        _agentQuery = agentQuery.NotNull();
+        _productQuery = productQuery.NotNull();
+        _statusProvider = statusProvider.NotNull();
+        _commandBus = commandBus.NotNull();
+        _product = product.NotNull();
+        _ui = ui.NotNull();
+        _productInteraction = productInteraction.NotNull();
 
+        // Member initialization:
+        // TODO: Fix warning
         InitializeProperties(async () =>
         {
             await RefreshAgentsAsync();
@@ -71,7 +74,8 @@ internal sealed class TrackerProductViewModel : ViewModelBase, ITrackerProductVi
             }
         });
 
-        CommitProductCommand = new ActionCommand(_ => CommitProduct());
+        // Actions:
+        CommitProductCommand = new ActionCommand(_ => CommitProductAsync());
 
         ShowInBrowserCommand = new ActionCommand(async _ =>
             await productInteraction.ShowProductInBrowserAsync(_product?.Lowest?.ProductSource));
@@ -96,6 +100,7 @@ internal sealed class TrackerProductViewModel : ViewModelBase, ITrackerProductVi
             await commandBus.SendAsync(new ProductEnqueueScanCommand(product!.Id));
         }, _ => _product is not null && Status != ProductScanStatus.Scanning);
 
+        // Subscriptions:
         eventBus.WhenFired<AgentsAffectedEvent>()
             .ObserveOn(RxApp.MainThreadScheduler)
             .Subscribe(async _ =>
@@ -172,7 +177,7 @@ internal sealed class TrackerProductViewModel : ViewModelBase, ITrackerProductVi
         StatusText = errorMessage;
     }
 
-    private async Task CommitProduct()
+    private async Task CommitProductAsync()
     {
         if (string.IsNullOrEmpty(Name))
         {

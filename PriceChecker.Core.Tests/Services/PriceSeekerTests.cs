@@ -1,5 +1,6 @@
 using Genius.Atom.Infrastructure.Io;
 using Genius.Atom.Infrastructure.Net;
+using Genius.Atom.Infrastructure.TestingUtil;
 using Genius.PriceChecker.Core.AgentHandlers;
 using Genius.PriceChecker.Core.Models;
 using Genius.PriceChecker.Core.Services;
@@ -10,11 +11,11 @@ namespace Genius.PriceChecker.Core.Tests.Services;
 public class PriceSeekerTests
 {
     private readonly Fixture _fixture = new();
-    private readonly Mock<ITrickyHttpClient> _httpMock = new();
-    private readonly Mock<IFileService> _fileMock = new();
-    private readonly Mock<ILogger<PriceSeeker>> _loggerMock = new();
-    private readonly Mock<IAgentHandlersProvider> _agentHandlersProviderMock = new();
-    private readonly Mock<IAgentHandler> _agentHandlerMock = new();
+    private readonly ITrickyHttpClient _httpMock = A.Fake<ITrickyHttpClient>();
+    private readonly IFileService _fileMock = A.Fake<IFileService>();
+    private readonly FakeLogger<PriceSeeker> _logger = new FakeLogger<PriceSeeker>();
+    private readonly IAgentHandlersProvider _agentHandlersProviderMock = A.Fake<IAgentHandlersProvider>();
+    private readonly IAgentHandler _agentHandlerMock = A.Fake<IAgentHandler>();
 
     private readonly PriceSeeker _sut;
 
@@ -22,10 +23,10 @@ public class PriceSeekerTests
     {
         _fixture.Behaviors.Add(new OmitOnRecursionBehavior(recursionDepth: 2));
 
-        _agentHandlersProviderMock.Setup(x => x.FindByName(It.IsAny<string>()))
-            .Returns(_agentHandlerMock.Object);
+        A.CallTo(() => _agentHandlersProviderMock.FindByName(A<string>._))
+            .Returns(_agentHandlerMock);
 
-        _sut = new PriceSeeker(_httpMock.Object, _fileMock.Object, _agentHandlersProviderMock.Object, _loggerMock.Object);
+        _sut = new PriceSeeker(_httpMock, _fileMock, _agentHandlersProviderMock, _logger);
     }
 
     [Fact]
@@ -39,9 +40,8 @@ public class PriceSeekerTests
 
         // Verify
         Assert.Equal(product.Sources.Length, result.Length);
-        _fileMock.Verify(x => x.WriteTextToFile(It.IsAny<string>(), It.IsAny<string>()), Times.Never);
-        TestHelpers.VerifyLogger(_loggerMock, LogLevel.Warning, Times.Never());
-        TestHelpers.VerifyLogger(_loggerMock, LogLevel.Error, Times.Never());
+        A.CallTo(() => _fileMock.WriteTextToFile(A<string>._, A<string>._)).MustNotHaveHappened();
+        Assert.DoesNotContain(_logger.Logs, x => x.LogLevel is LogLevel.Error or LogLevel.Warning);
     }
 
     [Fact]
@@ -49,8 +49,8 @@ public class PriceSeekerTests
     {
         // Arrange
         var product = CreateSampleProduct(sourcesCount: 1);
-        _httpMock.Setup(x => x.DownloadContent(It.IsAny<string>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync((string?)null);
+        A.CallTo(() => _httpMock.DownloadContentAsync(A<string>._, A<CancellationToken>._))
+            .Returns(Task.FromResult((string?)null));
 
         // Act
         var result = await _sut.SeekAsync(product, new CancellationToken());
@@ -66,7 +66,7 @@ public class PriceSeekerTests
         // Arrange
         var product = CreateSampleProduct(sourcesCount: 1);
         decimal? price;
-        _agentHandlerMock.Setup(x => x.Handle(It.IsAny<Agent>(), It.IsAny<string>(), out price))
+        A.CallTo(() => _agentHandlerMock.Handle(A<Agent>._, A<string>._, out price))
             .Returns(AgentHandlingStatus.CouldNotMatch);
 
         // Act
@@ -75,8 +75,8 @@ public class PriceSeekerTests
         // Verify
         Assert.Single(result);
         Assert.Equal(AgentHandlingStatus.CouldNotMatch, result[0].Status);
-        _fileMock.Verify(x => x.WriteTextToFile(It.IsAny<string>(), It.IsAny<string>()), Times.Once);
-        TestHelpers.VerifyLogger(_loggerMock, LogLevel.Error);
+                A.CallTo(() => _fileMock.WriteTextToFile(A<string>._, A<string>._)).MustHaveHappenedOnceExactly();
+        Assert.Single(_logger.Logs, x => x.LogLevel is LogLevel.Error);
     }
 
     [Fact]
@@ -85,7 +85,7 @@ public class PriceSeekerTests
         // Arrange
         var product = CreateSampleProduct(sourcesCount: 1);
         decimal? price;
-        _agentHandlerMock.Setup(x => x.Handle(It.IsAny<Agent>(), It.IsAny<string>(), out price))
+        A.CallTo(() => _agentHandlerMock.Handle(A<Agent>._, A<string>._, out price))
             .Returns(AgentHandlingStatus.InvalidPrice);
 
         // Act
@@ -102,7 +102,7 @@ public class PriceSeekerTests
         // Arrange
         var product = CreateSampleProduct(sourcesCount: 1);
         decimal? price;
-        _agentHandlerMock.Setup(x => x.Handle(It.IsAny<Agent>(), It.IsAny<string>(), out price))
+        A.CallTo(() => _agentHandlerMock.Handle(A<Agent>._, A<string>._, out price))
             .Returns(AgentHandlingStatus.CouldNotParse);
 
         // Act
@@ -125,9 +125,10 @@ public class PriceSeekerTests
                 .Create();
             var content = _fixture.Create<string>();
 
-            _httpMock.Setup(x => x.DownloadContent(
-                It.Is<string>(url => url == string.Format(productSource.Agent.Url, productSource.AgentArgument)), It.IsAny<CancellationToken>()))
-                .ReturnsAsync(content);
+            A.CallTo(() => _httpMock.DownloadContentAsync(
+                A<string>.That.IsEqualTo(string.Format(productSource.Agent.Url, productSource.AgentArgument)),
+                A<CancellationToken>._))
+                .Returns(content);
         }
         return product;
     }

@@ -2,8 +2,8 @@ using System.Diagnostics.CodeAnalysis;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
-using Genius.Atom.UI.Forms;
-using Genius.PriceChecker.UI.ViewModels;
+using Genius.Atom.UI.Forms.Wpf;
+using Genius.PriceChecker.UI.Views;
 
 namespace Genius.PriceChecker.UI.Views;
 

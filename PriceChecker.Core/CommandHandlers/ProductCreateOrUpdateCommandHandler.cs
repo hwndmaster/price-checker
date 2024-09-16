@@ -1,4 +1,3 @@
-using System.Threading.Tasks;
 using Genius.Atom.Infrastructure.Commands;
 using Genius.Atom.Infrastructure.Events;
 using Genius.PriceChecker.Core.Commands;

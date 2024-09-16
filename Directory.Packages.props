@@ -1,0 +1,58 @@
+<Project>
+
+  <PropertyGroup>
+    <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+    <CentralPackageTransitivePinningEnabled>true</CentralPackageTransitivePinningEnabled>
+    <FrameworkPackageVersion>8.0.0</FrameworkPackageVersion>
+    <AtomPackageVersion>0.0.41</AtomPackageVersion>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- Microsoft common dependencies -->
+    <PackageVersion Include="System.Reactive" Version="6.0.1" />
+    <PackageVersion Include="Microsoft.Extensions.DependencyInjection" Version="$(FrameworkPackageVersion)" />
+    <PackageVersion Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="$(FrameworkPackageVersion)"/>
+    <PackageVersion Include="Microsoft.Extensions.Configuration.Json" Version="$(FrameworkPackageVersion)" />
+    <PackageVersion Include="Microsoft.Extensions.Logging" Version="$(FrameworkPackageVersion)" />
+    <PackageVersion Include="Microsoft.Extensions.Logging.Abstractions" Version="$(FrameworkPackageVersion)" />
+    <PackageVersion Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="$(FrameworkPackageVersion)" />
+    <PackageVersion Include="System.Threading.Tasks.Dataflow" Version="$(FrameworkPackageVersion)" />
+
+    <!-- Atom Framework -->
+    <PackageVersion Include="Genius.Atom.Data" Version="$(AtomPackageVersion)" />
+    <PackageVersion Include="Genius.Atom.Infrastructure" Version="$(AtomPackageVersion)" />
+    <PackageVersion Include="Genius.Atom.Infrastructure.TestingUtil" Version="$(AtomPackageVersion)" />
+    <PackageVersion Include="Genius.Atom.UI.Forms" Version="$(AtomPackageVersion)" />
+    <PackageVersion Include="Genius.Atom.UI.Forms.TestingUtil" Version="$(AtomPackageVersion)" />
+
+    <!-- WPF/UI related dependencies -->
+    <PackageVersion Include="Hardcodet.NotifyIcon.Wpf" Version="1.1.0" />
+    <PackageVersion Include="Humanizer.Core" Version="2.14.1" />
+    <!-- <PackageVersion Include="DotNetProjects.WpfToolkit.Input" Version="6.1.94" /> -->
+    <PackageVersion Include="MahApps.Metro" Version="2.4.10" />
+    <PackageVersion Include="ReactiveUI" Version="20.1.1" />
+    <PackageVersion Include="ReactiveUI.WPF" Version="20.1.1" />
+    <!-- <PackageVersion Include="ReactiveUI.Events.WPF" Version="15.1.1" /> -->
+    <!-- <PackageVersion Include="WpfAnimatedGif" Version="2.0.2" /> -->
+
+    <!-- Misc dependencies -->
+    <!-- <PackageVersion Include="CommandLineParser" Version="2.9.1" /> -->
+
+    <!-- Automated Testing components -->
+    <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.10.0" />
+    <PackageVersion Include="xunit" Version="2.9.0" />
+    <PackageVersion Include="xunit.analyzers" Version="1.15.0" />
+    <PackageVersion Include="xunit.assert" Version="2.9.0" />
+    <PackageVersion Include="xunit.runner.visualstudio" Version="2.8.2" />
+    <PackageVersion Include="Xunit.StaFact" Version="1.1.11" />
+    <PackageVersion Include="AutoFixture" Version="4.18.1" />
+    <PackageVersion Include="AutoFixture.AutoFakeItEasy" Version="4.18.1" />
+    <PackageVersion Include="FakeItEasy" Version="8.3.0" />
+
+    <!-- Code analyzers -->
+    <PackageVersion Include="Microsoft.VisualStudio.Threading.Analyzers" Version="17.10.48" />
+    <PackageVersion Include="Roslynator.Analyzers" Version="4.12.4" />
+    <PackageVersion Include="SonarAnalyzer.CSharp" Version="9.29.0.95321" />
+    <PackageVersion Include="Genius.Atom.Analyzers" Version="0.0.2-beta03" />
+  </ItemGroup>
+</Project>

@@ -1,42 +1,17 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFramework>net6.0-windows</TargetFramework>
-    <RootNamespace>Genius.PriceChecker.UI.Tests</RootNamespace>
-    <IsPackable>false</IsPackable>
-  </PropertyGroup>
-
   <ItemGroup>
     <ProjectReference Include="..\PriceChecker.UI\PriceChecker.UI.csproj" />
   </ItemGroup>
 
-  <ItemGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|AnyCPU'">
-    <Reference Include="Genius.Atom.Data">
-      <HintPath>..\..\atom\Atom.Data\bin\Debug\net6.0\Genius.Atom.Data.dll</HintPath>
-    </Reference>
-    <Reference Include="Genius.Atom.Infrastructure">
-      <HintPath>..\..\atom\Atom.Infrastructure\bin\Debug\net6.0\Genius.Atom.Infrastructure.dll</HintPath>
-    </Reference>
-    <Reference Include="Genius.Atom.UI.Forms">
-      <HintPath>..\..\atom\Atom.UI.Forms\bin\Debug\net6.0-windows\Genius.Atom.UI.Forms.dll</HintPath>
-    </Reference>
-    <Reference Include="Genius.Atom.UI.Forms.TestingUtil">
-      <HintPath>..\..\atom\Atom.UI.Forms.TestingUtil\bin\Debug\net6.0-windows\Genius.Atom.UI.Forms.TestingUtil.dll</HintPath>
-    </Reference>
+  <PropertyGroup>
+    <ReferenceAtomData>true</ReferenceAtomData>
+    <ReferenceAtomInfrastructure>true</ReferenceAtomInfrastructure>
+    <ReferenceAtomUiForms>true</ReferenceAtomUiForms>
+  </PropertyGroup>
 
-    <!-- 3rd-party dependencies from Atom.UI.Forms -->
-    <Reference Include="DotNetProjects.WpfToolkit.Input">
-      <HintPath>..\..\atom\Atom.UI.Forms.Demo\bin\Debug\net6.0-windows\DotNetProjects.Input.Toolkit.dll</HintPath>
-    </Reference>
-    <Reference Include="WpfAnimatedGif">
-      <HintPath>..\..\atom\Atom.UI.Forms.Demo\bin\Debug\net6.0-windows\WpfAnimatedGif.dll</HintPath>
-    </Reference>
-  </ItemGroup>
-  <ItemGroup Condition="'$(Configuration)|$(Platform)' == 'Release|AnyCPU'">
-    <PackageReference Include="Genius.Atom.Data" />
-    <PackageReference Include="Genius.Atom.Infrastructure" />
-    <PackageReference Include="Genius.Atom.UI.Forms" />
-    <PackageReference Include="Genius.Atom.UI.Forms.TestingUtil" />
+  <ItemGroup>
+    <PackageReference Include="Xunit.StaFact" />
   </ItemGroup>
 
 </Project>

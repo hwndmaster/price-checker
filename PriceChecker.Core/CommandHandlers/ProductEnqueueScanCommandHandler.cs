@@ -1,5 +1,5 @@
-using System.Threading.Tasks;
 using Genius.Atom.Infrastructure.Commands;
+using Genius.Atom.Infrastructure.Tasks;
 using Genius.PriceChecker.Core.Commands;
 using Genius.PriceChecker.Core.Services;
 
@@ -16,7 +16,7 @@ internal sealed class ProductEnqueueScanCommandHandler : ICommandHandler<Product
 
     public Task ProcessAsync(ProductEnqueueScanCommand command)
     {
-        _productMng.EnqueueScanAsync(command.ProductId);
+        _productMng.EnqueueScanAsync(command.ProductId).RunAndForget();
 
         return Task.CompletedTask;
     }

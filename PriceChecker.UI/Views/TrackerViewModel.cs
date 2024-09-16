@@ -1,24 +1,23 @@
-using System.Collections.ObjectModel;
+using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using System.Windows.Input;
-using Genius.PriceChecker.Core.Messages;
-using Genius.PriceChecker.Core.Repositories;
-using Genius.Atom.Infrastructure.Events;
-using Genius.Atom.UI.Forms;
-using Genius.PriceChecker.UI.Helpers;
 using ReactiveUI;
 using Genius.Atom.Infrastructure.Commands;
+using Genius.Atom.Infrastructure.Events;
+using Genius.Atom.Infrastructure.Tasks;
+using Genius.Atom.UI.Forms;
 using Genius.PriceChecker.Core.Commands;
-using System.Reactive.Disposables;
+using Genius.PriceChecker.Core.Messages;
+using Genius.PriceChecker.Core.Repositories;
+using Genius.PriceChecker.UI.Helpers;
 
-namespace Genius.PriceChecker.UI.ViewModels;
+namespace Genius.PriceChecker.UI.Views;
 
 public interface ITrackerViewModel : ITabViewModel
 { }
 
 internal sealed class TrackerViewModel : TabViewModelBase, ITrackerViewModel, IDisposable
 {
-    private readonly IEventBus _eventBus;
     private readonly IProductQueryService _productQuery;
     private readonly IViewModelFactory _vmFactory;
     private readonly ITrackerScanContext _scanContext;
@@ -27,15 +26,20 @@ internal sealed class TrackerViewModel : TabViewModelBase, ITrackerViewModel, ID
     public TrackerViewModel(IEventBus eventBus,
         IProductQueryService productQuery,
         IViewModelFactory vmFactory,
+        IUiDispatcher uiDispatcher,
         IUserInteraction ui,
         ITrackerScanContext scanContext,
         ICommandBus commandBus)
     {
-        _eventBus = eventBus;
-        _productQuery = productQuery;
-        _vmFactory = vmFactory;
-        _scanContext = scanContext;
+        Guard.NotNull(eventBus);
+        Guard.NotNull(uiDispatcher);
 
+        // Dependencies:
+        _productQuery = productQuery.NotNull();
+        _vmFactory = vmFactory.NotNull();
+        _scanContext = scanContext.NotNull();
+
+        // Actions:
         RefreshAllCommand = new ActionCommand(_ => {
             IsAddEditProductVisible = false;
             EnqueueScan(Products);
@@ -87,17 +91,18 @@ internal sealed class TrackerViewModel : TabViewModelBase, ITrackerViewModel, ID
             }
         });
 
-        _eventBus.WhenFired<ProductScanStartedEvent>()
+        // Subscriptions:
+        eventBus.WhenFired<ProductScanStartedEvent>()
             .ObserveOn(RxApp.MainThreadScheduler)
             .Subscribe(ev =>
                 Products.First(x => x.Id == ev.ProductId).Status = Core.Models.ProductScanStatus.Scanning
             )
             .DisposeWith(_disposables);
-        _eventBus.WhenFired<ProductScannedEvent>()
+        eventBus.WhenFired<ProductScannedEvent>()
             .Subscribe(ev =>
                 Products.First(x => x.Id == ev.ProductId).Reconcile(ev.Status))
             .DisposeWith(_disposables);
-        _eventBus.WhenFired<ProductScanFailedEvent>()
+        eventBus.WhenFired<ProductScanFailedEvent>()
             .Subscribe(ev =>
                 Products.First(x => x.Id == ev.ProductId).SetFailed(ev.ErrorMessage))
             .DisposeWith(_disposables);
@@ -106,12 +111,12 @@ internal sealed class TrackerViewModel : TabViewModelBase, ITrackerViewModel, ID
             .Subscribe(_ => IsAddEditProductVisible = false)
             .DisposeWith(_disposables);
 
+        // Final preparation:
         RefreshOptions = new List<DropDownMenuItem> {
             new DropDownMenuItem("Refresh all", RefreshAllCommand),
             new DropDownMenuItem("Refresh selected", RefreshSelectedCommand),
         };
-
-        ReloadListAsync();
+        uiDispatcher.InvokeAsync(ReloadListAsync).RunAndForget();
     }
 
     public void Dispose()
@@ -154,8 +159,8 @@ internal sealed class TrackerViewModel : TabViewModelBase, ITrackerViewModel, ID
 
     public List<DropDownMenuItem> RefreshOptions { get; }
 
-    public ObservableCollection<ITrackerProductViewModel> Products { get; }
-        = new TypedObservableList<ITrackerProductViewModel, TrackerProductViewModel>();
+    public DelayedObservableCollection<ITrackerProductViewModel> Products { get; }
+        = new TypedObservableCollection<ITrackerProductViewModel, TrackerProductViewModel>();
 
     [FilterContext]
     public string Filter

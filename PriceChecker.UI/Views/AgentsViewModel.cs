@@ -1,17 +1,16 @@
-using System.Collections.ObjectModel;
 using Genius.Atom.UI.Forms;
 using Genius.Atom.Infrastructure.Commands;
 using Genius.PriceChecker.Core.Commands;
 using Genius.PriceChecker.Core.Models;
 using Genius.PriceChecker.Core.Repositories;
-using Genius.PriceChecker.UI.Helpers;
 using Genius.PriceChecker.Core.AgentHandlers;
+using Genius.Atom.Infrastructure.Tasks;
 
-namespace Genius.PriceChecker.UI.ViewModels;
+namespace Genius.PriceChecker.UI.Views;
 
 public interface IAgentsViewModel : ITabViewModel
 {
-    ObservableCollection<IAgentViewModel> Agents { get; }
+    DelayedObservableCollection<IAgentViewModel> Agents { get; }
 }
 
 internal sealed class AgentsViewModel : TabViewModelBase, IAgentsViewModel, IHasDirtyFlag
@@ -22,16 +21,14 @@ internal sealed class AgentsViewModel : TabViewModelBase, IAgentsViewModel, IHas
     public AgentsViewModel(IAgentQueryService agentQuery, IViewModelFactory vmFactory,
         IUserInteraction ui, ICommandBus commandBus, IAgentHandlersProvider agentHandlersProvider)
     {
-        _commandBus = commandBus;
-        _vmFactory = vmFactory;
+        // Dependencies:
+        _commandBus = commandBus.NotNull();
+        _vmFactory = vmFactory.NotNull();
 
+        // Member initialization:
         AgentHandlers = agentHandlersProvider.GetNames().ToList();
 
-        var agentVms = agentQuery.GetAllAsync().GetAwaiter().GetResult()
-            .OrderBy(x => x.Key)
-            .Select(x => CreateAgentViewModel(x));
-        Agents.ReplaceItems(agentVms);
-
+        // Actions:
         AddAgentCommand = new ActionCommand(_ =>
         {
             Agents.Add(CreateAgentViewModel(null));
@@ -56,7 +53,7 @@ internal sealed class AgentsViewModel : TabViewModelBase, IAgentsViewModel, IHas
             }
         });
 
-        CommitAgentsCommand = new ActionCommand(_ => CommitAgents(),
+        CommitAgentsCommand = new ActionCommand(async _ => await CommitAgentsAsync(),
             _ => IsDirty && !HasErrors);
 
         ResetChangesCommand = new ActionCommand(_ => {
@@ -66,6 +63,18 @@ internal sealed class AgentsViewModel : TabViewModelBase, IAgentsViewModel, IHas
             }
             SetNotDirty();
         }, _ => IsDirty);
+
+        // Final preparation:
+        FetchAgentsAsync(agentQuery).RunAndForget();
+    }
+
+    private async Task FetchAgentsAsync(IAgentQueryService agentQuery)
+    {
+        var agents = await agentQuery.GetAllAsync();
+        var agentVms = agents
+            .OrderBy(x => x.Key)
+            .Select(x => CreateAgentViewModel(x));
+        Agents.ReplaceItems(agentVms);
     }
 
     private IAgentViewModel CreateAgentViewModel(Agent? x)
@@ -75,7 +84,7 @@ internal sealed class AgentsViewModel : TabViewModelBase, IAgentsViewModel, IHas
         return agentVm;
     }
 
-    private async Task CommitAgents()
+    private async Task CommitAgentsAsync()
     {
         if (HasErrors)
         {
@@ -98,8 +107,8 @@ internal sealed class AgentsViewModel : TabViewModelBase, IAgentsViewModel, IHas
         }
     }
 
-    public ObservableCollection<IAgentViewModel> Agents { get; }
-        = new TypedObservableList<IAgentViewModel, AgentViewModel>();
+    public DelayedObservableCollection<IAgentViewModel> Agents { get; }
+        = new TypedObservableCollection<IAgentViewModel, AgentViewModel>();
 
     public IReadOnlyCollection<string> AgentHandlers { get; }
 

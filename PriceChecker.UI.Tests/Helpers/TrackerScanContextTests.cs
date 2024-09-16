@@ -1,25 +1,23 @@
-using System.Reactive.Subjects;
-using Genius.Atom.UI.Forms.TestingUtil;
+using Genius.Atom.Infrastructure.TestingUtil.Events;
 using Genius.PriceChecker.Core.Messages;
 using Genius.PriceChecker.Core.Models;
 using Genius.PriceChecker.UI.Helpers;
 
 namespace Genius.PriceChecker.UI.Tests.Helpers;
 
-public class TrackerScanContextTests : TestBase
+public class TrackerScanContextTests
 {
+    private readonly Fixture _fixture = new();
+    private readonly FakeEventBus _eventBus = new();
     private readonly TrackerScanContext _sut;
 
     // Session values:
-    private readonly Subject<ProductAutoScanStartedEvent> _productAutoScanStartedEventSubject;
-    private TrackerScanStatus? _lastStatus = null;
-    private double? _lastProgress = null;
+    private TrackerScanStatus? _lastStatus;
+    private double? _lastProgress;
 
     public TrackerScanContextTests()
     {
-        _productAutoScanStartedEventSubject = CreateEventSubject<ProductAutoScanStartedEvent>();
-
-        _sut = new TrackerScanContext(EventBusMock.Object);
+        _sut = new TrackerScanContext(_eventBus);
 
         _sut.ScanProgress.Subscribe(x => {
             _lastStatus = x.Status;
@@ -89,7 +87,7 @@ public class TrackerScanContextTests : TestBase
     public void NotifyProgressChange__When_ScannedWithErrors__Reports_about_errors()
     {
         // Arrange
-        _sut.NotifyStarted(Fixture.Create<int>());
+        _sut.NotifyStarted(_fixture.Create<int>());
 
         // Act
         _sut.NotifyProgressChange(ProductScanStatus.ScannedWithErrors);
@@ -103,7 +101,7 @@ public class TrackerScanContextTests : TestBase
     public void NotifyProgressChange__When_ScannedNewLowest__Reports_about_new_lowest()
     {
         // Arrange
-        _sut.NotifyStarted(Fixture.Create<int>());
+        _sut.NotifyStarted(_fixture.Create<int>());
 
         // Act
         _sut.NotifyProgressChange(ProductScanStatus.ScannedNewLowest);
@@ -119,7 +117,7 @@ public class TrackerScanContextTests : TestBase
         const int count = 10;
 
         // Act
-        _productAutoScanStartedEventSubject.OnNext(new ProductAutoScanStartedEvent(count));
+        _eventBus.Publish(new ProductAutoScanStartedEvent(count));
 
         // Verify
         const double expectedProgress = 1d / (count * 2);

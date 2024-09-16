@@ -1,18 +1,18 @@
 using Genius.Atom.Data.Persistence;
 using Genius.Atom.Infrastructure.Entities;
-using Genius.Atom.Infrastructure.Events;
+using Genius.Atom.Infrastructure.TestingUtil;
+using Genius.Atom.Infrastructure.TestingUtil.Events;
 using Genius.PriceChecker.Core.Models;
 using Genius.PriceChecker.Core.Repositories;
-using Microsoft.Extensions.Logging;
 
 namespace Genius.PriceChecker.Core.Tests.Repositories;
 
 public class ProductRepositoryTests
 {
     private readonly ProductRepository _sut;
-    private readonly Mock<IEventBus> _eventBusMock = new();
-    private readonly Mock<IJsonPersister> _persisterMock = new();
-    private readonly Mock<IAgentQueryService> _agentQueryMock = new();
+    private readonly FakeEventBus _eventBus = new();
+    private readonly IJsonPersister _persisterMock = A.Fake<IJsonPersister>();
+    private readonly IAgentQueryService _agentQueryMock = A.Fake<IAgentQueryService>();
 
     private readonly Product[] _products;
     private readonly Agent[] _agents;
@@ -23,14 +23,12 @@ public class ProductRepositoryTests
         _agents = ModelHelpers.SampleManyAgents(_products).ToArray();
 
         foreach (var agent in _agents)
-            _agentQueryMock.Setup(x => x.FindByKeyAsync(agent.Key)).ReturnsAsync(agent);
+            A.CallTo(() => _agentQueryMock.FindByKeyAsync(agent.Key)).Returns(agent);
 
-        _persisterMock.Setup(x => x.LoadCollection<Product>(It.IsAny<string>()))
+        A.CallTo(() => _persisterMock.LoadCollection<Product>(A<string>._))
             .Returns(_products);
 
-        _sut = new ProductRepository(_eventBusMock.Object, _persisterMock.Object,
-            _agentQueryMock.Object,
-            Mock.Of<ILogger<ProductRepository>>());
+        _sut = new ProductRepository(_eventBus, _persisterMock, _agentQueryMock, new FakeLogger<ProductRepository>());
 
         _sut.GetAllAsync().GetAwaiter().GetResult(); // To trigger the initializer
     }
@@ -94,9 +92,9 @@ public class ProductRepositoryTests
         await _sut.StoreAsync(product);
 
         // Verify
-        _persisterMock.Verify(x => x.Store(It.IsAny<string>(),
-            It.Is((List<Product> p) => p.SequenceEqual(_products))));
-        _eventBusMock.Verify(x => x.Publish(It.Is<EntitiesAffectedEvent>(e => e.Updated.First().Key == product.Id)), Times.Once);
+        A.CallTo(() => _persisterMock.Store(A<string>._, A<IEnumerable<Product>>.That.IsSameSequenceAs(_products)))
+            .MustHaveHappenedOnceExactly();
+        _eventBus.AssertSingleEvent<EntitiesAffectedEvent>(e => e.Updated.First().Key == product.Id);
     }
 
     [Fact]
@@ -111,9 +109,9 @@ public class ProductRepositoryTests
 
         // Verify
         var expectedProducts = _products.Concat(new [] { product });
-        _persisterMock.Verify(x => x.Store(It.IsAny<string>(),
-            It.Is((List<Product> p) => p.SequenceEqual(expectedProducts))));
-        _eventBusMock.Verify(x => x.Publish(It.Is<EntitiesAffectedEvent>(e => e.Added.First().Key == product.Id)), Times.Once);
+        A.CallTo(() => _persisterMock.Store(A<string>._, A<IEnumerable<Product>>.That.IsSameSequenceAs(expectedProducts)))
+            .MustHaveHappenedOnceExactly();
+        _eventBus.AssertSingleEvent<EntitiesAffectedEvent>(e => e.Added.First().Key == product.Id);
         Assert.Equal(productCount + 1, (await _sut.GetAllAsync()).Count());
     }
 
@@ -122,7 +120,7 @@ public class ProductRepositoryTests
     {
         // Arrange
         var product = ModelHelpers.SampleProduct(_agents);
-        product.Id = Guid.Empty;
+        // TODO: product.Id = Guid.Empty;
         var productCount = (await _sut.GetAllAsync()).Count();
 
         // Act

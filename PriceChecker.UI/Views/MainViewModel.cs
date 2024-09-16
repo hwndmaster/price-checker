@@ -4,7 +4,7 @@ using Genius.Atom.UI.Forms.ViewModels;
 using Genius.PriceChecker.UI.Helpers;
 using Hardcodet.Wpf.TaskbarNotification;
 
-namespace Genius.PriceChecker.UI.ViewModels;
+namespace Genius.PriceChecker.UI.Views;
 
 public interface IMainViewModel : IViewModel
 {
@@ -23,32 +23,35 @@ internal sealed class MainViewModel : ViewModelBase, IMainViewModel
         ITrackerScanContext scanContext,
         INotifyIconViewModel notifyViewModel)
     {
-        _scanContext = scanContext;
-        _notifyViewModel = notifyViewModel;
+        // Dependencies:
+        _scanContext = scanContext.NotNull();
+        _notifyViewModel = notifyViewModel.NotNull();
 
-        Tabs = new() {
-            tracker,
-            agents,
-            settings,
-            logs
-        };
+        // Member initialization:
+        Tabs = [
+            tracker.NotNull(),
+            agents.NotNull(),
+            settings.NotNull(),
+            logs.NotNull()
+        ];
 
-        scanContext.ScanProgress.Subscribe(args => UpdateProgress(args.Status, args.Progress));
+        // Subscriptions:
+        _scanContext.ScanProgress.Subscribe(args => UpdateProgress(args.Status, args.Progress));
     }
 
     private void UpdateProgress(TrackerScanStatus status, double progress)
     {
-        if (status == Helpers.TrackerScanStatus.InProgress)
+        if (status == TrackerScanStatus.InProgress)
         {
             ProgressState = TaskbarItemProgressState.Normal;
             ProgressValue = progress;
         }
-        else if (status == Helpers.TrackerScanStatus.InProgressWithErrors)
+        else if (status == TrackerScanStatus.InProgressWithErrors)
         {
             ProgressState = TaskbarItemProgressState.Paused;
             ProgressValue = progress;
         }
-        else if (status == Helpers.TrackerScanStatus.Finished)
+        else if (status == TrackerScanStatus.Finished)
         {
             var message = _scanContext.HasNewLowestPrice ?
                 "Prices for some products have become even lower! Check it out." :

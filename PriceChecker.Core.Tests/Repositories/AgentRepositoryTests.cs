@@ -1,32 +1,36 @@
 using Genius.Atom.Data.Persistence;
 using Genius.Atom.Infrastructure.Entities;
-using Genius.Atom.Infrastructure.Events;
+using Genius.Atom.Infrastructure.TestingUtil;
+using Genius.Atom.Infrastructure.TestingUtil.Events;
 using Genius.PriceChecker.Core.Models;
 using Genius.PriceChecker.Core.Repositories;
-using Microsoft.Extensions.Logging;
 
 namespace Genius.PriceChecker.Core.Tests.Repositories;
 
-public class AgentRepositoryTests
+public class AgentRepositoryTests : IDisposable
 {
     private readonly AgentRepository _sut;
     private readonly Fixture _fixture = new();
-    private readonly Mock<IEventBus> _eventBusMock = new();
-    private readonly Mock<IJsonPersister> _persisterMock = new();
+    private readonly FakeEventBus _eventBus = new();
+    private readonly IJsonPersister _persisterMock = A.Fake<IJsonPersister>();
 
-    private readonly List<Agent> _agents = new();
+    private readonly Agent[] _agents;
 
     public AgentRepositoryTests()
     {
-        _agents = _fixture.CreateMany<Agent>().ToList();
+        _agents = _fixture.CreateMany<Agent>().ToArray();
 
-        _persisterMock.Setup(x => x.LoadCollection<Agent>(It.IsAny<string>()))
-            .Returns(_agents.ToArray());
+        A.CallTo(() => _persisterMock.LoadCollection<Agent>(A<string>._))
+            .Returns(_agents);
 
-        _sut = new AgentRepository(_eventBusMock.Object, _persisterMock.Object,
-            Mock.Of<ILogger<AgentRepository>>());
+        _sut = new AgentRepository(_eventBus, _persisterMock, new FakeLogger<AgentRepository>());
 
         _sut.GetAllAsync().GetAwaiter().GetResult(); // To trigger the initializer
+    }
+
+    public void Dispose()
+    {
+        _sut.Dispose();
     }
 
     [Fact]
@@ -81,9 +85,10 @@ public class AgentRepositoryTests
 
         // Verify
         Assert.False((await _sut.GetAllAsync()).Except(newAgents).Any());
-        _persisterMock.Verify(x => x.Store(It.IsAny<string>(),
-            It.Is((List<Agent> p) => p.SequenceEqual(newAgents))));
-        _eventBusMock.Verify(x => x.Publish(It.Is<EntitiesAffectedEvent>(e => e.Added.Count == newAgents.Length
-            && e.Deleted.Count == previousAgents.Length)), Times.Once);
+
+        A.CallTo(() => _persisterMock.Store(A<string>._, A<IEnumerable<Agent>>.That.IsSameSequenceAs(newAgents)))
+            .MustHaveHappenedOnceExactly();
+        _eventBus.AssertSingleEvent<EntitiesAffectedEvent>(e => e.Added.Count == newAgents.Length
+            && e.Deleted.Count == previousAgents.Length);
     }
 }

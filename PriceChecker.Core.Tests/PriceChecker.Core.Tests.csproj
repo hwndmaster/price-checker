@@ -1,26 +1,12 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
-    <RootNamespace>Genius.PriceChecker.Core.Tests</RootNamespace>
-    <IsPackable>false</IsPackable>
-  </PropertyGroup>
-
   <ItemGroup>
     <ProjectReference Include="..\PriceChecker.Core\PriceChecker.Core.csproj" />
   </ItemGroup>
 
-  <ItemGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|AnyCPU'">
-    <Reference Include="Genius.Atom.Data">
-      <HintPath>..\..\atom\Atom.Data\bin\Debug\net6.0\Genius.Atom.Data.dll</HintPath>
-    </Reference>
-    <Reference Include="Genius.Atom.Infrastructure">
-      <HintPath>..\..\atom\Atom.Infrastructure\bin\Debug\net6.0\Genius.Atom.Infrastructure.dll</HintPath>
-    </Reference>
-  </ItemGroup>
-  <ItemGroup Condition="'$(Configuration)|$(Platform)' == 'Release|AnyCPU'">
-    <PackageReference Include="Genius.Atom.Data" />
-    <PackageReference Include="Genius.Atom.Infrastructure" />
-  </ItemGroup>
+  <PropertyGroup>
+    <ReferenceAtomData>true</ReferenceAtomData>
+    <ReferenceAtomInfrastructure>true</ReferenceAtomInfrastructure>
+  </PropertyGroup>
 
 </Project>

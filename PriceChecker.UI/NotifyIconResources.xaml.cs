@@ -1,6 +1,6 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Windows;
-using Genius.PriceChecker.UI.ViewModels;
+using Genius.PriceChecker.UI.Views;
 using Hardcodet.Wpf.TaskbarNotification;
 
 namespace Genius.PriceChecker.UI;

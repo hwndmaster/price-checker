@@ -1,6 +1,6 @@
+using Genius.Atom.Infrastructure.TestingUtil;
 using Genius.PriceChecker.Core.AgentHandlers;
 using Genius.PriceChecker.Core.Models;
-using Microsoft.Extensions.Logging;
 
 namespace Genius.PriceChecker.Core.Tests.AgentHandlers;
 
@@ -12,7 +12,7 @@ public class SimpleRegexTests
 
     public SimpleRegexTests()
     {
-        _sut = new(Mock.Of<ILogger<SimpleRegex>>());
+        _sut = new(new FakeLogger<SimpleRegex>());
     }
 
     [Fact]

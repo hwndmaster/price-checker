@@ -32,6 +32,11 @@ public static class ModelHelpers
         return product;
     }
 
+    public static IEnumerable<T> RandomizeOrder<T>(this IEnumerable<T> source)
+    {
+        return source.OrderBy(_ => Guid.NewGuid());
+    }
+
     public static IEnumerable<Product> SampleManyProducts()
     {
         return Enumerable.Range(1, 3).Select(_ => SampleProduct());

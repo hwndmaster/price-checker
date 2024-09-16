@@ -1,5 +1,6 @@
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 using Genius.PriceChecker.Core.Models;
 using Genius.PriceChecker.Core.Repositories;
 
@@ -30,7 +31,7 @@ public class ProductInteraction : IProductInteraction
         {
             return;
         }
-        var url = string.Format(agent.Url, productSource.AgentArgument);
+        var url = string.Format(CultureInfo.CurrentCulture, agent.Url, productSource.AgentArgument);
 
         url = url.Replace("&", "^&");
         Process.Start(new ProcessStartInfo("cmd", $"/c start {url}") { CreateNoWindow = true });
