@@ -1,6 +1,6 @@
 using Genius.Atom.Infrastructure.Commands;
-using Genius.Atom.Infrastructure.Entities;
 using Genius.Atom.Infrastructure.Events;
+using Genius.Atom.Infrastructure.Events.Entities;
 using Genius.PriceChecker.Core.Commands;
 using Genius.PriceChecker.Core.Messages;
 using Genius.PriceChecker.Core.Models;
@@ -41,7 +41,7 @@ internal sealed class AgentsStoreWithOverwriteCommandHandler : ICommandHandler<A
         var agentsDict = agents.ToDictionary(x => x.Id);
 
         var products = (await _productQuery.GetAllAsync()).ToArray();
-        HashSet<Guid> affectedProductsIds = new();
+        HashSet<ProductRef> affectedProductsIds = new();
         foreach (var product in products)
         {
             var sources = product.Sources.ToList();
@@ -68,6 +68,6 @@ internal sealed class AgentsStoreWithOverwriteCommandHandler : ICommandHandler<A
             return;
 
         await _productRepo.OverwriteAsync(products);
-        _eventBus.Publish(new EntitiesAffectedEvent(typeof(Product), EntityAffectedEventType.Updated, affectedProductsIds.ToArray()));
+        _eventBus.Publish(new EntitiesAffectedEvent<ProductRef>(typeof(Product), EntityAffectedEventType.Updated, affectedProductsIds.ToArray()));
     }
 }

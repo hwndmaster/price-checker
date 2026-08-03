@@ -1,5 +1,5 @@
-using Genius.Atom.Data.Persistence;
-using Genius.Atom.Infrastructure.Entities;
+using Genius.Atom.Data.IdHandlers;
+using Genius.Atom.Data.JsonPersistence;
 using Genius.Atom.Infrastructure.Events;
 using Genius.PriceChecker.Core.Models;
 using Microsoft.Extensions.Logging;
@@ -10,27 +10,24 @@ public interface IProductQueryService : IQueryService<Product>
 {
 }
 
-public interface IProductRepository : IRepository<Product>
+public interface IProductRepository : IJsonRepository<Guid, ProductRef, Product>
 {
 }
 
-internal sealed class ProductRepository : RepositoryBase<Product>, IProductRepository, IProductQueryService
+internal sealed class ProductRepository : JsonRepositoryBase<Guid, ProductRef, Product>, IProductRepository, IProductQueryService
 {
     private readonly IAgentQueryService _agentRepo;
 
-    public ProductRepository(IEventBus eventBus, IJsonPersister persister,
+    public ProductRepository(IEventBus eventBus, IJsonPersister persister, IIdHandler<Guid> idHandler,
         IAgentQueryService agentQuery,
         ILogger<ProductRepository> logger)
-        : base(eventBus, persister, logger)
+        : base(eventBus, persister, idHandler, logger)
     {
-        _agentRepo = agentQuery;
+        _agentRepo = agentQuery.NotNull();
     }
 
-    public new Task<Product?> FindByIdAsync(Guid entityId)
-        => base.FindByIdAsync(entityId);
-
-    public new Task<IEnumerable<Product>> GetAllAsync()
-        => base.GetAllAsync();
+    public Task<Product?> FindByIdAsync(Guid entityId)
+        => base.FindByIdAsync(ProductRef.Create(entityId));
 
     protected override async Task FillUpRelationsAsync(Product product)
     {

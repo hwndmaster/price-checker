@@ -1,13 +1,13 @@
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
-using System.Reactive.Disposables;
-using System.Reactive.Linq;
 using System.Windows;
 using System.Windows.Media.Imaging;
 using Genius.Atom.Infrastructure.Commands;
 using Genius.Atom.Infrastructure.Events;
 using Genius.Atom.UI.Forms;
+using Genius.Atom.UI.Forms.Controls.AutoGrid.Builders;
+using Genius.PriceChecker.UI.AutoGridBuilders;
 using Genius.PriceChecker.Core.Commands;
 using Genius.PriceChecker.Core.Messages;
 using Genius.PriceChecker.Core.Models;
@@ -15,7 +15,6 @@ using Genius.PriceChecker.Core.Repositories;
 using Genius.PriceChecker.Core.Services;
 using Genius.PriceChecker.UI.Helpers;
 using Genius.PriceChecker.UI.ValueConverters;
-using ReactiveUI;
 
 namespace Genius.PriceChecker.UI.Views;
 
@@ -32,7 +31,7 @@ public interface ITrackerProductViewModel : IViewModel, ISelectable, IDisposable
 }
 
 [ShowOnlyBrowsable(true)]
-internal sealed class TrackerProductViewModel : ViewModelBase, ITrackerProductViewModel
+internal sealed class TrackerProductViewModel : DisposableViewModelBase, ITrackerProductViewModel
 {
     private readonly IAgentQueryService _agentQuery;
     private readonly IProductQueryService _productQuery;
@@ -40,7 +39,6 @@ internal sealed class TrackerProductViewModel : ViewModelBase, ITrackerProductVi
     private readonly ICommandBus _commandBus;
     private readonly IUserInteraction _ui;
     private readonly IProductInteraction _productInteraction;
-    private readonly CompositeDisposable _disposables = new();
 
     private Product? _product;
 
@@ -48,10 +46,13 @@ internal sealed class TrackerProductViewModel : ViewModelBase, ITrackerProductVi
         ICommandBus commandBus,
         IAgentQueryService agentQuery,
         IProductQueryService productQuery, IProductStatusProvider statusProvider,
+        IUiDispatcher uiDispatcher,
         IUserInteraction ui,
-        IProductInteraction productInteraction)
+        IProductInteraction productInteraction,
+        TrackerProductSourceAutoGridBuilder sourcesAutoGridBuilder)
     {
         // Dependencies:
+        AutoGridBuilder = sourcesAutoGridBuilder.NotNull();
         _agentQuery = agentQuery.NotNull();
         _productQuery = productQuery.NotNull();
         _statusProvider = statusProvider.NotNull();
@@ -102,17 +103,15 @@ internal sealed class TrackerProductViewModel : ViewModelBase, ITrackerProductVi
 
         // Subscriptions:
         eventBus.WhenFired<AgentsAffectedEvent>()
-            .ObserveOn(RxApp.MainThreadScheduler)
-            .Subscribe(async _ =>
+            .SubscribeOnUiThread(uiDispatcher, async _ =>
                 await RefreshAgentsAsync()
             )
-            .DisposeWith(_disposables);
+            .DisposeWith(Disposer);
         eventBus.WhenFired<ProductsAffectedEvent>()
-            .ObserveOn(RxApp.MainThreadScheduler)
-            .Subscribe(async _ =>
+            .SubscribeOnUiThread(uiDispatcher, async _ =>
                 await RefreshCategoriesAsync()
             )
-            .DisposeWith(_disposables);
+            .DisposeWith(Disposer);
     }
 
     public void Reconcile(ProductScanStatus status)
@@ -211,7 +210,7 @@ internal sealed class TrackerProductViewModel : ViewModelBase, ITrackerProductVi
         var vm = new TrackerProductSourceViewModel(_productInteraction, productSource, lastPrice);
         vm.DeleteCommand.Executed
             .Subscribe(_ => Sources.Remove(vm))
-            .DisposeWith(_disposables);
+            .DisposeWith(Disposer);
         return vm;
     }
 
@@ -239,12 +238,10 @@ internal sealed class TrackerProductViewModel : ViewModelBase, ITrackerProductVi
         Sources.ReplaceItems(productSourceVms);
     }
 
-    public void Dispose()
-    {
-        _disposables.Dispose();
-    }
+    public Guid? Id => _product?.Id.Id;
 
-    public Guid? Id => _product?.Id;
+    [Browsable(false)]
+    public IAutoGridBuilder AutoGridBuilder { get; }
 
     public IReadOnlyCollection<string> Agents { get; private set; } = new List<string>();
 
@@ -262,7 +259,7 @@ internal sealed class TrackerProductViewModel : ViewModelBase, ITrackerProductVi
             OnPropertyChanged(nameof(StatusIcon)));
     }
 
-    public BitmapImage? StatusIcon => ResourcesHelper.GetStatusIcon(Status);
+    public string? StatusIcon => ResourcesHelper.GetStatusIconUri(Status);
 
     public string StatusText
     {

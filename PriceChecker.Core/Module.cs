@@ -1,10 +1,11 @@
-global using Genius.Atom.Infrastructure;
-
 using System.Diagnostics.CodeAnalysis;
+using Genius.Atom.Data.JsonPersistence;
 using Genius.Atom.Infrastructure.Commands;
 using Genius.PriceChecker.Core.AgentHandlers;
 using Genius.PriceChecker.Core.CommandHandlers;
 using Genius.PriceChecker.Core.Commands;
+using Genius.PriceChecker.Core.Models;
+using Genius.PriceChecker.Core.Persistence;
 using Genius.PriceChecker.Core.Repositories;
 using Genius.PriceChecker.Core.Services;
 using Microsoft.Extensions.DependencyInjection;
@@ -16,16 +17,14 @@ public static class Module
 {
     public static void Configure(IServiceCollection services)
     {
-        // Repositories
-        services.AddSingleton<AgentRepository>();
-        services.AddSingleton<ProductRepository>();
-        services.AddSingleton<IAgentRepository>(sp => sp.GetService<AgentRepository>()!);
-        services.AddSingleton<IProductRepository>(sp => sp.GetService<ProductRepository>()!);
-        services.AddSingleton<ISettingsRepository, SettingsRepository>();
+        // Json persistence
+        services.AddSingleton<IJsonConverter, GuidReferenceJsonConverter<AgentRef>>();
+        services.AddSingleton<IJsonConverter, GuidReferenceJsonConverter<ProductRef>>();
 
-        // Query services
-        services.AddSingleton<IAgentQueryService>(sp => sp.GetService<AgentRepository>()!);
-        services.AddSingleton<IProductQueryService>(sp => sp.GetService<ProductRepository>()!);
+        // Repositories
+        services.RegisterJsonRepository<Guid, AgentRef, Agent, AgentRepository, IAgentQueryService, IAgentRepository>();
+        services.RegisterJsonRepository<Guid, ProductRef, Product, ProductRepository, IProductQueryService, IProductRepository>();
+        services.AddSingleton<ISettingsRepository, SettingsRepository>();
 
         // Services
         services.AddTransient<IPriceSeeker, PriceSeeker>();

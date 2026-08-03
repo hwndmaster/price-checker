@@ -1,9 +1,9 @@
 ﻿global using System.Windows;
-global using Genius.Atom.Infrastructure;
 global using Genius.Atom.Infrastructure.Attributes;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using Genius.PriceChecker.Core.Services;
+using Genius.PriceChecker.UI.AutoGridBuilders;
 using Genius.PriceChecker.UI.Helpers;
 using Genius.PriceChecker.UI.Views;
 using Hardcodet.Wpf.TaskbarNotification;
@@ -59,7 +59,7 @@ public partial class App : Application
     {
         Atom.Data.Module.Configure(services);
         Atom.Infrastructure.Module.Configure(services);
-        var configuration = Atom.UI.Forms.Module.Configure(services, this);
+        Atom.UI.Forms.Module.Configure(services, this);
         Core.Module.Configure(services);
 
         // Views, View models, View model factories
@@ -73,7 +73,9 @@ public partial class App : Application
         services.AddTransient<ISettingsViewModel, SettingsViewModel>();
 
         // AutoGrid builders
-        // TODO: ...
+        services.AddTransient<AgentAutoGridBuilder>();
+        services.AddTransient<TrackerProductAutoGridBuilder>();
+        services.AddTransient<TrackerProductSourceAutoGridBuilder>();
 
         // Services and Helpers:
         services.AddSingleton<INotifyIconViewModel>((NotifyIconViewModel)_notifyIcon.DataContext);

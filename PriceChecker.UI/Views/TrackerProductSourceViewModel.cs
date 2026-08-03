@@ -61,7 +61,7 @@ internal sealed class TrackerProductSourceViewModel : ViewModelBase
     }
 
     [Browsable(false)]
-    public BitmapImage? StatusIcon
+    public string? StatusIcon
     {
         get
         {
@@ -75,9 +75,7 @@ internal sealed class TrackerProductSourceViewModel : ViewModelBase
                 AgentHandlingStatus.InvalidPrice => "Warning16",
                 {} => null
             };
-            if (icon is null)
-                return null;
-            return (BitmapImage)App.Current.FindResource(icon);
+            return ResourcesHelper.GetIconUri(icon);
         }
     }
 

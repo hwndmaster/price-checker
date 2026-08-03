@@ -1,0 +1,10 @@
+<Solution>
+  <Project Path="PriceChecker.Core/PriceChecker.Core.csproj" />
+  <Project Path="PriceChecker.Core.Tests/PriceChecker.Core.Tests.csproj" />
+  <Project Path="PriceChecker.UI/PriceChecker.UI.csproj" />
+  <Project Path="PriceChecker.UI.Tests/PriceChecker.UI.Tests.csproj" />
+  <Properties Name="Configuration">
+    <Property Name="Debug|AnyCPU" />
+    <Property Name="Release|AnyCPU" />
+  </Properties>
+</Solution>

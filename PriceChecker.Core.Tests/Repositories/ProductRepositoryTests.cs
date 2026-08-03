@@ -1,5 +1,6 @@
-using Genius.Atom.Data.Persistence;
-using Genius.Atom.Infrastructure.Entities;
+using Genius.Atom.Data.IdHandlers;
+using Genius.Atom.Data.JsonPersistence;
+using Genius.Atom.Infrastructure.Events.Entities;
 using Genius.Atom.Infrastructure.TestingUtil;
 using Genius.Atom.Infrastructure.TestingUtil.Events;
 using Genius.PriceChecker.Core.Models;
@@ -28,7 +29,7 @@ public class ProductRepositoryTests
         A.CallTo(() => _persisterMock.LoadCollection<Product>(A<string>._))
             .Returns(_products);
 
-        _sut = new ProductRepository(_eventBus, _persisterMock, _agentQueryMock, new FakeLogger<ProductRepository>());
+        _sut = new ProductRepository(_eventBus, _persisterMock, new GuidIdHandler(), _agentQueryMock, new FakeLogger<ProductRepository>());
 
         _sut.GetAllAsync().GetAwaiter().GetResult(); // To trigger the initializer
     }
@@ -94,7 +95,7 @@ public class ProductRepositoryTests
         // Verify
         A.CallTo(() => _persisterMock.Store(A<string>._, A<IEnumerable<Product>>.That.IsSameSequenceAs(_products)))
             .MustHaveHappenedOnceExactly();
-        _eventBus.AssertSingleEvent<EntitiesAffectedEvent>(e => e.Updated.First().Key == product.Id);
+        _eventBus.AssertSingleEvent<EntitiesAffectedEvent<ProductRef>>(e => e.Updated.First().Key == product.Id);
     }
 
     [Fact]
@@ -111,7 +112,7 @@ public class ProductRepositoryTests
         var expectedProducts = _products.Concat(new [] { product });
         A.CallTo(() => _persisterMock.Store(A<string>._, A<IEnumerable<Product>>.That.IsSameSequenceAs(expectedProducts)))
             .MustHaveHappenedOnceExactly();
-        _eventBus.AssertSingleEvent<EntitiesAffectedEvent>(e => e.Added.First().Key == product.Id);
+        _eventBus.AssertSingleEvent<EntitiesAffectedEvent<ProductRef>>(e => e.Added.First().Key == product.Id);
         Assert.Equal(productCount + 1, (await _sut.GetAllAsync()).Count());
     }
 
@@ -127,7 +128,7 @@ public class ProductRepositoryTests
         await _sut.StoreAsync(product);
 
         // Verify
-        Assert.NotEqual(Guid.Empty, product.Id);
+        Assert.NotEqual(Guid.Empty, product.Id.Id);
         Assert.Equal(productCount + 1, (await _sut.GetAllAsync()).Count());
     }
 

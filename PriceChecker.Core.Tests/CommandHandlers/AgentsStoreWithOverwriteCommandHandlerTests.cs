@@ -1,5 +1,5 @@
-using Genius.Atom.Infrastructure.Entities;
 using Genius.Atom.Infrastructure.Events;
+using Genius.Atom.Infrastructure.Events.Entities;
 using Genius.PriceChecker.Core.CommandHandlers;
 using Genius.PriceChecker.Core.Commands;
 using Genius.PriceChecker.Core.Messages;
@@ -52,7 +52,7 @@ public class AgentsStoreWithOverwriteCommandHandlerTests
         // Remove one agent:
         agentsToUpdate = agentsToUpdate.Except(new [] { agentsToUpdate[5] }).ToArray();
         var command = new AgentsStoreWithOverwriteCommand(agentsToUpdate);
-        var affectedProductIds = new HashSet<Guid>
+        var affectedProductIds = new HashSet<ProductRef>
         {
             products[0].Id, // only renaming
             products[1].Id  // renaming and removing
@@ -75,7 +75,7 @@ public class AgentsStoreWithOverwriteCommandHandlerTests
             && x[1].Sources[1].AgentKey == agentsToUpdate[4].Key
             && x[1].Sources.Length == 2
         ))).MustHaveHappenedOnceExactly();
-        A.CallTo(() => _fakeEventBus.Publish(A<EntitiesAffectedEvent>.That.Matches(x =>
+        A.CallTo(() => _fakeEventBus.Publish(A<EntitiesAffectedEvent<ProductRef>>.That.Matches(x =>
             x.Updated.Keys.SequenceEqual(affectedProductIds)
         ))).MustHaveHappenedOnceExactly();
     }

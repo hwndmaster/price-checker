@@ -3,7 +3,7 @@
   "isRoot": true,
   "tools": {
     "genius.atom.build": {
-      "version": "0.0.43",
+      "version": "0.2.8",
       "commands": [
         "atom-build"
       ],

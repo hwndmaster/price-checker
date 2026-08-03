@@ -6,7 +6,7 @@
       "type": "coreclr",
       "request": "launch",
       "preLaunchTask": "build",
-      "program": "${workspaceFolder}/build/PriceChecker.exe",
+      "program": "${workspaceFolder}/build/net10.0-windows10.0.19041/PriceChecker.exe",
       "args": [],
       "cwd": "${workspaceFolder}",
       "console": "internalConsole",

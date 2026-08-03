@@ -79,7 +79,7 @@ internal sealed class AgentViewModel : ViewModelBase, IAgentViewModel
     public IEnumerable<string> UsedKeys => _owner.Agents.Select(x => x.Key);
 
     [Browsable(false)]
-    public Guid? Id => _agent?.Id;
+    public Guid? Id => _agent?.Id.Id;
 
     public bool IsDirty
     {

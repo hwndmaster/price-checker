@@ -3,6 +3,13 @@
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
     <UseWPF>true</UseWPF>
+    <!-- The WPF markup compiler builds a temporary "PriceChecker.UI_<hash>_wpftmp" project, whose
+         name doesn't match the ".UI" suffix convention of Genius.Atom.Build.props, so the UI
+         target framework has to be pinned explicitly here. -->
+    <TargetFramework>$(UiTargetFramework)</TargetFramework>
+    <!-- Same workaround as in Atom.UI.Forms itself: the NuGet-aware markup compilation flow
+         fails to load locally defined types in MarkupCompilePass2 (MC3074). -->
+    <IncludePackageReferencesDuringMarkupCompilation>false</IncludePackageReferencesDuringMarkupCompilation>
     <AssemblyName>PriceChecker</AssemblyName>
     <ApplicationIcon>Assets/Logo.ico</ApplicationIcon>
 
@@ -39,6 +46,10 @@
     <PackageReference Include="Microsoft.Extensions.Logging" />
     <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" />
     <PackageReference Include="ReactiveUI.WPF" />
+
+    <PackageReference Include="Serilog.Extensions.Logging.File" />
+    <PackageReference Include="Serilog.Sinks.Console" />
+    <PackageReference Include="Serilog.Sinks.File" />
     <PackageReference Include="System.Reactive" />
   </ItemGroup>
 

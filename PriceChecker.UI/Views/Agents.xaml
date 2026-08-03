@@ -24,6 +24,7 @@
                     Command="{Binding ResetChangesCommand}" />
         </StackPanel>
         <DataGrid Grid.Row="1" Margin="10"
+                  autogrid:Properties.AutoGridBuilder="{Binding AutoGridBuilder}"
                   ItemsSource="{Binding Path=Agents}">
             <i:Interaction.Behaviors>
                 <autogrid:AttachingBehavior />

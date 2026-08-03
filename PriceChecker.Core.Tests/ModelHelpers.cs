@@ -49,6 +49,6 @@ public static class ModelHelpers
 
     public static Agent[] Clone(Agent[] agents)
     {
-        return agents.Select(x => (Agent)x.Clone()).ToArray();
+        return agents.Select(x => x with { }).ToArray();
     }
 }

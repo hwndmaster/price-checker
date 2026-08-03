@@ -1,14 +1,14 @@
-using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using System.Windows.Input;
-using ReactiveUI;
 using Genius.Atom.Infrastructure.Commands;
 using Genius.Atom.Infrastructure.Events;
 using Genius.Atom.Infrastructure.Tasks;
 using Genius.Atom.UI.Forms;
+using Genius.Atom.UI.Forms.Controls.AutoGrid.Builders;
 using Genius.PriceChecker.Core.Commands;
 using Genius.PriceChecker.Core.Messages;
 using Genius.PriceChecker.Core.Repositories;
+using Genius.PriceChecker.UI.AutoGridBuilders;
 using Genius.PriceChecker.UI.Helpers;
 
 namespace Genius.PriceChecker.UI.Views;
@@ -21,7 +21,7 @@ internal sealed class TrackerViewModel : TabViewModelBase, ITrackerViewModel, ID
     private readonly IProductQueryService _productQuery;
     private readonly IViewModelFactory _vmFactory;
     private readonly ITrackerScanContext _scanContext;
-    private readonly CompositeDisposable _disposables = new();
+    private readonly Disposer _disposer = new();
 
     public TrackerViewModel(IEventBus eventBus,
         IProductQueryService productQuery,
@@ -29,7 +29,8 @@ internal sealed class TrackerViewModel : TabViewModelBase, ITrackerViewModel, ID
         IUiDispatcher uiDispatcher,
         IUserInteraction ui,
         ITrackerScanContext scanContext,
-        ICommandBus commandBus)
+        ICommandBus commandBus,
+        TrackerProductAutoGridBuilder autoGridBuilder)
     {
         Guard.NotNull(eventBus);
         Guard.NotNull(uiDispatcher);
@@ -38,6 +39,7 @@ internal sealed class TrackerViewModel : TabViewModelBase, ITrackerViewModel, ID
         _productQuery = productQuery.NotNull();
         _vmFactory = vmFactory.NotNull();
         _scanContext = scanContext.NotNull();
+        AutoGridBuilder = autoGridBuilder.NotNull();
 
         // Actions:
         RefreshAllCommand = new ActionCommand(_ => {
@@ -59,7 +61,7 @@ internal sealed class TrackerViewModel : TabViewModelBase, ITrackerViewModel, ID
                         IsAddEditProductVisible = false;
                         await ReloadListAsync();
                     })
-                    .DisposeWith(_disposables);
+                    .DisposeWith(_disposer);
             }
         });
         OpenEditProductFlyoutCommand = new ActionCommand(_ => {
@@ -68,7 +70,7 @@ internal sealed class TrackerViewModel : TabViewModelBase, ITrackerViewModel, ID
             EditingProduct?.CommitProductCommand.Executed
                 .Take(1)
                 .Subscribe(_ => IsAddEditProductVisible = false)
-                .DisposeWith(_disposables);
+                .DisposeWith(_disposer);
             IsAddEditProductVisible = EditingProduct is not null;
         });
 
@@ -93,23 +95,22 @@ internal sealed class TrackerViewModel : TabViewModelBase, ITrackerViewModel, ID
 
         // Subscriptions:
         eventBus.WhenFired<ProductScanStartedEvent>()
-            .ObserveOn(RxApp.MainThreadScheduler)
-            .Subscribe(ev =>
+            .SubscribeOnUiThread(uiDispatcher, ev =>
                 Products.First(x => x.Id == ev.ProductId).Status = Core.Models.ProductScanStatus.Scanning
             )
-            .DisposeWith(_disposables);
+            .DisposeWith(_disposer);
         eventBus.WhenFired<ProductScannedEvent>()
             .Subscribe(ev =>
                 Products.First(x => x.Id == ev.ProductId).Reconcile(ev.Status))
-            .DisposeWith(_disposables);
+            .DisposeWith(_disposer);
         eventBus.WhenFired<ProductScanFailedEvent>()
             .Subscribe(ev =>
                 Products.First(x => x.Id == ev.ProductId).SetFailed(ev.ErrorMessage))
-            .DisposeWith(_disposables);
+            .DisposeWith(_disposer);
 
         Deactivated.Executed
             .Subscribe(_ => IsAddEditProductVisible = false)
-            .DisposeWith(_disposables);
+            .DisposeWith(_disposer);
 
         // Final preparation:
         RefreshOptions = new List<DropDownMenuItem> {
@@ -122,7 +123,7 @@ internal sealed class TrackerViewModel : TabViewModelBase, ITrackerViewModel, ID
     public void Dispose()
     {
         DisposeEditingProductIfNeeded();
-        _disposables.Dispose();
+        _disposer.Dispose();
     }
 
     private void EnqueueScan(ICollection<ITrackerProductViewModel> products)
@@ -156,6 +157,8 @@ internal sealed class TrackerViewModel : TabViewModelBase, ITrackerViewModel, ID
             EditingProduct = null;
         }
     }
+
+    public IAutoGridBuilder AutoGridBuilder { get; }
 
     public List<DropDownMenuItem> RefreshOptions { get; }
 

@@ -1,5 +1,6 @@
-using Genius.Atom.Data.Persistence;
-using Genius.Atom.Infrastructure.Entities;
+using Genius.Atom.Data.IdHandlers;
+using Genius.Atom.Data.JsonPersistence;
+using Genius.Atom.Infrastructure.Events.Entities;
 using Genius.Atom.Infrastructure.TestingUtil;
 using Genius.Atom.Infrastructure.TestingUtil.Events;
 using Genius.PriceChecker.Core.Models;
@@ -23,7 +24,7 @@ public class AgentRepositoryTests : IDisposable
         A.CallTo(() => _persisterMock.LoadCollection<Agent>(A<string>._))
             .Returns(_agents);
 
-        _sut = new AgentRepository(_eventBus, _persisterMock, new FakeLogger<AgentRepository>());
+        _sut = new AgentRepository(_eventBus, _persisterMock, new GuidIdHandler(), new FakeLogger<AgentRepository>());
 
         _sut.GetAllAsync().GetAwaiter().GetResult(); // To trigger the initializer
     }
@@ -88,7 +89,7 @@ public class AgentRepositoryTests : IDisposable
 
         A.CallTo(() => _persisterMock.Store(A<string>._, A<IEnumerable<Agent>>.That.IsSameSequenceAs(newAgents)))
             .MustHaveHappenedOnceExactly();
-        _eventBus.AssertSingleEvent<EntitiesAffectedEvent>(e => e.Added.Count == newAgents.Length
+        _eventBus.AssertSingleEvent<EntitiesAffectedEvent<AgentRef>>(e => e.Added.Count == newAgents.Length
             && e.Deleted.Count == previousAgents.Length);
     }
 }

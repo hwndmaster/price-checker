@@ -1,9 +1,11 @@
 using Genius.Atom.UI.Forms;
 using Genius.Atom.Infrastructure.Commands;
+using Genius.Atom.UI.Forms.Controls.AutoGrid.Builders;
 using Genius.PriceChecker.Core.Commands;
 using Genius.PriceChecker.Core.Models;
 using Genius.PriceChecker.Core.Repositories;
 using Genius.PriceChecker.Core.AgentHandlers;
+using Genius.PriceChecker.UI.AutoGridBuilders;
 using Genius.Atom.Infrastructure.Tasks;
 
 namespace Genius.PriceChecker.UI.Views;
@@ -19,11 +21,13 @@ internal sealed class AgentsViewModel : TabViewModelBase, IAgentsViewModel, IHas
     private readonly IViewModelFactory _vmFactory;
 
     public AgentsViewModel(IAgentQueryService agentQuery, IViewModelFactory vmFactory,
-        IUserInteraction ui, ICommandBus commandBus, IAgentHandlersProvider agentHandlersProvider)
+        IUserInteraction ui, ICommandBus commandBus, IAgentHandlersProvider agentHandlersProvider,
+        AgentAutoGridBuilder autoGridBuilder)
     {
         // Dependencies:
         _commandBus = commandBus.NotNull();
         _vmFactory = vmFactory.NotNull();
+        AutoGridBuilder = autoGridBuilder.NotNull();
 
         // Member initialization:
         AgentHandlers = agentHandlersProvider.GetNames().ToList();
@@ -106,6 +110,8 @@ internal sealed class AgentsViewModel : TabViewModelBase, IAgentsViewModel, IHas
             agent.IsDirty = false;
         }
     }
+
+    public IAutoGridBuilder AutoGridBuilder { get; }
 
     public DelayedObservableCollection<IAgentViewModel> Agents { get; }
         = new TypedObservableCollection<IAgentViewModel, AgentViewModel>();

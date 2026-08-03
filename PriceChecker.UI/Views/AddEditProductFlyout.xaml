@@ -47,7 +47,9 @@
                 </StackPanel>
             </Button>
         </StackPanel>
-        <DataGrid Margin="5" ItemsSource="{Binding Sources}">
+        <DataGrid Margin="5"
+                  autogrid:Properties.AutoGridBuilder="{Binding AutoGridBuilder}"
+                  ItemsSource="{Binding Sources}">
             <i:Interaction.Behaviors>
                 <autogrid:AttachingBehavior />
             </i:Interaction.Behaviors>

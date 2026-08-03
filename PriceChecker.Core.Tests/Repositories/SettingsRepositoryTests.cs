@@ -1,4 +1,4 @@
-using Genius.Atom.Data.Persistence;
+using Genius.Atom.Data.JsonPersistence;
 using Genius.Atom.Infrastructure.TestingUtil;
 using Genius.Atom.Infrastructure.TestingUtil.Events;
 using Genius.PriceChecker.Core.Messages;

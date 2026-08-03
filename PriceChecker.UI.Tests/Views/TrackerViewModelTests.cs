@@ -6,11 +6,13 @@ using Genius.Atom.Infrastructure.TestingUtil.Commands;
 using Genius.Atom.Infrastructure.TestingUtil.Events;
 using Genius.Atom.Infrastructure.Threading;
 using Genius.Atom.UI.Forms;
+using Genius.Atom.UI.Forms.Controls.AutoGrid.Builders;
 using Genius.Atom.UI.Forms.TestingUtil;
 using Genius.PriceChecker.Core.Commands;
 using Genius.PriceChecker.Core.Messages;
 using Genius.PriceChecker.Core.Models;
 using Genius.PriceChecker.Core.Repositories;
+using Genius.PriceChecker.UI.AutoGridBuilders;
 using Genius.PriceChecker.UI.Helpers;
 using Genius.PriceChecker.UI.Views;
 using WinRT;
@@ -349,14 +351,18 @@ public class TrackerViewModelTests
 
     private TrackerViewModel CreateSystemUnderTest()
     {
+        var autoGridBuilder = new TrackerProductAutoGridBuilder(
+            A.Fake<IFactory<IAutoGridContextBuilder<TrackerProductViewModel, TrackerViewModel>>>());
+
         return new TrackerViewModel(_eventBus, _fakeProductQuery,
-            _fakeVmFactory, new FakeUiDispatcher(), _fakeUi, _fakeScanContext, _commandBus);
+            _fakeVmFactory, new FakeUiDispatcher(), _fakeUi, _fakeScanContext, _commandBus,
+            autoGridBuilder);
     }
 
     private ICollection<Guid> SampleProducts()
     {
         var products = _fixture.CreateMany<Product>().ToList();
         A.CallTo(() => _fakeProductQuery.GetAllAsync()).Returns(products.AsEnumerable());
-        return products.ConvertAll(x => x.Id);
+        return products.ConvertAll(x => x.Id.Id);
     }
 }

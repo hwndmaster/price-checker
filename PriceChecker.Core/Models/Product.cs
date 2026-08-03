@@ -1,8 +1,6 @@
-using Genius.Atom.Infrastructure.Entities;
-
 namespace Genius.PriceChecker.Core.Models;
 
-public class Product : EntityBase
+public sealed record Product : EntityBase<Guid, ProductRef>
 {
     public string? Category { get; set; }
     public string Name { get; set; } = null!;

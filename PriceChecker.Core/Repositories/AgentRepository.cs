@@ -1,5 +1,5 @@
-using Genius.Atom.Data.Persistence;
-using Genius.Atom.Infrastructure.Entities;
+using Genius.Atom.Data.IdHandlers;
+using Genius.Atom.Data.JsonPersistence;
 using Genius.Atom.Infrastructure.Events;
 using Genius.PriceChecker.Core.Models;
 using Microsoft.Extensions.Logging;
@@ -11,27 +11,25 @@ public interface IAgentQueryService : IQueryService<Agent>
     Task<Agent?> FindByKeyAsync(string agentKey);
 }
 
-public interface IAgentRepository : IRepository<Agent>
+public interface IAgentRepository : IJsonRepository<Guid, AgentRef, Agent>
 {
 }
 
-internal sealed class AgentRepository : RepositoryBase<Agent>, IAgentRepository, IAgentQueryService
+internal sealed class AgentRepository : JsonRepositoryBase<Guid, AgentRef, Agent>, IAgentRepository, IAgentQueryService
 {
-    public AgentRepository(IEventBus eventBus, IJsonPersister persister, ILogger<AgentRepository> logger)
-        : base(eventBus, persister, logger)
+    public AgentRepository(IEventBus eventBus, IJsonPersister persister, IIdHandler<Guid> idHandler,
+        ILogger<AgentRepository> logger)
+        : base(eventBus, persister, idHandler, logger)
     {
     }
 
-    public new Task<Agent?> FindByIdAsync(Guid entityId)
-        => base.FindByIdAsync(entityId);
+    public Task<Agent?> FindByIdAsync(Guid entityId)
+        => base.FindByIdAsync(AgentRef.Create(entityId));
 
     public async Task<Agent?> FindByKeyAsync(string agentKey)
     {
         return (await GetAllAsync()).FirstOrDefault(x => x.Key == agentKey);
     }
-
-    public new Task<IEnumerable<Agent>> GetAllAsync()
-        => base.GetAllAsync();
 
     protected override Task FillUpRelationsAsync(Agent entity)
     {
