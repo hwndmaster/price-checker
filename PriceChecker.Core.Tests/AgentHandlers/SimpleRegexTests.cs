@@ -47,8 +47,8 @@ public class SimpleRegexTests
     public void Handle__Price_is_invalid__Returns_null()
     {
         // Arrange
-        const decimal priceInvalid = 0.0m;
-        var (agent, content, _) = CreateSampleAgentAndContent(price: priceInvalid);
+        const decimal PriceInvalid = 0.0m;
+        var (agent, content, _) = CreateSampleAgentAndContent(price: PriceInvalid);
 
         // Act
         var result = _sut.Handle(agent, content, out var actualPrice);

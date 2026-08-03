@@ -5,6 +5,9 @@
     <UseWPF>true</UseWPF>
     <AssemblyName>PriceChecker</AssemblyName>
     <ApplicationIcon>Assets/Logo.ico</ApplicationIcon>
+
+    <!-- Since we're overriding the AssemblyName here, RootNamespace needs to be set again. -->
+    <RootNamespace>Genius.$(MSBuildProjectName)</RootNamespace>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
