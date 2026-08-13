@@ -1,0 +1,36 @@
+// Common styles for photo upload/preview sections in edit components.
+
+.photoSection {
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+}
+
+.photoLabel {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+}
+
+.photoContainer {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.photoPreview {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.5rem;
+}
+
+.removePhotoButton {
+    margin-top: 0.25rem;
+}
+
+.fileUpload {
+    max-width: 200px;
+}
+
+.photoHelp {
+    color: var(--text-color-secondary);
+}

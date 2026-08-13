@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <!-- The project name ends with ".IntegrationTests", which the convention-based detection
+         in Genius.Atom.Build.props does not recognize, so the flag is set explicitly. -->
+    <IsTestProject>true</IsTestProject>
+    <ReferenceAtomData>true</ReferenceAtomData>
+    <ReferenceAtomDataEf>true</ReferenceAtomDataEf>
+    <ReferenceAtomInfrastructure>true</ReferenceAtomInfrastructure>
+    <ReferenceAtomWeb>true</ReferenceAtomWeb>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\PriceChecker.WebApi\PriceChecker.WebApi.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" />
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,35 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <!-- The Genius.* prefix is deliberately not applied here, so that the Docker entrypoint
+         is simply PriceChecker.WebApi.dll -->
+    <AssemblyName>PriceChecker.WebApi</AssemblyName>
+    <RootNamespace>Genius.PriceChecker.WebApi</RootNamespace>
+    <ReferenceAtomData>true</ReferenceAtomData>
+    <ReferenceAtomDataEf>true</ReferenceAtomDataEf>
+    <ReferenceAtomInfrastructure>true</ReferenceAtomInfrastructure>
+    <ReferenceAtomWeb>true</ReferenceAtomWeb>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Genius.Atom.Web.Telemetry" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Versioning" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Versioning.ApiExplorer" />
+    <PackageReference Include="Microsoft.AspNetCore.OpenApi" />
+    <!-- Loaded reflectively by the Serilog configuration reader (see appsettings.json) -->
+    <PackageReference Include="Serilog.Extensions.Logging.File" />
+    <PackageReference Include="Serilog.Sinks.Console" />
+    <PackageReference Include="Serilog.Sinks.File" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\PriceChecker.Core\PriceChecker.Core.csproj" />
+    <ProjectReference Include="..\PriceChecker.Db\PriceChecker.Db.csproj" />
+    <ProjectReference Include="..\PriceChecker.Dto\PriceChecker.Dto.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="Genius.PriceChecker.WebApi.IntegrationTests" />
+  </ItemGroup>
+
+</Project>

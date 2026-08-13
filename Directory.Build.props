@@ -1,7 +1,7 @@
 <Project>
 
   <PropertyGroup>
-    <Version>1.0.2</Version>
+    <Version>2.0.0</Version>
     <Product>Price Checker</Product>
     <Authors>Dima Kravtsov</Authors>
     <Description>A simple price checker</Description>
@@ -13,16 +13,11 @@
     <AtomPackageVersion>0.2.8</AtomPackageVersion>
     <!-- Local development: use the Atom source checkout directly -->
     <AtomBuildDirectory Condition="Exists('C:\Dev\Src\atom\Atom.Build\build')">C:\Dev\Src\atom\Atom.Build\build</AtomBuildDirectory>
-    <!-- CI fallback: use the restored NuGet package (Windows) -->
+    <!-- CI/Docker fallback: use the restored NuGet package (Windows) -->
     <AtomBuildDirectory Condition="'$(AtomBuildDirectory)' == '' And '$(USERPROFILE)' != ''">$(USERPROFILE)/.nuget/packages/genius.atom.build/$(AtomPackageVersion)/build</AtomBuildDirectory>
-    <!-- CI fallback: use the restored NuGet package (Linux) -->
+    <!-- CI/Docker fallback: use the restored NuGet package (Linux) -->
     <AtomBuildDirectory Condition="'$(AtomBuildDirectory)' == '' And '$(HOME)' != ''">$(HOME)/.nuget/packages/genius.atom.build/$(AtomPackageVersion)/build</AtomBuildDirectory>
     <AtomLocation>..\..\</AtomLocation>
-    <!-- Frameworks used by AtomReferences.targets to locate the locally built Atom assemblies.
-         AtomFramework must stay the plain TFM even in the WPF project, because Atom.Data and
-         Atom.Infrastructure are not Windows-targeted. -->
-    <AtomFramework>net10.0</AtomFramework>
-    <UiTargetFramework>net10.0-windows10.0.19041</UiTargetFramework>
   </PropertyGroup>
 
   <Import Project="$(AtomBuildDirectory)/Genius.Atom.Build.props" Condition="Exists('$(AtomBuildDirectory)/Genius.Atom.Build.props')" />
@@ -32,5 +27,18 @@
   <ItemGroup Condition="$(IsTestProject) == 'True' Or $(MSBuildProjectName.EndsWith('.TestingUtil'))">
     <Using Include="AutoFixture.AutoFakeItEasy" />
   </ItemGroup>
+
+  <ItemGroup Condition="$(IsTestProject) == 'True'">
+    <PackageReference Include="coverlet.msbuild">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+
+  <PropertyGroup Condition="$(IsTestProject) == 'True'">
+    <CoverletOutputFormat>lcov</CoverletOutputFormat>
+    <CoverletOutput>$(MSBuildProjectDirectory)/coverage/</CoverletOutput>
+    <RunSettingsFilePath>$(MSBuildThisFileDirectory)CodeCoverage.runsettings</RunSettingsFilePath>
+  </PropertyGroup>
 
 </Project>

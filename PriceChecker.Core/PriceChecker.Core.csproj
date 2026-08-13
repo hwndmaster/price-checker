@@ -1,19 +1,12 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-  <ItemGroup>
-    <None Include="..\Data\**" CopyToOutputDirectory="PreserveNewest" LinkBase="Data" />
-  </ItemGroup>
-
   <PropertyGroup>
-    <ReferenceAtomData>true</ReferenceAtomData>
     <ReferenceAtomInfrastructure>true</ReferenceAtomInfrastructure>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="System.Reactive" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" />
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" />
-    <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" />
   </ItemGroup>
 
 </Project>

@@ -2,7 +2,6 @@ using System.Globalization;
 using Genius.Atom.Infrastructure.Io;
 using Genius.Atom.Infrastructure.Net;
 using Genius.PriceChecker.Core.AgentHandlers;
-using Genius.PriceChecker.Core.Messages;
 using Genius.PriceChecker.Core.Models;
 using Microsoft.Extensions.Logging;
 
@@ -10,7 +9,7 @@ namespace Genius.PriceChecker.Core.Services;
 
 public interface IPriceSeeker
 {
-    Task<PriceSeekResult[]> SeekAsync(Product product, CancellationToken cancel);
+    Task<PriceSeekResult[]> SeekAsync(ScanProduct product, CancellationToken cancel);
 }
 
 internal sealed class PriceSeeker : IPriceSeeker
@@ -20,39 +19,41 @@ internal sealed class PriceSeeker : IPriceSeeker
     private readonly IFileService _io;
     private readonly ILogger<PriceSeeker> _logger;
 
-    private static readonly object _locker = new();
+    private static readonly Lock Locker = new();
 
     public PriceSeeker(ITrickyHttpClient trickyHttpClient, IFileService io,
         IAgentHandlersProvider agentHandlersProvider, ILogger<PriceSeeker> logger)
     {
-        _trickyHttpClient = trickyHttpClient;
-        _io = io;
-        _agentHandlersProvider = agentHandlersProvider;
-        _logger = logger;
+        _trickyHttpClient = trickyHttpClient.NotNull();
+        _io = io.NotNull();
+        _agentHandlersProvider = agentHandlersProvider.NotNull();
+        _logger = logger.NotNull();
     }
 
-    public async Task<PriceSeekResult[]> SeekAsync(Product product, CancellationToken cancel)
+    public async Task<PriceSeekResult[]> SeekAsync(ScanProduct product, CancellationToken cancel)
     {
-        var result = product.Sources.AsParallel().Select(async (productSource) =>
-            await SeekAsync(productSource, cancel));
+        Guard.NotNull(product);
 
-        return await Task.WhenAll(result);
+        var result = product.Sources.AsParallel().Select(async (productSource) =>
+            await SeekAsync(productSource, cancel).ConfigureAwait(false));
+
+        return await Task.WhenAll(result).ConfigureAwait(false);
     }
 
-    private async Task<PriceSeekResult> SeekAsync(ProductSource productSource, CancellationToken cancel)
+    private async Task<PriceSeekResult> SeekAsync(ScanSource productSource, CancellationToken cancel)
     {
         var agent = productSource.Agent;
-        var url = string.Format(CultureInfo.InvariantCulture, agent.Url, productSource.AgentArgument);
+        var url = string.Format(CultureInfo.InvariantCulture, agent.Url, productSource.Argument);
         string? content;
-        var resultTemplate = new PriceSeekResult(AgentHandlingStatus.Success, productSource.Id, agent.Key, null);
+        var resultTemplate = new PriceSeekResult(AgentHandlingStatus.Success, productSource.SourceId, agent.Key, null);
 
         try
         {
-            content = await _trickyHttpClient.DownloadContentAsync(url, cancel);
+            content = await _trickyHttpClient.DownloadContentAsync(url, cancel).ConfigureAwait(false);
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Failed loading content for source `{ProductSourceAgentKey}`, url = `{Url}`", productSource.AgentKey, url);
+            _logger.LogError(ex, "Failed loading content for source `{ProductSourceAgentKey}`, url = `{Url}`", agent.Key, url);
             throw;
         }
         if (content is null)
@@ -65,8 +66,8 @@ internal sealed class PriceSeeker : IPriceSeeker
 
         if (result == AgentHandlingStatus.CouldNotMatch)
         {
-            var dumpFileName = $"dump ({productSource.Id}).log";
-            lock(_locker)
+            var dumpFileName = $"dump ({productSource.SourceId}).log";
+            lock (Locker)
             {
                 _io.WriteTextToFile(dumpFileName, content);
             }
@@ -79,7 +80,7 @@ internal sealed class PriceSeeker : IPriceSeeker
         }
         else if (result == AgentHandlingStatus.InvalidPrice)
         {
-            _logger.LogError("Invalid price from the given content. Url = '{Url}', Product = {Product}, Agent = {Agent}, Price = {Price}", url, productSource.AgentArgument, agent.Key, price);
+            _logger.LogError("Invalid price from the given content. Url = '{Url}', Argument = {Argument}, Agent = {Agent}, Price = {Price}", url, productSource.Argument, agent.Key, price);
             return resultTemplate with { Status = result };
         }
 

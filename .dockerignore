@@ -1,0 +1,37 @@
+.git
+.github
+.vscode
+.claude
+
+# Environment-specific files
+.env
+Data-Local/
+
+# The legacy JSON data files are imported through the mounted Data volume, not the image
+Data/
+settings.json
+
+# Build and test artifacts
+**/bin/
+**/obj/
+**/TestResults/
+**/coverage/
+**/build/
+**/dist/
+**/.vite/
+**/*.lscache
+**/*.tsbuildinfo
+**/.eslintcache
+
+# Node artifacts
+**/node_modules/
+**/.pnpm-store/
+
+# Logs
+**/Logs/
+**/*.log
+
+# Test projects are not required for runtime image builds
+PriceChecker.Core.Tests/
+PriceChecker.Db.Tests/
+PriceChecker.WebApi.IntegrationTests/

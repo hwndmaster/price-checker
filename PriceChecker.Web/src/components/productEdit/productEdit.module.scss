@@ -1,0 +1,15 @@
+@use "../../styles/forms.scss";
+
+.sourcesHeader {
+    margin: 1rem 0 0.5rem;
+}
+
+.sourceRow {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.sourceArgument {
+    flex: 1;
+}

@@ -1,0 +1,46 @@
+@use "./variables";
+@use "./mixins";
+
+* {
+  box-sizing: border-box;
+  outline: none;
+}
+
+body {
+  position: relative;
+  margin: 0;
+}
+
+/* Used for the filter panel over the DataTable component */
+.flex {
+    display: flex!important;
+}
+.justify-content-between {
+    justify-content: space-between!important;
+}
+
+/* Input forms: float label to be gray when underlying element is not filled */
+.p-float-label:has(.p-inputtext):not(:has(input.p-filled, input:focus)) {
+    label {
+        color: gray;
+        font-weight: 500;
+    }
+}
+
+.p-datatable .p-datatable-tbody > tr > td {
+    padding: 0.4rem;
+}
+
+.p-toast {
+    z-index: 2000;
+}
+
+@media (max-width: 768px) {
+    .p-toast {
+        top: 0.75rem !important;
+        right: 0.75rem !important;
+        left: 0.75rem !important;
+        width: auto !important;
+        max-width: calc(100vw - 1.5rem) !important;
+    }
+}

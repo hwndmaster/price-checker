@@ -11,7 +11,7 @@ internal sealed class SimpleRegexDivideBy100 : IAgentHandler
         _simpleRegex = simpleRegex;
     }
 
-    public AgentHandlingStatus Handle(Agent agent, string content, out decimal? price)
+    public AgentHandlingStatus Handle(ScanAgent agent, string content, out decimal? price)
     {
         var result = _simpleRegex.Handle(agent, content, out price);
         if (result == AgentHandlingStatus.Success)

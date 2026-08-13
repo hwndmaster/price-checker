@@ -1,0 +1,20 @@
+{
+  "short_name": "Price Checker",
+  "name": "Price Checker",
+  "icons": [
+    {
+      "src": "logo128.png",
+      "type": "image/png",
+      "sizes": "128x128"
+    },
+    {
+      "src": "logo48.png",
+      "type": "image/png",
+      "sizes": "48x48"
+    }
+  ],
+  "start_url": ".",
+  "display": "standalone",
+  "theme_color": "#000000",
+  "background_color": "#ffffff"
+}

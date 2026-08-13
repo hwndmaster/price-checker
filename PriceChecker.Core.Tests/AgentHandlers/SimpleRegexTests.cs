@@ -58,11 +58,11 @@ public class SimpleRegexTests
         Assert.Null(actualPrice);
     }
 
-    private (Agent Agent, string Content, decimal price) CreateSampleAgentAndContent(
+    private (ScanAgent Agent, string Content, decimal price) CreateSampleAgentAndContent(
         char delimiter = '.',
         decimal? price = null)
     {
-        var agent = _fixture.Build<Agent>()
+        var agent = _fixture.Build<ScanAgent>()
             .With(x => x.PricePattern, $@"`(?<price>[\d\{delimiter}]+)`")
             .With(x => x.DecimalDelimiter, delimiter)
             .Create();

@@ -15,7 +15,7 @@ internal sealed class SimpleRegex : IAgentHandler
         _logger = logger;
     }
 
-    public AgentHandlingStatus Handle(Agent agent, string content, out decimal? price)
+    public AgentHandlingStatus Handle(ScanAgent agent, string content, out decimal? price)
     {
         var re = new Regex(agent.PricePattern);
         var match = re.Match(content);

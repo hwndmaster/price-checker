@@ -1,22 +1,54 @@
 {
-  "version": "0.2.0",
-  "configurations": [
-    {
-      "name": ".NET Core Launch (console)",
-      "type": "coreclr",
-      "request": "launch",
-      "preLaunchTask": "build",
-      "program": "${workspaceFolder}/build/net10.0-windows10.0.19041/PriceChecker.exe",
-      "args": [],
-      "cwd": "${workspaceFolder}",
-      "console": "internalConsole",
-      "stopAtEntry": false
-    },
-    {
-      "name": ".NET Core Attach",
-      "type": "coreclr",
-      "request": "attach",
-      "processId": "${command:pickProcess}"
-    }
-  ]
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Launch WebAPI (no build)",
+            "type": "coreclr",
+            "request": "launch",
+            "program": "${workspaceFolder}/PriceChecker.WebApi/bin/Debug/net10.0/PriceChecker.WebApi.exe",
+            "args": [],
+            "cwd": "${workspaceFolder}/PriceChecker.WebApi",
+            "launchSettingsFilePath": "${workspaceFolder}/PriceChecker.WebApi/Properties/launchSettings.json",
+            "launchSettingsProfile": "http",
+            "console": "internalConsole",
+            "stopAtEntry": false
+        },
+        {
+            "name": "Launch WebAPI",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build",
+            "program": "${workspaceFolder}/PriceChecker.WebApi/bin/Debug/net10.0/PriceChecker.WebApi.exe",
+            "args": [],
+            "cwd": "${workspaceFolder}/PriceChecker.WebApi",
+            "launchSettingsFilePath": "${workspaceFolder}/PriceChecker.WebApi/Properties/launchSettings.json",
+            "launchSettingsProfile": "http",
+            "console": "internalConsole",
+            "stopAtEntry": false
+        },
+        {
+            "name": "Launch Aspire AppHost",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build",
+            "program": "${workspaceFolder}/PriceChecker.AppHost/bin/Debug/net10.0/Genius.PriceChecker.AppHost.exe",
+            "args": [],
+            "cwd": "${workspaceFolder}/PriceChecker.AppHost",
+            "launchSettingsFilePath": "${workspaceFolder}/PriceChecker.AppHost/Properties/launchSettings.json",
+            "launchSettingsProfile": "http",
+            "serverReadyAction": {
+                "action": "openExternally",
+                "pattern": "\\bNow listening on:\\s+http://localhost:15180\\b",
+                "uriFormat": "http://localhost:15180/"
+            },
+            "console": "internalConsole",
+            "stopAtEntry": false
+        },
+        {
+            "name": ".NET Core Attach",
+            "type": "coreclr",
+            "request": "attach",
+            "processId": "${command:pickProcess}"
+        }
+    ]
 }

@@ -1,0 +1,274 @@
+{
+    "folders": [
+        {
+            "path": "."
+        }
+    ],
+    "settings": {
+        "commands.workspaceCommands": {
+            "PriceChecker.Web": {
+                "nestedItems": {
+                    "Install": {
+                        "command": "commands.runInTerminal",
+                        "args": {
+                            "text": "pnpm install",
+                            "cwd": "${workspaceFolder}/PriceChecker.Web",
+                            "reveal": true
+                        },
+                        "icon": "debug-restart",
+                        "iconColor": "errorForeground"
+                    },
+                    "Build": {
+                        "command": "commands.runInTerminal",
+                        "args": {
+                            "text": "pnpm build",
+                            "cwd": "${workspaceFolder}/PriceChecker.Web",
+                            "reveal": true
+                        },
+                        "icon": "package",
+                        "iconColor": "textLink.activeForeground"
+                    },
+                    "Lint": {
+                        "command": "commands.runInTerminal",
+                        "args": {
+                            "text": "pnpm lint",
+                            "cwd": "${workspaceFolder}/PriceChecker.Web",
+                            "reveal": true
+                        },
+                        "icon": "diff-editor-toggle-whitespace",
+                        "iconColor": "textLink.activeForeground"
+                    },
+                    "Lint Inspect config": {
+                        "command": "commands.runInTerminal",
+                        "args": {
+                            "text": "pnpm eslint --inspect-config",
+                            "cwd": "${workspaceFolder}/PriceChecker.Web",
+                            "reveal": true
+                        },
+                        "icon": "diff-editor-toggle-whitespace",
+                        "iconColor": "textLink.activeForeground"
+                    },
+                    "Run (Dev)": {
+                        "command": "commands.runInTerminal",
+                        "args": {
+                            "text": "pnpm start",
+                            "cwd": "${workspaceFolder}/PriceChecker.Web",
+                            "reveal": true
+                        },
+                        "icon": "debug-start"
+                    },
+                    "Test": {
+                        "command": "commands.runInTerminal",
+                        "args": {
+                            "text": "pnpm test",
+                            "cwd": "${workspaceFolder}/PriceChecker.Web",
+                            "reveal": true
+                        },
+                        "icon": "output",
+                        "iconColor": "editorBracketHighlight.foreground2"
+                    },
+                    "NSwag": {
+                        "command": "commands.runInTerminal",
+                        "args": {
+                            "text": "pnpm nswag",
+                            "cwd": "${workspaceFolder}/PriceChecker.Web",
+                            "reveal": true
+                        },
+                        "icon": "file-code",
+                        "iconColor": "terminal.ansiYellow"
+                    },
+                    "Check outdated packages": {
+                        "command": "commands.runInTerminal",
+                        "args": {
+                            "text": "pnpm outdated",
+                            "cwd": "${workspaceFolder}/PriceChecker.Web",
+                            "reveal": true
+                        },
+                        "icon": "versions",
+                        "iconColor": "terminal.ansiYellow"
+                    },
+                    "Update outdated packages": {
+                        "command": "commands.runInTerminal",
+                        "args": {
+                            "text": "pnpm update --interactive",
+                            "cwd": "${workspaceFolder}/PriceChecker.Web",
+                            "reveal": true
+                        },
+                        "icon": "arrow-up",
+                        "iconColor": "terminal.ansiYellow"
+                    }
+                }
+            },
+            "PriceChecker (.NET)": {
+                "nestedItems": {
+                    "Restore tools": {
+                        "command": "commands.runInTerminal",
+                        "args": {
+                            "text": "dotnet tool restore",
+                            "cwd": "${workspaceFolder}",
+                            "reveal": true
+                        },
+                        "icon": "debug-restart",
+                        "iconColor": "errorForeground"
+                    },
+                    "Build": {
+                        "command": "commands.runInTerminal",
+                        "args": {
+                            "text": "dotnet build PriceChecker.slnx",
+                            "cwd": "${workspaceFolder}",
+                            "reveal": true
+                        },
+                        "icon": "package",
+                        "iconColor": "textLink.activeForeground"
+                    },
+                    "Test": {
+                        "command": "commands.runInTerminal",
+                        "args": {
+                            "text": "dotnet test PriceChecker.slnx",
+                            "cwd": "${workspaceFolder}",
+                            "reveal": true
+                        },
+                        "icon": "beaker",
+                        "iconColor": "editorBracketHighlight.foreground2"
+                    },
+                    "Run AppHost (API + Web + Dashboard)": {
+                        "command": "commands.runInTerminal",
+                        "args": {
+                            "text": "dotnet run --project PriceChecker.AppHost",
+                            "cwd": "${workspaceFolder}",
+                            "reveal": true
+                        },
+                        "icon": "debug-start"
+                    },
+                    "Run WebApi": {
+                        "command": "commands.runInTerminal",
+                        "args": {
+                            "text": "dotnet run --project PriceChecker.WebApi",
+                            "cwd": "${workspaceFolder}",
+                            "reveal": true
+                        },
+                        "icon": "server-process"
+                    },
+                    "EF: List migrations": {
+                        "command": "commands.runInTerminal",
+                        "args": {
+                            "text": "dotnet ef migrations list --project PriceChecker.Db --startup-project PriceChecker.Db",
+                            "cwd": "${workspaceFolder}",
+                            "reveal": true
+                        },
+                        "icon": "database",
+                        "iconColor": "terminal.ansiYellow"
+                    },
+                    "EF: Remove last migration": {
+                        "command": "commands.runInTerminal",
+                        "args": {
+                            "text": "dotnet ef migrations remove --project PriceChecker.Db --startup-project PriceChecker.Db",
+                            "cwd": "${workspaceFolder}",
+                            "reveal": true
+                        },
+                        "icon": "database",
+                        "iconColor": "terminal.ansiRed"
+                    }
+                }
+            },
+            "PriceChecker (Docker)": {
+                "nestedItems": {
+                    "Compose up (build)": {
+                        "command": "commands.runInTerminal",
+                        "args": {
+                            "text": "docker compose up --build -d",
+                            "cwd": "${workspaceFolder}",
+                            "reveal": true
+                        },
+                        "icon": "debug-start"
+                    },
+                    "Compose logs": {
+                        "command": "commands.runInTerminal",
+                        "args": {
+                            "text": "docker compose logs -f",
+                            "cwd": "${workspaceFolder}",
+                            "reveal": true
+                        },
+                        "icon": "output",
+                        "iconColor": "editorBracketHighlight.foreground2"
+                    },
+                    "Compose down": {
+                        "command": "commands.runInTerminal",
+                        "args": {
+                            "text": "docker compose down",
+                            "cwd": "${workspaceFolder}",
+                            "reveal": true
+                        },
+                        "icon": "debug-stop",
+                        "iconColor": "terminal.ansiRed"
+                    },
+                    "Publish images": {
+                        "command": "commands.runInTerminal",
+                        "args": {
+                            "text": "powershell -ExecutionPolicy Bypass -File ./publish-docker.ps1",
+                            "cwd": "${workspaceFolder}",
+                            "reveal": true
+                        },
+                        "icon": "cloud-upload",
+                        "iconColor": "terminal.ansiYellow"
+                    },
+                    "Cleanup published packages": {
+                        "command": "commands.runInTerminal",
+                        "args": {
+                            "text": "powershell -ExecutionPolicy Bypass -File ./packages-cleanup.ps1",
+                            "cwd": "${workspaceFolder}",
+                            "reveal": true
+                        },
+                        "icon": "trash",
+                        "iconColor": "terminal.ansiYellow"
+                    }
+                }
+            }
+        },
+        "cSpell.ignorePaths": [
+            "package-lock.json",
+            "pnpm-lock.yaml",
+            "node_modules",
+            "vscode-extension",
+            ".git",
+            ".vscode",
+            "*.code-workspace",
+            "**/api.generated.ts",
+            "**/Migrations/**"
+        ],
+        "eslint.lintTask.enable": true,
+        "eslint.useFlatConfig": true,
+        "eslint.workingDirectories": [
+            {
+                "directory": "./PriceChecker.Web",
+                "changeProcessCWD": true
+            }
+        ],
+        "[typescript]": {
+            "editor.tabSize": 4,
+            "editor.insertSpaces": true
+        },
+        "[typescriptreact]": {
+            "editor.tabSize": 4,
+            "editor.insertSpaces": true
+        },
+        "[csharp]": {
+            "editor.tabSize": 4
+        },
+        "chat.tools.terminal.autoApprove": {
+            "docker compose logs": true,
+            "docker compose ps": true,
+            "dotnet build": true,
+            "dotnet ef migrations list": true,
+            "dotnet list": true,
+            "dotnet publish": true,
+            "dotnet run": true,
+            "dotnet test": true,
+            "Get-Item": true,
+            "mkdir": true,
+            "New-Item": true,
+            "pnpm": true,
+            "Test-Path": true
+        }
+    }
+}

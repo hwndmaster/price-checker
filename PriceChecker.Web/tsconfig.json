@@ -1,0 +1,20 @@
+{
+  "extends": "./tsconfig.base.json",
+
+  /* NOTE: For some reason VSCode cannot resolve compilerOptions from tsconfig.test.json,
+           thus we need to repeat the paths and types here */
+  "compilerOptions": {
+    "composite": true,
+    "types": [
+      // Service Worker:
+      "node",
+
+      // Tests:
+      "vitest/globals", "@testing-library/jest-dom"
+    ],
+    "paths": {
+      "@/*": ["./src/*"],
+      "@testing/*": ["./src/__tests__/*"]
+    }
+  },
+}

@@ -1,0 +1,38 @@
+{
+  "compilerOptions": {
+    "allowJs": false,
+    "allowSyntheticDefaultImports": true,
+    "composite": true,
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "isolatedModules": true,
+    "jsx": "react-jsx",
+    "lib": ["DOM", "DOM.Iterable", "ESNext"],
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    "noEmit": true,
+    "noFallthroughCasesInSwitch": true,
+    "noImplicitAny": true,
+    "paths": {
+      "@/*": ["./src/*"]
+    },
+    "resolveJsonModule": true,
+
+    // TODO: Might be needed to enable this later, when some libs errors are fixed.
+    //       Now there is an issue with `resize-observer-polyfill` lib, which has excessive `contentRect` property defined.
+    "skipLibCheck": true,
+
+    "sourceMap": true,
+
+    "strict": true,
+    "target": "ESNext",
+    "types": ["vite/client"],
+  },
+  "include": [
+    "src",
+    "vite-env.d.ts"
+  ],
+  "exclude": [
+    "node_modules"
+  ]
+}

@@ -4,28 +4,35 @@ namespace Genius.PriceChecker.Core.Services;
 
 public interface IProductStatusProvider
 {
-    ProductScanStatus DetermineStatus(Product product);
+    ProductScanStatus DetermineStatus(IReadOnlyCollection<PriceSnapshot> recentPrices);
 }
 
 internal sealed class ProductStatusProvider : IProductStatusProvider
 {
     private readonly IDateTime _dateTime;
-    private readonly TimeSpan _outdatedPeriod = TimeSpan.FromHours(20);
+    private readonly IScanSchedule _scanSchedule;
 
-    public ProductStatusProvider(IDateTime dateTime)
+    public ProductStatusProvider(IDateTime dateTime, IScanSchedule scanSchedule)
     {
         _dateTime = dateTime.NotNull();
+        _scanSchedule = scanSchedule.NotNull();
     }
 
-    public ProductScanStatus DetermineStatus(Product product)
+    public ProductScanStatus DetermineStatus(IReadOnlyCollection<PriceSnapshot> recentPrices)
     {
-        if (product.Recent.Length == 0)
+        Guard.NotNull(recentPrices);
+
+        if (recentPrices.Count == 0)
             return ProductScanStatus.NotScanned;
 
-        if (_dateTime.NowUtc - product.Recent.Max(x => x.FoundDate) > _outdatedPeriod)
+        // Outdated means "the last scheduled scan should have refreshed this and did not". The grace
+        // period keeps the whole list from reading as outdated while that scan is still in flight.
+        var now = _dateTime.NowUtc;
+        var trigger = _scanSchedule.GetMostRecentTrigger(now);
+        if (recentPrices.Max(x => x.FoundDate) < trigger && now >= trigger + _scanSchedule.OutdatedGrace)
             return ProductScanStatus.Outdated;
 
-        if (product.Recent.Any(x => x.Status != AgentHandlingStatus.Success))
+        if (recentPrices.Any(x => x.Status != AgentHandlingStatus.Success))
             return ProductScanStatus.ScannedWithErrors;
 
         return ProductScanStatus.ScannedOk;

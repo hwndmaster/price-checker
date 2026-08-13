@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <ReferenceAtomData>true</ReferenceAtomData>
+    <ReferenceAtomDataEf>true</ReferenceAtomDataEf>
+    <ReferenceAtomInfrastructure>true</ReferenceAtomInfrastructure>
+    <ReferenceAtomWeb>true</ReferenceAtomWeb>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\PriceChecker.WebApi\PriceChecker.WebApi.csproj" />
+  </ItemGroup>
+
+</Project>

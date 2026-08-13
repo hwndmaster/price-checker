@@ -4,5 +4,5 @@ namespace Genius.PriceChecker.Core.AgentHandlers;
 
 public interface IAgentHandler
 {
-    AgentHandlingStatus Handle(Agent agent, string content, out decimal? price);
+    AgentHandlingStatus Handle(ScanAgent agent, string content, out decimal? price);
 }

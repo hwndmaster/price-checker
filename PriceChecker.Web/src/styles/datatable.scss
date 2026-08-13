@@ -1,0 +1,91 @@
+// Common styles for DataTable pages with expandable rows, headers, and action columns.
+
+.expandableContent {
+    background-color: var(--surface-d);
+    border-top: 1px solid var(--surface-d);
+    padding: 0.5rem;
+    border-radius: var(--border-radius);
+
+    :global(.p-datatable) {
+        background: inherit;
+
+        :global(.p-datatable-wrapper),
+        :global(.p-datatable-table),
+        :global(.p-datatable-table tr) {
+            background: inherit;
+        }
+        :global(.p-datatable-table tr.p-row-odd) {
+            background: var(--surface-c);
+        }
+    }
+}
+
+.expanderColumn {
+    width: 2rem;
+}
+
+.expanderCell {
+    padding-right: 0 !important;
+}
+
+.actionColumn {
+    width: 2.5rem;
+    padding: 0 !important;
+    text-align: center;
+}
+
+.innerActionColumn {
+    width: 2.5rem;
+    padding: 0 !important;
+}
+
+.addRowButton {
+    margin-top: 0.5rem;
+    display: flex;
+    justify-content: flex-start;
+}
+
+.fixedLayoutTable {
+    > :global(.p-datatable-table-container) > :global(.p-datatable-table),
+    > :global(.p-datatable-wrapper) > :global(.p-datatable-table) {
+        table-layout: fixed;
+        width: 100%;
+    }
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.headerRight {
+    display: flex;
+    gap: 0.5rem;
+    flex-shrink: 1;
+    min-width: 0;
+}
+
+.searchField {
+    flex: 1 1 auto;
+    min-width: 0;
+
+    :global(.p-inputtext) {
+        width: 100%;
+    }
+}
+
+.ellipsisColumn {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+@media (max-width: 640px) {
+    .hideButtonLabelOnMobile {
+        :global(.p-button-label) {
+            display: none;
+        }
+    }
+}

@@ -1,8 +1,23 @@
 <Solution>
-  <Project Path="PriceChecker.Core/PriceChecker.Core.csproj" />
+  <Folder Name="/PriceChecker.AppHost/">
+    <Project Path="PriceChecker.AppHost\PriceChecker.AppHost.csproj" />
+  </Folder>
+  <Folder Name="/PriceChecker.Core/">
+    <Project Path="PriceChecker.Core\PriceChecker.Core.csproj" />
+  </Folder>
+  <Folder Name="/PriceChecker.Db/">
+    <Project Path="PriceChecker.Db\PriceChecker.Db.csproj" />
+  </Folder>
+  <Folder Name="/PriceChecker.Dto/">
+    <Project Path="PriceChecker.Dto\PriceChecker.Dto.csproj" />
+  </Folder>
+  <Folder Name="/PriceChecker.WebApi/">
+    <Project Path="PriceChecker.WebApi\PriceChecker.WebApi.csproj" />
+  </Folder>
   <Project Path="PriceChecker.Core.Tests/PriceChecker.Core.Tests.csproj" />
-  <Project Path="PriceChecker.UI/PriceChecker.UI.csproj" />
-  <Project Path="PriceChecker.UI.Tests/PriceChecker.UI.Tests.csproj" />
+  <Project Path="PriceChecker.Db.Tests/PriceChecker.Db.Tests.csproj" />
+  <Project Path="PriceChecker.WebApi.IntegrationTests/PriceChecker.WebApi.IntegrationTests.csproj" />
+  <Project Path="PriceChecker.WebApi.Tests/PriceChecker.WebApi.Tests.csproj" />
   <Properties Name="Configuration">
     <Property Name="Debug|AnyCPU" />
     <Property Name="Release|AnyCPU" />

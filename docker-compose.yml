@@ -1,0 +1,58 @@
+services:
+  pricechecker-apphost:
+    build:
+      context: .
+      dockerfile: PriceChecker.AppHost/Dockerfile
+      secrets:
+        - atom_pkg_access_token
+    container_name: pricechecker-apphost
+    ports:
+      - "15180:15180"                       # Aspire dashboard UI
+      - "21180:21180"                       # OTLP/gRPC ingest
+      - "21181:21181"                       # OTLP/HTTP ingest
+    environment:
+      ASPNETCORE_ENVIRONMENT: Production
+      DOTNET_ENVIRONMENT: Production
+      ASPNETCORE_URLS: http://+:15180
+      ASPIRE_ALLOW_UNSECURED_TRANSPORT: "true"
+      ASPIRE_DASHBOARD_OTLP_ENDPOINT_URL: http://0.0.0.0:21180
+      ASPIRE_DASHBOARD_OTLP_HTTP_ENDPOINT_URL: http://0.0.0.0:21181
+      AppHost__Mode: dashboard
+    restart: unless-stopped
+
+  pricechecker-api:
+    build:
+      context: .                          # Root, so all projects are in scope
+      dockerfile: PriceChecker.WebApi/Dockerfile
+      secrets:
+        - atom_pkg_access_token
+    container_name: pricechecker-api
+    ports:
+      - "5080:8031"                       # Host port 5080 → container port 8031
+    environment:
+      OTEL_EXPORTER_OTLP_ENDPOINT: http://pricechecker-apphost:21180
+      OTEL_EXPORTER_OTLP_PROTOCOL: grpc
+      OTEL_EXPORTER_OTLP_INSECURE: "true"
+    volumes:
+      - ./Data-Local/Data:/app/Data      # Persist SQLite database; also the place for the legacy JSON import files
+      - ./Data-Local/Logs:/app/Logs      # Persist API error logs
+    depends_on:
+      - pricechecker-apphost
+    restart: unless-stopped
+
+  pricechecker-web:
+    build:
+      context: ./PriceChecker.Web
+      dockerfile: Dockerfile
+      secrets:
+        - atom_pkg_access_token
+    container_name: pricechecker-web
+    ports:
+      - "5081:8032"                         # Host port 5081 → container port 8032
+    depends_on:
+      - pricechecker-api
+    restart: unless-stopped
+
+secrets:
+  atom_pkg_access_token:
+    environment: ATOM_PKG_ACCESS_TOKEN

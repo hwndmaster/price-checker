@@ -66,7 +66,7 @@ public class PriceSeekerTests
         // Arrange
         var product = CreateSampleProduct(sourcesCount: 1);
         decimal? price;
-        A.CallTo(() => _agentHandlerMock.Handle(A<Agent>._, A<string>._, out price))
+        A.CallTo(() => _agentHandlerMock.Handle(A<ScanAgent>._, A<string>._, out price))
             .Returns(AgentHandlingStatus.CouldNotMatch);
 
         // Act
@@ -85,7 +85,7 @@ public class PriceSeekerTests
         // Arrange
         var product = CreateSampleProduct(sourcesCount: 1);
         decimal? price;
-        A.CallTo(() => _agentHandlerMock.Handle(A<Agent>._, A<string>._, out price))
+        A.CallTo(() => _agentHandlerMock.Handle(A<ScanAgent>._, A<string>._, out price))
             .Returns(AgentHandlingStatus.InvalidPrice);
 
         // Act
@@ -102,7 +102,7 @@ public class PriceSeekerTests
         // Arrange
         var product = CreateSampleProduct(sourcesCount: 1);
         decimal? price;
-        A.CallTo(() => _agentHandlerMock.Handle(A<Agent>._, A<string>._, out price))
+        A.CallTo(() => _agentHandlerMock.Handle(A<ScanAgent>._, A<string>._, out price))
             .Returns(AgentHandlingStatus.CouldNotParse);
 
         // Act
@@ -113,20 +113,28 @@ public class PriceSeekerTests
         Assert.Equal(AgentHandlingStatus.CouldNotParse, result[0].Status);
     }
 
-    private Product CreateSampleProduct(int sourcesCount = 3) //, char delimiter = '.')
+    private ScanProduct CreateSampleProduct(int sourcesCount = 3)
     {
-        var product = _fixture.Build<Product>()
-            .With(x => x.Sources, _fixture.CreateMany<ProductSource>(sourcesCount).ToArray())
+        var sources = Enumerable.Range(0, sourcesCount)
+            .Select(_ =>
+            {
+                var agent = _fixture.Build<ScanAgent>()
+                    .With(x => x.Url, _fixture.Create<string>() + "{0}")
+                    .Create();
+                return _fixture.Build<ScanSource>()
+                    .With(x => x.Agent, agent)
+                    .Create();
+            })
+            .ToArray();
+        var product = _fixture.Build<ScanProduct>()
+            .With(x => x.Sources, sources)
             .Create();
         foreach (var productSource in product.Sources)
         {
-            productSource.Agent = _fixture.Build<Agent>()
-                .With(x => x.Url, _fixture.Create<string>() + "{0}")
-                .Create();
             var content = _fixture.Create<string>();
 
             A.CallTo(() => _httpMock.DownloadContentAsync(
-                A<string>.That.IsEqualTo(string.Format(productSource.Agent.Url, productSource.AgentArgument)),
+                A<string>.That.IsEqualTo(string.Format(productSource.Agent.Url, productSource.Argument)),
                 A<CancellationToken>._))
                 .Returns(content);
         }

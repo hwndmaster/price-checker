@@ -1,0 +1,12 @@
+node_modules
+build
+dist
+.vite
+.pnpm-store
+coverage
+.eslintcache
+*.tsbuildinfo
+.git
+.gitignore
+.dockerignore
+*.log

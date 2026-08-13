@@ -1,0 +1,12 @@
+allowBuilds:
+  '@parcel/watcher': false
+  esbuild: false
+  unrs-resolver: false
+
+# Supply-chain protection: refuse package versions published less than 6 days
+# ago (value in minutes). Malicious/compromised releases are usually discovered and
+# unpublished within days; this keeps freshly published versions out of the tree.
+minimumReleaseAge: 8640
+# Own packages are consumed right after publishing — exempt them from the release-age delay.
+minimumReleaseAgeExclude:
+  - "@hwndmaster/*"
