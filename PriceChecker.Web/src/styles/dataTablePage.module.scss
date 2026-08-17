@@ -1,0 +1,114 @@
+// Shared styles of the DataTable-based list pages (Products, Agents).
+//
+// Below `$mobile-breakpoint` those tables run in PrimeReact's stacked layout
+// (`responsiveLayout="stack"`): the column headers are hidden and every cell becomes a full-width
+// "<column header> ... <value>" line. The rules below group those lines into one card per record,
+// so a record stays completely readable without horizontal scrolling.
+
+.header {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+}
+
+.headerButtons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+
+    // Without this the labels break into two lines as soon as the buttons get slightly squeezed.
+    :global(.p-button-label) {
+        white-space: nowrap;
+    }
+}
+
+.groupHeader {
+    font-weight: 700;
+}
+
+.rowActions {
+    display: flex;
+    gap: 0.25rem;
+}
+
+@media (max-width: $mobile-breakpoint) {
+    // There is no room left for the search box next to the buttons, so it takes a line of its own.
+    .searchField {
+        flex: 1 0 100%;
+
+        :global(.p-inputtext) {
+            width: 100%;
+        }
+    }
+
+    .responsiveTable {
+        &:global(.p-datatable) :global(.p-datatable-wrapper) > :global(.p-datatable-table) {
+            display: block;
+
+            > :global(.p-datatable-tbody) {
+                display: block;
+
+                // A record card.
+                > tr {
+                    display: block;
+                    margin-bottom: 0.75rem;
+                    padding: 0.25rem 0;
+                    border: 1px solid var(--surface-border);
+                    border-radius: var(--border-radius);
+                    background: var(--surface-card);
+                }
+
+                // The group rows delimit the cards, they are not cards themselves. Note that
+                // PrimeReact emits a footer row per group even without a footer template.
+                > tr:global(.p-rowgroup-header),
+                > tr:global(.p-rowgroup-footer) {
+                    padding: 0;
+                    border: 0 none;
+                    border-radius: 0;
+                    background: none;
+                }
+
+                > tr:global(.p-rowgroup-header) {
+                    margin-bottom: 0.25rem;
+                }
+
+                > tr:global(.p-rowgroup-footer) {
+                    margin-bottom: 0;
+                }
+
+                // A single "<column header> ... <value>" line within a card.
+                > tr > td {
+                    gap: 1rem;
+                    min-width: 0;
+                    padding: 0.35rem 0.75rem;
+                    border: 0 none;
+                    overflow-wrap: anywhere;
+                }
+
+                > tr > td > :global(.p-column-title) {
+                    flex: 0 0 auto;
+                    color: var(--text-color-secondary);
+                    font-weight: 600;
+                }
+
+                // Columns without a header (the row actions) give their whole width to the value.
+                > tr > td > :global(.p-column-title):empty {
+                    display: none;
+                }
+            }
+        }
+
+        // Status badges shrink to their icon, their text is reachable through the tooltip.
+        .statusTag {
+            :global(.p-tag-value) {
+                display: none;
+            }
+
+            :global(.p-tag-icon) {
+                margin-right: 0;
+            }
+        }
+    }
+}

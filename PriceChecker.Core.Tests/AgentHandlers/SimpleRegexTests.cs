@@ -24,7 +24,7 @@ public class SimpleRegexTests
         // Act
         var result = _sut.Handle(agent, content, out var actualPrice);
 
-        // Verify
+        // Assert
         Assert.Equal(AgentHandlingStatus.Success, result);
         Assert.Equal(actualPrice, price);
     }
@@ -38,7 +38,7 @@ public class SimpleRegexTests
         // Act
         var result = _sut.Handle(agent, content, out var actualPrice);
 
-        // Verify
+        // Assert
         Assert.Equal(AgentHandlingStatus.Success, result);
         Assert.Equal(actualPrice, price);
     }
@@ -53,7 +53,7 @@ public class SimpleRegexTests
         // Act
         var result = _sut.Handle(agent, content, out var actualPrice);
 
-        // Verify
+        // Assert
         Assert.Equal(AgentHandlingStatus.InvalidPrice, result);
         Assert.Null(actualPrice);
     }

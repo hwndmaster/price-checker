@@ -1,4 +1,3 @@
-using System.Linq.Expressions;
 using Genius.PriceChecker.Db.Models;
 using Genius.PriceChecker.Dto.References;
 using Microsoft.EntityFrameworkCore;
@@ -20,6 +19,8 @@ public sealed class PriceCheckerDbContext : DbContext
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
+        Guard.NotNull(optionsBuilder);
+
         // The value-converted primary keys cause a false-positive "pending model changes"
         // warning during MigrateAsync().
         optionsBuilder.ConfigureWarnings(warnings =>
@@ -28,14 +29,17 @@ public sealed class PriceCheckerDbContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        ConfigureReferenceId<Agent, AgentRef>(modelBuilder, id => new AgentRef(id));
-        ConfigureReferenceId<Product, ProductRef>(modelBuilder, id => new ProductRef(id));
-        ConfigureReferenceId<ProductSource, ProductSourceRef>(modelBuilder, id => new ProductSourceRef(id));
-        ConfigureReferenceId<ProductPrice, ProductPriceRef>(modelBuilder, id => new ProductPriceRef(id));
+        Guard.NotNull(modelBuilder);
 
-        ConfigureReferenceFk<ProductSource, ProductRef>(modelBuilder, nameof(ProductSource.ProductId), id => new ProductRef(id));
-        ConfigureReferenceFk<ProductSource, AgentRef>(modelBuilder, nameof(ProductSource.AgentId), id => new AgentRef(id));
-        ConfigureReferenceFk<ProductPrice, ProductSourceRef>(modelBuilder, nameof(ProductPrice.ProductSourceId), id => new ProductSourceRef(id));
+        // The keys are always generated on the client (see the CreateWithNoLinking factories), never by the database.
+        modelBuilder.ConfigureReferenceId<Agent, AgentRef>(id => new AgentRef(id));
+        modelBuilder.ConfigureReferenceId<Product, ProductRef>(id => new ProductRef(id));
+        modelBuilder.ConfigureReferenceId<ProductSource, ProductSourceRef>(id => new ProductSourceRef(id));
+        modelBuilder.ConfigureReferenceId<ProductPrice, ProductPriceRef>(id => new ProductPriceRef(id));
+
+        modelBuilder.ConfigureReferenceFk<ProductSource, ProductRef>(nameof(ProductSource.ProductId), id => new ProductRef(id));
+        modelBuilder.ConfigureReferenceFk<ProductSource, AgentRef>(nameof(ProductSource.AgentId), id => new AgentRef(id));
+        modelBuilder.ConfigureReferenceFk<ProductPrice, ProductSourceRef>(nameof(ProductPrice.ProductSourceId), id => new ProductSourceRef(id));
 
         modelBuilder.Entity<Agent>()
             .HasIndex(x => x.Key)
@@ -70,30 +74,5 @@ public sealed class PriceCheckerDbContext : DbContext
                 property.SetValueConverter(dateTimeOffsetConverter);
             }
         }
-    }
-
-    /// <summary>
-    ///   Configures the strongly typed reference of an entity's primary key. The keys are always
-    ///   generated on the client (see the <c>CreateWithNoLinking</c> factories), never by the database.
-    /// </summary>
-    private static void ConfigureReferenceId<TEntity, TReference>(ModelBuilder modelBuilder,
-        Expression<Func<Guid, TReference>> fromProvider)
-        where TEntity : EntityBase<Guid, TReference>
-        where TReference : IReference<Guid, TReference>
-    {
-        modelBuilder.Entity<TEntity>()
-            .Property(e => e.Id)
-            .HasConversion(r => r.Id, fromProvider)
-            .ValueGeneratedNever();
-    }
-
-    private static void ConfigureReferenceFk<TEntity, TReference>(ModelBuilder modelBuilder,
-        string propertyName, Expression<Func<Guid, TReference>> fromProvider)
-        where TEntity : class
-        where TReference : IReference<Guid, TReference>
-    {
-        modelBuilder.Entity<TEntity>()
-            .Property<TReference>(propertyName)
-            .HasConversion(r => r.Id, fromProvider);
     }
 }

@@ -16,11 +16,13 @@ import {
 import { ProductScanStatus } from "@/models/enums";
 import ProductOverview from "@/models/productOverview";
 import { ProductRef, productRef } from "@/models/types";
+import { MobileBreakpoint } from "@/shared/constants";
 import LoadingTargets from "@/shared/loadingTargets";
 import { formatDateFromTicks, formatPrice } from "@/shared/formatters";
 import { getScanStatusPresentation } from "@/shared/scanStatus";
 import * as store from "@/store";
 import ProductEdit from "@/components/productEdit/productEdit";
+import styles from "@/styles/dataTablePage.module.scss";
 
 const Products: React.FC = () => {
     const dispatch = store.useAppDispatch();
@@ -78,15 +80,21 @@ const Products: React.FC = () => {
     const statusTemplate = (product: ProductOverview): React.ReactNode => {
         const presentation = getScanStatusPresentation(product.status);
         const elementId = `product-status-${product.id}`;
+        // On mobile the badge is reduced to its icon, so the tooltip has to carry the label as well.
+        const tooltip = product.statusText != null
+            ? `${presentation.label}: ${product.statusText}`
+            : presentation.label;
         return (
             <>
-                {product.statusText != null
-                    && <Tooltip target={`#${elementId}`} content={product.statusText} />}
+                <Tooltip target={`#${elementId}`} content={tooltip} event="both" position="left" />
                 <Tag
                     id={elementId}
                     icon={presentation.icon}
                     severity={presentation.severity}
                     value={presentation.label}
+                    className={styles.statusTag}
+                    // Makes the tag focusable, so that tapping it opens the tooltip on a touch device.
+                    tabIndex={0}
                     data-test_id="Products__Status"
                 />
             </>
@@ -94,8 +102,8 @@ const Products: React.FC = () => {
     };
 
     const header = (
-        <div className="flex flex-wrap align-items-center justify-content-between gap-2">
-            <div className="flex gap-2">
+        <div className={styles.header}>
+            <div className={styles.headerButtons}>
                 <Button
                     label="Add Product"
                     icon="pi pi-plus"
@@ -111,7 +119,7 @@ const Products: React.FC = () => {
                     data-test_id="Products__Scan_All_Button"
                 />
             </div>
-            <IconField iconPosition="left">
+            <IconField iconPosition="left" className={styles.searchField}>
                 <InputIcon className="pi pi-search" />
                 <InputText
                     placeholder="Search..."
@@ -124,7 +132,7 @@ const Products: React.FC = () => {
     );
 
     const actionsTemplate = (product: ProductOverview): React.ReactNode => (
-        <div className="flex gap-1">
+        <div className={styles.rowActions}>
             <Button
                 icon="pi pi-sync"
                 rounded text
@@ -174,42 +182,49 @@ const Products: React.FC = () => {
                 rowGroupMode="subheader"
                 groupRowsBy="category"
                 rowGroupHeaderTemplate={(product: ProductOverview) => (
-                    <span className="font-bold" data-test_id="Products__Category_Group">{product.category ?? "Uncategorized"}</span>
+                    <span className={styles.groupHeader} data-test_id="Products__Category_Group">{product.category ?? "Uncategorized"}</span>
                 )}
                 emptyMessage="No products yet. Add your first product to start tracking prices."
+                className={styles.responsiveTable}
+                responsiveLayout="stack"
+                breakpoint={MobileBreakpoint}
                 data-test_id="Products__Table"
             >
-                <Column body={statusTemplate} header="Status" style={{ width: "12rem" }} />
+                {/* The column widths are set on the header cells only: in the stacked layout the body
+                    cells span the whole card and must not be constrained. */}
+                <Column body={statusTemplate} header="Status" headerStyle={{ width: "12rem" }} />
                 <Column field="name" header="Name" sortable data-test_id="Products__Name" />
                 <Column
                     field="lowestPrice"
                     header="Lowest Price"
                     sortable
+                    align="right"
                     body={(p: ProductOverview) => formatPrice(p.lowestPrice)}
-                    style={{ textAlign: "right", width: "10rem" }}
+                    headerStyle={{ width: "10rem" }}
                 />
                 <Column
                     field="recentPrice"
                     header="Recent Price"
                     sortable
+                    align="right"
                     body={(p: ProductOverview) => formatPrice(p.recentPrice)}
-                    style={{ textAlign: "right", width: "10rem" }}
+                    headerStyle={{ width: "10rem" }}
                 />
                 <Column
                     field="lowestFoundDate"
                     header="Lowest Found On"
                     sortable
                     body={(p: ProductOverview) => formatDateFromTicks(p.lowestFoundDate)}
-                    style={{ width: "11rem" }}
+                    headerStyle={{ width: "11rem" }}
                 />
                 <Column
                     field="lastScannedDate"
                     header="Last Updated"
                     sortable
                     body={(p: ProductOverview) => formatDateFromTicks(p.lastScannedDate)}
-                    style={{ width: "11rem" }}
+                    headerStyle={{ width: "11rem" }}
                 />
-                <Column body={actionsTemplate} style={{ width: "13rem" }} />
+                <Column body={actionsTemplate} headerStyle={{ width: "13rem" }} />
             </DataTable>
 
             <Dialog

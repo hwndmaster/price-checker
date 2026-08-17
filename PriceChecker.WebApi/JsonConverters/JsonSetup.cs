@@ -1,4 +1,5 @@
 using System.Text.Json;
+using Genius.Atom.Data.JsonConverters;
 using Genius.PriceChecker.Dto.References;
 
 namespace Genius.PriceChecker.WebApi.JsonConverters;

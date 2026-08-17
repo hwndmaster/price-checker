@@ -13,9 +13,11 @@ import {
 } from "@/primereact";
 import Agent from "@/models/agent";
 import { AgentRef } from "@/models/types";
+import { MobileBreakpoint } from "@/shared/constants";
 import LoadingTargets from "@/shared/loadingTargets";
 import * as store from "@/store";
 import AgentEdit from "@/components/agentEdit/agentEdit";
+import styles from "@/styles/dataTablePage.module.scss";
 
 const Agents: React.FC = () => {
     const dispatch = store.useAppDispatch();
@@ -57,14 +59,16 @@ const Agents: React.FC = () => {
     };
 
     const header = (
-        <div className="flex flex-wrap align-items-center justify-content-between gap-2">
-            <Button
-                label="Add Agent"
-                icon="pi pi-plus"
-                onClick={openAddDialog}
-                data-test_id="Agents__Add_Button"
-            />
-            <IconField iconPosition="left">
+        <div className={styles.header}>
+            <div className={styles.headerButtons}>
+                <Button
+                    label="Add Agent"
+                    icon="pi pi-plus"
+                    onClick={openAddDialog}
+                    data-test_id="Agents__Add_Button"
+                />
+            </div>
+            <IconField iconPosition="left" className={styles.searchField}>
                 <InputIcon className="pi pi-search" />
                 <InputText
                     placeholder="Search..."
@@ -77,7 +81,7 @@ const Agents: React.FC = () => {
     );
 
     const actionsTemplate = (agent: Agent): React.ReactNode => (
-        <div className="flex gap-1">
+        <div className={styles.rowActions}>
             <Button
                 icon="pi pi-pencil"
                 rounded text
@@ -108,13 +112,18 @@ const Agents: React.FC = () => {
                 sortField="key"
                 sortOrder={1}
                 emptyMessage="No agents yet. Add your first scanning agent."
+                className={styles.responsiveTable}
+                responsiveLayout="stack"
+                breakpoint={MobileBreakpoint}
                 data-test_id="Agents__Table"
             >
+                {/* The column widths are set on the header cells only: in the stacked layout the body
+                    cells span the whole card and must not be constrained. */}
                 <Column field="key" header="Key" sortable data-test_id="Agents__Key" />
                 <Column field="url" header="URL" sortable />
-                <Column field="handler" header="Handler" sortable style={{ width: "16rem" }} />
-                <Column field="decimalDelimiter" header="Delimiter" style={{ width: "8rem", textAlign: "center" }} />
-                <Column body={actionsTemplate} style={{ width: "8rem" }} />
+                <Column field="handler" header="Handler" sortable headerStyle={{ width: "16rem" }} />
+                <Column field="decimalDelimiter" header="Delimiter" align="center" headerStyle={{ width: "8rem" }} />
+                <Column body={actionsTemplate} headerStyle={{ width: "8rem" }} />
             </DataTable>
 
             <Dialog

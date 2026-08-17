@@ -10,7 +10,7 @@
     <RootNamespace>Genius.$(MSBuildProjectName)</RootNamespace>
     <AssemblyName>$(RootNamespace)</AssemblyName>
 
-    <AtomPackageVersion>0.2.8</AtomPackageVersion>
+    <AtomPackageVersion>0.2.9</AtomPackageVersion>
     <!-- Local development: use the Atom source checkout directly -->
     <AtomBuildDirectory Condition="Exists('C:\Dev\Src\atom\Atom.Build\build')">C:\Dev\Src\atom\Atom.Build\build</AtomBuildDirectory>
     <!-- CI/Docker fallback: use the restored NuGet package (Windows) -->

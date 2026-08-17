@@ -12,7 +12,7 @@ _CI Status:_<br/>
 | `PriceChecker.Core` | The scanning domain: agent handlers, the price seeker, scan status logic. |
 | `PriceChecker.Dto` | Wire contracts: strongly typed references, DTOs, request messages. |
 | `PriceChecker.Db` | SQLite persistence: EF Core entities, migrations, repositories, the one-time legacy JSON import. |
-| `PriceChecker.WebApi` | ASP.NET Core API: CRUD controllers, scan orchestration, SignalR scan hub, auto-refresh background service. |
+| `PriceChecker.WebApi` | ASP.NET Core API: CRUD controllers, scan orchestration, SignalR scan hub, scheduled scan background service. |
 | `PriceChecker.Web` | React + TypeScript frontend (Vite, PrimeReact, redux-saga), talking to the API via an NSwag-generated client and live scan updates over SignalR. |
 | `PriceChecker.AppHost` | .NET Aspire orchestration for local development and the telemetry dashboard in Docker. |
 
@@ -22,6 +22,12 @@ Built on top of the [Atom framework](https://github.com/hwndmaster/atom). The ol
 
 Prerequisites: .NET 10 SDK, Node.js 22+, pnpm (via `corepack enable`), and a GitHub Packages token
 (`read:packages`) configured for NuGet and in `~/.npmrc` (`//npm.pkg.github.com/:_authToken=...`).
+
+Open `price-checker.code-workspace` in VS Code to get the grouped one-click commands
+(`PriceChecker.Web`, `PriceChecker (.NET)`, `PriceChecker (Docker)`) in the Commands view —
+they require the [`usernamehw.commands`](https://marketplace.visualstudio.com/items?itemName=usernamehw.commands)
+extension. `F5` offers the launch configurations, and `Ctrl+Shift+B` / `Ctrl+Shift+P → Run Test Task`
+run the build and coverage tasks.
 
 The single F5 target is the Aspire AppHost, which starts the API, the Vite dev server, and the dashboard:
 
@@ -49,13 +55,29 @@ After changing the API surface, regenerate the TypeScript client (with the API r
 pnpm --dir PriceChecker.Web nswag
 ```
 
+## Automatic price scans
+
+All products are re-scanned once a day, configured under `Scanning:Schedule` in the API's
+`appsettings.json` — there is no in-app setting for it:
+
+| Key | Default | Meaning |
+| --- | --- | --- |
+| `Enabled` | `true` | Whether the daily scan runs. Manual scans from the UI are unaffected. |
+| `TimeOfDay` | `09:00` | Wall-clock time of the scan, in `TimeZone`. |
+| `TimeZone` | `Europe/Amsterdam` | Explicit rather than machine-local, since containers run on UTC. |
+| `OutdatedGrace` | `03:00:00` | How long after the scan a product may stay unscanned before the list marks it "Outdated". |
+
+Whether a run is due is derived from the products' own last scan dates, not from a timer, so an
+overnight shutdown or a restart does not skip a day — the scan happens as soon as the API is up
+again, and never twice for the same day.
+
 ## Data
 
 The SQLite database lives in `Data/PriceChecker.db` next to the API binaries and is migrated
 automatically on startup, with periodic backups (see the `Database:Backup` settings).
 
 On the first run against an empty database, the legacy JSON data files (`Agent.json`,
-`Product.json`, `settings.json`) are imported automatically. Locally they are picked up from
+`Product.json`) are imported automatically. Locally they are picked up from
 the repository `Data/` folder; in Docker, copy them into the mounted `Data-Local/Data/` folder
 before the first start.
 

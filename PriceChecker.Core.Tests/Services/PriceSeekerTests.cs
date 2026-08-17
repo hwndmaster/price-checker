@@ -38,7 +38,7 @@ public class PriceSeekerTests
         // Act
         var result = await _sut.SeekAsync(product, new CancellationToken());
 
-        // Verify
+        // Assert
         Assert.Equal(product.Sources.Length, result.Length);
         A.CallTo(() => _fileMock.WriteTextToFile(A<string>._, A<string>._)).MustNotHaveHappened();
         Assert.DoesNotContain(_logger.Logs, x => x.LogLevel is LogLevel.Error or LogLevel.Warning);
@@ -55,7 +55,7 @@ public class PriceSeekerTests
         // Act
         var result = await _sut.SeekAsync(product, new CancellationToken());
 
-        // Verify
+        // Assert
         Assert.Single(result);
         Assert.Equal(AgentHandlingStatus.CouldNotFetch, result[0].Status);
     }
@@ -72,7 +72,7 @@ public class PriceSeekerTests
         // Act
         var result = await _sut.SeekAsync(product, new CancellationToken());
 
-        // Verify
+        // Assert
         Assert.Single(result);
         Assert.Equal(AgentHandlingStatus.CouldNotMatch, result[0].Status);
                 A.CallTo(() => _fileMock.WriteTextToFile(A<string>._, A<string>._)).MustHaveHappenedOnceExactly();
@@ -91,7 +91,7 @@ public class PriceSeekerTests
         // Act
         var result = await _sut.SeekAsync(product, new CancellationToken());
 
-        // Verify
+        // Assert
         Assert.Single(result);
         Assert.Equal(AgentHandlingStatus.InvalidPrice, result[0].Status);
     }
@@ -108,7 +108,7 @@ public class PriceSeekerTests
         // Act
         var result = await _sut.SeekAsync(product, new CancellationToken());
 
-        // Verify
+        // Assert
         Assert.Single(result);
         Assert.Equal(AgentHandlingStatus.CouldNotParse, result[0].Status);
     }

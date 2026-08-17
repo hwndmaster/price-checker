@@ -111,26 +111,6 @@
                         "icon": "debug-restart",
                         "iconColor": "errorForeground"
                     },
-                    "Build": {
-                        "command": "commands.runInTerminal",
-                        "args": {
-                            "text": "dotnet build PriceChecker.slnx",
-                            "cwd": "${workspaceFolder}",
-                            "reveal": true
-                        },
-                        "icon": "package",
-                        "iconColor": "textLink.activeForeground"
-                    },
-                    "Test": {
-                        "command": "commands.runInTerminal",
-                        "args": {
-                            "text": "dotnet test PriceChecker.slnx",
-                            "cwd": "${workspaceFolder}",
-                            "reveal": true
-                        },
-                        "icon": "beaker",
-                        "iconColor": "editorBracketHighlight.foreground2"
-                    },
                     "Run AppHost (API + Web + Dashboard)": {
                         "command": "commands.runInTerminal",
                         "args": {

@@ -11,7 +11,8 @@ body {
   margin: 0;
 }
 
-/* Used for the filter panel over the DataTable component */
+/* Used by the menubar of the layout. PrimeFlex is not a dependency, so only the utility
+   classes declared here exist - anything else has to be a style of the component itself. */
 .flex {
     display: flex!important;
 }

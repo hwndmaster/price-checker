@@ -1,1 +1,5 @@
 $color-bg-overlay: #80808030;
+
+/* The viewport width below which the app switches to its mobile layout.
+   Keep in sync with `MobileBreakpoint` in `src/shared/constants.ts`. */
+$mobile-breakpoint: 960px;
