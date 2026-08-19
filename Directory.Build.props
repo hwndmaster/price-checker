@@ -1,7 +1,7 @@
 <Project>
 
   <PropertyGroup>
-    <Version>2.0.0</Version>
+    <Version>2.0.1</Version>
     <Product>Price Checker</Product>
     <Authors>Dima Kravtsov</Authors>
     <Description>A simple price checker</Description>
@@ -22,6 +22,17 @@
 
   <Import Project="$(AtomBuildDirectory)/Genius.Atom.Build.props" Condition="Exists('$(AtomBuildDirectory)/Genius.Atom.Build.props')" />
   <Import Project="$(AtomBuildDirectory)/AtomReferences.targets" Condition="Exists('$(AtomBuildDirectory)/AtomReferences.targets')" />
+
+  <!-- The Atom build assets (analyzers, global usings and PackageVersions.props, which is what
+       enables central package management) come from the genius.atom.build package that
+       "dotnet tool restore" unpacks into the NuGet global packages folder. If the version pinned
+       in .config/dotnet-tools.json drifts from AtomPackageVersion above, that folder does not
+       exist: the imports above silently no-op, central package management stays off and restore
+       fails with a misleading NU1015 on the AppHost. Report the actual cause instead. -->
+  <Target Name="EnsureAtomBuildAssets" BeforeTargets="CollectPackageReferences;PrepareForBuild"
+          Condition="!Exists('$(AtomBuildDirectory)/Genius.Atom.Build.props')">
+    <Error Text="Atom build assets were not found at '$(AtomBuildDirectory)'. Pin genius.atom.build to $(AtomPackageVersion) in .config/dotnet-tools.json (matching AtomPackageVersion in Directory.Build.props) and run 'dotnet tool restore'." />
+  </Target>
 
   <!-- Automated Testing components -->
   <ItemGroup Condition="$(IsTestProject) == 'True' Or $(MSBuildProjectName.EndsWith('.TestingUtil'))">
