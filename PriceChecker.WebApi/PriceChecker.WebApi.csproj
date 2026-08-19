@@ -16,7 +16,9 @@
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Versioning" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Versioning.ApiExplorer" />
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" />
-    <!-- Loaded reflectively by the Serilog configuration reader (see appsettings.json) -->
+    <!-- Loaded reflectively by the Serilog configuration reader (see appsettings.json). Referenced
+         here so they reach the output and deps.json when Atom comes from a local checkout;
+         versions are inherited from Atom's PackageVersions.props. -->
     <PackageReference Include="Serilog.Extensions.Logging.File" />
     <PackageReference Include="Serilog.Sinks.Console" />
     <PackageReference Include="Serilog.Sinks.File" />
