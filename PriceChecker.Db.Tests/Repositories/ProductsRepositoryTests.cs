@@ -121,6 +121,38 @@ public sealed class ProductsRepositoryTests
         Assert.Equal('.', scanSource.Agent.DecimalDelimiter);
     }
 
+    [Fact]
+    public async Task GetOverviewByIdAsync_GivenFailedScanResult_ThenSnapshotIsKeyedByAgentAndIssuesAreReported()
+    {
+        // Arrange
+        await using var context = new RepositoryTestContext();
+        var (productsRepository, agentId) = await CreateSystemUnderTestAsync(context);
+        var created = await productsRepository.CreateAsync(
+            new CreateProductRequest("Test Product", null, null,
+                [new CreateProductSourceRequest(agentId, "B000123")]),
+            cancellationToken: TestContext.Current.CancellationToken);
+        var product = await productsRepository.GetByIdOrThrowAsync(created.EntityId, TestContext.Current.CancellationToken);
+        await productsRepository.AddScanResultsAsync(created.EntityId,
+            [new PriceSeekResult(AgentHandlingStatus.CouldNotMatch, product.Sources[0].Id.Id, "test-agent", null)],
+            TestContext.Current.CancellationToken);
+
+        IReadOnlyCollection<PriceSnapshot>? describedSnapshots = null;
+        A.CallTo(() => _statusProviderMock.DescribeIssues(A<IReadOnlyCollection<PriceSnapshot>>._))
+            .Invokes((IReadOnlyCollection<PriceSnapshot> snapshots) => describedSnapshots = snapshots)
+            .Returns("test-agent: something went wrong");
+
+        // Act
+        var overview = await productsRepository.GetOverviewByIdAsync(created.EntityId, TestContext.Current.CancellationToken);
+
+        // Assert
+        Assert.NotNull(overview);
+        Assert.Equal("test-agent: something went wrong", overview.StatusText);
+        Assert.NotNull(describedSnapshots);
+        var snapshot = Assert.Single(describedSnapshots);
+        Assert.Equal("test-agent", snapshot.AgentKey);
+        Assert.Equal(AgentHandlingStatus.CouldNotMatch, snapshot.Status);
+    }
+
     private async Task<(ProductsRepository ProductsRepository, AgentRef AgentId)> CreateSystemUnderTestAsync(RepositoryTestContext context)
     {
         var agentsRepository = new AgentsRepository(_dateTime, context);

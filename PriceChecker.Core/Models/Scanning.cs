@@ -1,4 +1,4 @@
-namespace Genius.PriceChecker.Core.Models;
+﻿namespace Genius.PriceChecker.Core.Models;
 
 /// <summary>
 ///   The scanning agent definition, detached from any persistence concerns.
@@ -40,5 +40,6 @@ public readonly record struct PriceSeekResult(
 /// </summary>
 public readonly record struct PriceSnapshot(
     AgentHandlingStatus Status,
+    string AgentKey,
     decimal? Price,
     DateTimeOffset FoundDate);

@@ -1,0 +1,111 @@
+# PriceChecker server deployment.
+#
+# Unlike the repo-root docker-compose.yml (which BUILDS the images for local work), this file runs the
+# published images on a server, and it starts exactly ONE service: the Aspire app host. The app host's
+# DCP orchestrator then creates the api and web containers itself on the same Docker daemon, which is
+# what populates the dashboard's Resources page with startable/stoppable resources — a dashboard-only
+# app host has no resource model and shows that page empty.
+#
+# Run from this directory:
+#   docker compose --env-file .env up -d
+#
+# The project name is fixed so container and network names are predictable across restarts.
+name: pricechecker
+
+services:
+  pricechecker-apphost:
+    image: ghcr.io/hwndmaster/pricechecker-apphost:${PRICECHECKER_IMAGE_TAG:-latest}
+    container_name: pricechecker-apphost
+    ports:
+      - "15180:15180"                       # Aspire dashboard UI
+      - "21180:21180"                       # OTLP/gRPC ingest
+      - "21181:21181"                       # OTLP/HTTP ingest (the SPA's traces and logs, via nginx)
+    environment:
+      ASPNETCORE_ENVIRONMENT: Production
+      DOTNET_ENVIRONMENT: Production
+      ASPNETCORE_URLS: http://+:15180
+      ASPIRE_ALLOW_UNSECURED_TRANSPORT: "true"
+      ASPIRE_DASHBOARD_OTLP_ENDPOINT_URL: http://0.0.0.0:21180
+      ASPIRE_DASHBOARD_OTLP_HTTP_ENDPOINT_URL: http://0.0.0.0:21181
+
+      # deployed = DCP owns the containers (full Resources page).
+      # external = compose owns them and the app host only reports them; switch to this, remove the
+      #            docker.sock mount below and uncomment the api/web services if DCP cannot drive the
+      #            container runtime on this host. No rebuild needed, it is only configuration.
+      AppHost__Mode: deployed
+
+      # Must match the `name:` above. Docker Desktop groups containers by the compose project label, and
+      # the app host stamps this one onto the containers it creates so the whole stack shows up as a
+      # single project instead of the app host and its containers appearing as two unrelated ones.
+      Deployment__ComposeProject: pricechecker
+      Deployment__Registry: ${PRICECHECKER_REGISTRY:-ghcr.io/hwndmaster}
+      Deployment__ImageTag: ${PRICECHECKER_IMAGE_TAG:-latest}
+      # nginx in the web container proxies /otlp/ back to this app host. DCP owns the network its
+      # containers sit on and this app host is not on it, so that hop goes over the host gateway to the
+      # OTLP/HTTP port published below. /api/ needs no override: both managed containers share DCP's
+      # network and resolve each other by name.
+      Deployment__WebOtlpUpstream: ${PRICECHECKER_OTLP_UPSTREAM:-http://host.docker.internal:21181}
+      # Always keeps the deployment current, but the daemon must be logged in to the registry when the
+      # app host creates the containers. Missing reuses images already on the host (offline / local test).
+      Deployment__ImagePullPolicy: ${PRICECHECKER_IMAGE_PULL_POLICY:-Always}
+      # DCP publishes its own endpoints on 127.0.0.1 with no way to override it, so the app host adds a
+      # second, reachable publish at this address. 127.0.0.1 here makes the app local-only.
+      Deployment__BindAddress: ${PRICECHECKER_BIND_ADDRESS:-0.0.0.0}
+      Deployment__ApiPort: "${PRICECHECKER_API_PORT:-5080}"
+      Deployment__WebPort: "${PRICECHECKER_WEB_PORT:-5081}"
+
+      # IMPORTANT: these are paths on the DOCKER HOST, not inside this container. The app host asks the
+      # host's daemon to create the api container, and the daemon resolves bind mounts against its own
+      # filesystem. Pointing them at a path that only exists inside this container silently gives the
+      # API an empty database.
+      Deployment__DataPath: ${PRICECHECKER_DATA_PATH:?PRICECHECKER_DATA_PATH must be set (see .env.example)}
+      Deployment__LogsPath: ${PRICECHECKER_LOGS_PATH:?PRICECHECKER_LOGS_PATH must be set (see .env.example)}
+
+      # The dashboard requires a login token by default; it is printed in this container's logs
+      # (docker logs pricechecker-apphost). Set to "true" only on a trusted network — it makes the
+      # dashboard, and every log line and trace in it, readable by anyone who can reach port 15180.
+      DOTNET_DASHBOARD_UNSECURED_ALLOW_ANONYMOUS: "${PRICECHECKER_DASHBOARD_ANONYMOUS:-false}"
+    volumes:
+      # Docker-out-of-docker: lets DCP create sibling containers on the host daemon. This grants this
+      # container root-equivalent control of that daemon — acceptable on a single-tenant host running
+      # only images you build, not on anything shared or internet-exposed.
+      - /var/run/docker.sock:/var/run/docker.sock
+    restart: unless-stopped
+
+  # ── The images DCP manages ─────────────────────────────────────────────────────────────────────
+  # Under the "pull" profile, so `up` never starts them — DCP owns them in deployed mode — while
+  # `--profile pull pull` still fetches them.
+  #
+  # That indirection exists because registry credentials are CLIENT-side (~/.docker/config.json, here
+  # behind Docker Desktop's credential helper), not daemon-side. DCP runs the docker CLI inside the app
+  # host container, which has neither, so a pull from in there is anonymous and fails against a private
+  # registry with "error from registry: unauthorized". Pulling from the host uses the login you already
+  # have; the app host then finds the images present and starts them.
+  #
+  # These are also the full definitions for AppHost__Mode=external: delete the two `profiles:` lines and
+  # compose owns the containers again (then drop the docker.sock mount above and set the mode).
+  pricechecker-api:
+    profiles: ["pull"]
+    image: ghcr.io/hwndmaster/pricechecker-api:${PRICECHECKER_IMAGE_TAG:-latest}
+    container_name: pricechecker-api
+    ports:
+      - "${PRICECHECKER_API_PORT:-5080}:8031"
+    environment:
+      OTEL_EXPORTER_OTLP_ENDPOINT: http://pricechecker-apphost:21180
+      OTEL_EXPORTER_OTLP_PROTOCOL: grpc
+      OTEL_EXPORTER_OTLP_INSECURE: "true"
+      OTEL_SERVICE_NAME: pricechecker-api
+    volumes:
+      - ${PRICECHECKER_DATA_PATH}:/app/Data
+      - ${PRICECHECKER_LOGS_PATH}:/app/Logs
+    restart: unless-stopped
+
+  pricechecker-web:
+    profiles: ["pull"]
+    image: ghcr.io/hwndmaster/pricechecker-web:${PRICECHECKER_IMAGE_TAG:-latest}
+    container_name: pricechecker-web
+    ports:
+      - "${PRICECHECKER_WEB_PORT:-5081}:8032"
+    depends_on:
+      - pricechecker-api
+    restart: unless-stopped

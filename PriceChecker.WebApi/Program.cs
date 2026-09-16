@@ -1,3 +1,4 @@
+using Genius.Atom.Infrastructure.Logging;
 using Genius.Atom.Web.Telemetry;
 using Genius.PriceChecker.WebApi.Hubs;
 using Genius.PriceChecker.WebApi.JsonConverters;
@@ -9,12 +10,24 @@ builder.AddAtomWebTelemetry(options =>
 {
     options.ApplicationName = builder.Environment.ApplicationName;
     options.ActivitySourceName = "Genius.PriceChecker.WebApi.Mvc";
+
+    // The deployed app host supervises this service over /health, so the endpoints have to exist in
+    // Production too. Atom's default maps them in Development only, which left them returning 404 on
+    // the server and made health supervision impossible.
+    options.MapHealthEndpointsInDevelopmentOnly = false;
+
+    // SignalR's own long-lived connections would otherwise produce a request-summary line each.
+    options.RequestLogIgnoredPathPrefixes.Add("/hubs");
 });
 
 builder.Environment.ContentRootPath = Path.Combine(AppContext.BaseDirectory);
 Directory.CreateDirectory(Path.Combine(builder.Environment.ContentRootPath, "Logs"));
 
-Genius.Atom.Infrastructure.Module.Configure(builder.Services, builder.Configuration);
+// ReplaceHostDefaults: CreateBuilder registers the Console, Debug and EventSource providers and Atom
+// adds Serilog, so without this every line reaches the console twice. Atom removes just those four by
+// type, leaving the OpenTelemetry provider AddAtomWebTelemetry registered above untouched.
+Genius.Atom.Infrastructure.Module.Configure(builder.Services, builder.Configuration,
+    options => options.LoggingMode = AtomLoggingMode.ReplaceHostDefaults);
 Genius.Atom.Data.Module.Configure(builder.Services);
 Genius.Atom.Web.Module.Configure(builder,
     new Microsoft.AspNetCore.Mvc.ApiVersion(1, 0),
@@ -61,5 +74,9 @@ app.UseReactAppCors();
 app.MapAtomWebTelemetryEndpoints();
 app.MapControllers();
 app.MapHub<ScanHub>("/hubs/scan");
+
+app.LogAtomStartupSummary(summary => summary
+    .AddFile("Database", dbPath)
+    .Add("Legacy import path", legacyDataPath));
 
 await app.RunAsync().ConfigureAwait(false);

@@ -1,4 +1,5 @@
-using System.Globalization;
+﻿using System.Globalization;
+using System.Text;
 using Genius.Atom.Infrastructure.Io;
 using Genius.Atom.Infrastructure.Net;
 using Genius.PriceChecker.Core.AgentHandlers;
@@ -19,7 +20,7 @@ internal sealed class PriceSeeker : IPriceSeeker
     private readonly IFileService _io;
     private readonly ILogger<PriceSeeker> _logger;
 
-    private static readonly Lock Locker = new();
+    private static readonly SemaphoreSlim DumpLock = new(1, 1);
 
     public PriceSeeker(ITrickyHttpClient trickyHttpClient, IFileService io,
         IAgentHandlersProvider agentHandlersProvider, ILogger<PriceSeeker> logger)
@@ -56,6 +57,7 @@ internal sealed class PriceSeeker : IPriceSeeker
             _logger.LogError(ex, "Failed loading content for source `{ProductSourceAgentKey}`, url = `{Url}`", agent.Key, url);
             throw;
         }
+
         if (content is null)
             return resultTemplate with { Status = AgentHandlingStatus.CouldNotFetch };
 
@@ -66,12 +68,17 @@ internal sealed class PriceSeeker : IPriceSeeker
 
         if (result == AgentHandlingStatus.CouldNotMatch)
         {
-            var dumpFileName = $"dump ({productSource.SourceId}).log";
-            lock (Locker)
+            var dumpFilePath = Path.Combine("Logs", $"dump ({productSource.SourceId}).log");
+            await DumpLock.WaitAsync(cancel).ConfigureAwait(false);
+            try
             {
-                _io.WriteTextToFile(dumpFileName, content);
+                await _io.WriteTextToFileAsync(dumpFilePath, content, Encoding.UTF8, cancel).ConfigureAwait(false);
             }
-            _logger.LogError("Cannot match price from the given content. File = '{DumpFileName}', Url = '{Url}'", dumpFileName, url);
+            finally
+            {
+                DumpLock.Release();
+            }
+            _logger.LogError("Cannot match price from the given content. File = '{DumpFilePath}', Url = '{Url}'", dumpFilePath, url);
             return resultTemplate with { Status = result };
         }
         else if (result == AgentHandlingStatus.CouldNotParse)

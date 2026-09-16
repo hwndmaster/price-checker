@@ -5,6 +5,15 @@ namespace Genius.PriceChecker.Core.Services;
 public interface IProductStatusProvider
 {
     ProductScanStatus DetermineStatus(IReadOnlyCollection<PriceSnapshot> recentPrices);
+
+    /// <summary>
+    ///   Describes, per failing source, why the last scan of a product did not fully succeed.
+    /// </summary>
+    /// <param name="recentPrices">The most recent price of every product source.</param>
+    /// <returns>
+    ///   A newline-separated "&lt;agent&gt;: &lt;reason&gt;" list, or <c>null</c> when every source succeeded.
+    /// </returns>
+    string? DescribeIssues(IReadOnlyCollection<PriceSnapshot> recentPrices);
 }
 
 internal sealed class ProductStatusProvider : IProductStatusProvider
@@ -37,4 +46,27 @@ internal sealed class ProductStatusProvider : IProductStatusProvider
 
         return ProductScanStatus.ScannedOk;
     }
+
+    public string? DescribeIssues(IReadOnlyCollection<PriceSnapshot> recentPrices)
+    {
+        Guard.NotNull(recentPrices);
+
+        var issues = recentPrices
+            .Where(x => x.Status != AgentHandlingStatus.Success)
+            .Select(x => $"{x.AgentKey}: {DescribeStatus(x.Status)}")
+            .Distinct(StringComparer.Ordinal)
+            .ToArray();
+
+        return issues.Length == 0 ? null : string.Join('\n', issues);
+    }
+
+    private static string DescribeStatus(AgentHandlingStatus status)
+        => status switch
+        {
+            AgentHandlingStatus.CouldNotFetch => "the page could not be downloaded",
+            AgentHandlingStatus.CouldNotMatch => "the price pattern did not match the page content",
+            AgentHandlingStatus.CouldNotParse => "the matched value could not be parsed as a price",
+            AgentHandlingStatus.InvalidPrice => "the parsed price is not a valid amount",
+            _ => "the scan did not complete for an unknown reason",
+        };
 }

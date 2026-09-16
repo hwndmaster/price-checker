@@ -36,7 +36,7 @@ export function convertProductOverviewApiToModel(apiOverview: api.ProductOvervie
         category: apiOverview.category ?? null,
         description: apiOverview.description ?? null,
         status: apiOverview.status as ProductScanStatus,
-        statusText: null,
+        statusText: apiOverview.statusText ?? null,
         lowestPrice: apiOverview.lowestPrice ?? null,
         lowestFoundDate: apiOverview.lowestFoundDate ?? null,
         recentPrice: apiOverview.recentPrice ?? null,

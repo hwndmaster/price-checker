@@ -4,7 +4,7 @@ import { useFieldArray, useForm } from "react-hook-form";
 import { translateErrorsToForm } from "@hwndmaster/atom-react-core";
 import { FormDropdown, FormInputText, FormInputTextarea, toastService } from "@hwndmaster/atom-react-prime";
 import { LoadingSpinner } from "@hwndmaster/atom-react-redux";
-import { Button } from "@/primereact";
+import { Button, confirmDialog } from "@/primereact";
 import { ProductRef, productRef, agentRef } from "@/models/types";
 import Product, { ProductSource } from "@/models/product";
 import { productSchema, ProductSchemaData } from "@/schemas/productSchema";
@@ -58,6 +58,23 @@ const ProductEdit: React.FC<ProductEditProps> = ({ productId, onClose }) => {
             });
         }
     }, [product, form, isAddMode]);
+
+    const dropPrices = (): void => {
+        if (product == null) {
+            return;
+        }
+
+        confirmDialog({
+            message: `Are you sure you want to drop the price history of '${product.name}'?`,
+            header: "Prices drop confirmation",
+            icon: "pi pi-exclamation-triangle",
+            accept: () => {
+                dispatch(store.Products.Actions.dropPrices(product.id, () => {
+                    toastService.showSuccess("Prices dropped", `The price history of '${product.name}' has been dropped.`);
+                }));
+            },
+        });
+    };
 
     const onSubmit = (data: ProductSchemaData): void => {
         // Preserve the existing source ids by their position, so that the price history
@@ -154,6 +171,19 @@ const ProductEdit: React.FC<ProductEditProps> = ({ productId, onClose }) => {
                 </div>
 
                 <div className={styles.actions}>
+                    {/* Destructive and unrelated to the form, hence kept away from Save/Cancel. */}
+                    {!isAddMode && (
+                        <Button
+                            type="button"
+                            label="Drop price history"
+                            icon="pi pi-eraser"
+                            severity="warning"
+                            outlined
+                            className={styles.dropPrices}
+                            onClick={dropPrices}
+                            data-test_id="ProductEdit__Drop_Prices_Button"
+                        />
+                    )}
                     <Button type="submit" label="Save" icon="pi pi-check" data-test_id="ProductEdit__Save_Button" />
                     <Button type="button" label="Cancel" icon="pi pi-times" severity="secondary" onClick={onClose} data-test_id="ProductEdit__Cancel_Button" />
                 </div>

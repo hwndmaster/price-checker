@@ -1,4 +1,4 @@
-using System.Linq.Expressions;
+﻿using System.Linq.Expressions;
 using Genius.PriceChecker.Core.Models;
 using Genius.PriceChecker.Core.Services;
 using Genius.PriceChecker.Db.Models;
@@ -102,10 +102,7 @@ internal sealed class ProductsRepository
 
     public async Task<IEnumerable<ProductOverviewDto>> GetOverviewAsync(CancellationToken cancellationToken = default)
     {
-        var products = await GetContext().Set<Product>()
-            .AsNoTracking()
-            .Include(p => p.Sources)
-            .ThenInclude(s => s.Prices)
+        var products = await QueryOverviews()
             .ToArrayAsync(cancellationToken).ConfigureAwait(false);
 
         return products.Select(BuildOverview).ToArray();
@@ -113,10 +110,7 @@ internal sealed class ProductsRepository
 
     public async Task<ProductOverviewDto?> GetOverviewByIdAsync(ProductRef productId, CancellationToken cancellationToken = default)
     {
-        var product = await GetContext().Set<Product>()
-            .AsNoTracking()
-            .Include(p => p.Sources)
-            .ThenInclude(s => s.Prices)
+        var product = await QueryOverviews()
             .FirstOrDefaultAsync(ProductWithId(productId), cancellationToken).ConfigureAwait(false);
 
         return product is null ? null : BuildOverview(product);
@@ -208,10 +202,11 @@ internal sealed class ProductsRepository
     private ProductOverviewDto BuildOverview(Product product)
     {
         var allPrices = product.Sources.SelectMany(s => s.Prices).ToArray();
-        var latestPerSource = product.Sources
-            .Select(s => s.Prices.OrderByDescending(p => p.FoundDate).FirstOrDefault())
-            .Where(p => p is not null)
-            .Select(p => p!)
+        // Keyed by the source, so that a failing source can be named by the agent it is scanned with.
+        var snapshots = product.Sources
+            .Select(s => (Source: s, Price: s.Prices.OrderByDescending(p => p.FoundDate).FirstOrDefault()))
+            .Where(x => x.Price is not null)
+            .Select(x => new PriceSnapshot(x.Price!.Status, x.Source.Agent.Key, x.Price.Price, x.Price.FoundDate))
             .ToArray();
 
         var successfulPrices = allPrices
@@ -221,15 +216,14 @@ internal sealed class ProductsRepository
             ? null
             : successfulPrices.MinBy(p => p.Price);
 
-        var recentSuccessfulPrices = latestPerSource
+        var recentSuccessfulPrices = snapshots
             .Where(p => p.Status == AgentHandlingStatus.Success && p.Price is not null)
             .ToArray();
         var recentPrice = recentSuccessfulPrices.Length == 0
             ? (decimal?)null
             : recentSuccessfulPrices.Min(p => p.Price);
 
-        var status = _statusProvider.DetermineStatus(
-            latestPerSource.Select(p => new PriceSnapshot(p.Status, p.Price, p.FoundDate)).ToArray());
+        var status = _statusProvider.DetermineStatus(snapshots);
 
         return new ProductOverviewDto(
             product.Id,
@@ -237,12 +231,22 @@ internal sealed class ProductsRepository
             product.Category,
             product.Description,
             status,
+            _statusProvider.DescribeIssues(snapshots),
             lowest?.Price,
             lowest?.FoundDate,
             recentPrice,
             allPrices.Length == 0 ? null : allPrices.Max(p => p.FoundDate),
             product.LastModified);
     }
+
+    // The agents are a part of the query because the overview names the failing source by its agent key.
+    private IQueryable<Product> QueryOverviews()
+        => GetContext().Set<Product>()
+            .AsNoTracking()
+            .Include(p => p.Sources)
+            .ThenInclude(s => s.Prices)
+            .Include(p => p.Sources)
+            .ThenInclude(s => s.Agent);
 
     private static Expression<Func<Product, bool>> ProductWithId(ProductRef id)
     {

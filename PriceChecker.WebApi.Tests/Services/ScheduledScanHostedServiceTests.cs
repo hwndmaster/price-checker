@@ -83,6 +83,7 @@ public sealed class ScheduledScanHostedServiceTests
             Category: null,
             Description: null,
             ProductScanStatus.ScannedOk,
+            StatusText: null,
             LowestPrice: null,
             LowestFoundDate: null,
             RecentPrice: null,

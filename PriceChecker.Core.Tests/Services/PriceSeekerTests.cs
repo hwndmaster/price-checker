@@ -1,3 +1,4 @@
+﻿using System.Text;
 using Genius.Atom.Infrastructure.Io;
 using Genius.Atom.Infrastructure.Net;
 using Genius.Atom.Infrastructure.TestingUtil;
@@ -40,7 +41,7 @@ public class PriceSeekerTests
 
         // Assert
         Assert.Equal(product.Sources.Length, result.Length);
-        A.CallTo(() => _fileMock.WriteTextToFile(A<string>._, A<string>._)).MustNotHaveHappened();
+        A.CallTo(() => _fileMock.WriteTextToFileAsync(A<string>._, A<string>._, A<Encoding>._, A<CancellationToken?>._)).MustNotHaveHappened();
         Assert.DoesNotContain(_logger.Logs, x => x.LogLevel is LogLevel.Error or LogLevel.Warning);
     }
 
@@ -75,7 +76,7 @@ public class PriceSeekerTests
         // Assert
         Assert.Single(result);
         Assert.Equal(AgentHandlingStatus.CouldNotMatch, result[0].Status);
-                A.CallTo(() => _fileMock.WriteTextToFile(A<string>._, A<string>._)).MustHaveHappenedOnceExactly();
+        A.CallTo(() => _fileMock.WriteTextToFileAsync(A<string>._, A<string>._, A<Encoding>._, A<CancellationToken?>._)).MustHaveHappenedOnceExactly();
         Assert.Single(_logger.Logs, x => x.LogLevel is LogLevel.Error);
     }
 

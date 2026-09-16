@@ -13,3 +13,8 @@
 .sourceArgument {
     flex: 1;
 }
+
+// `.actions` (from forms.scss) is right-aligned; the destructive action sits opposite of it.
+.dropPrices {
+    margin-right: auto;
+}

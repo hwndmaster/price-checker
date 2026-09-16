@@ -33,6 +33,13 @@
     gap: 0.25rem;
 }
 
+// The scan status tooltip puts every failing source on a line of its own.
+.statusTooltip {
+    :global(.p-tooltip-text) {
+        white-space: pre-line;
+    }
+}
+
 @media (max-width: $mobile-breakpoint) {
     // There is no room left for the search box next to the buttons, so it takes a line of its own.
     .searchField {

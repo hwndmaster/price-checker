@@ -1,4 +1,4 @@
-using Genius.PriceChecker.Core.Models;
+﻿using Genius.PriceChecker.Core.Models;
 using Genius.PriceChecker.Dto.References;
 
 namespace Genius.PriceChecker.Dto;
@@ -13,6 +13,7 @@ public sealed record ProductOverviewDto(
     string? Category,
     string? Description,
     ProductScanStatus Status,
+    string? StatusText,
     decimal? LowestPrice,
     DateTimeOffset? LowestFoundDate,
     decimal? RecentPrice,

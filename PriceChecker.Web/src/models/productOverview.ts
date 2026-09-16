@@ -10,7 +10,7 @@ interface ProductOverview {
     category: string | null;
     description: string | null;
     status: ProductScanStatus;
-    /** An additional status detail. Only assigned by the live scan updates. */
+    /** Why the last scan did not fully succeed, per failing source; one line each. */
     statusText: string | null;
     lowestPrice: number | null;
     lowestFoundDate: number | null;

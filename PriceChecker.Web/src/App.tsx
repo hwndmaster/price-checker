@@ -3,6 +3,7 @@ import { Provider } from "react-redux";
 import { PersistGate } from "redux-persist/integration/react";
 import { LoadingSpinner } from "@hwndmaster/atom-react-redux";
 import { ToastProvider } from "@hwndmaster/atom-react-prime";
+import { AtomErrorBoundary } from "@hwndmaster/atom-web-telemetry";
 import { ConfirmDialog, PrimeReactProvider } from "@/primereact";
 
 import { setupAxiosInstances } from "./api/setup";
@@ -25,18 +26,20 @@ void startScanHubConnection();
 
 const App: React.FC = () => {
     return (
-        <Provider store={getStore()}>
-            <PersistGate loading={null} persistor={getPersistor()}>
-                <PrimeReactProvider>
-                    <ConfirmDialog />
-                    <ToastProvider>
-                        <LoadingSpinner target={LoadingTargets.WholePage}>
-                            <RootComponent />
-                        </LoadingSpinner>
-                    </ToastProvider>
-                </PrimeReactProvider>
-            </PersistGate>
-        </Provider>
+        <AtomErrorBoundary>
+            <Provider store={getStore()}>
+                <PersistGate loading={null} persistor={getPersistor()}>
+                    <PrimeReactProvider>
+                        <ConfirmDialog />
+                        <ToastProvider>
+                            <LoadingSpinner target={LoadingTargets.WholePage}>
+                                <RootComponent />
+                            </LoadingSpinner>
+                        </ToastProvider>
+                    </PrimeReactProvider>
+                </PersistGate>
+            </Provider>
+        </AtomErrorBoundary>
     );
 };
 

@@ -1,4 +1,4 @@
-using Genius.Atom.Infrastructure.TestingUtil;
+﻿using Genius.Atom.Infrastructure.TestingUtil;
 using Genius.PriceChecker.Core.Models;
 using Genius.PriceChecker.Core.Services;
 
@@ -105,9 +105,60 @@ public sealed class ProductStatusProviderTests
         Assert.Equal(ProductScanStatus.Outdated, sut.DetermineStatus(prices));
     }
 
+    [Fact]
+    public void DescribeIssues_GivenAllSourcesSucceeded_ThenNoDescription()
+    {
+        // Arrange
+        var sut = CreateSut(new DateTimeOffset(2026, 1, 15, 18, 0, 0, WinterOffset));
+        var prices = new[] { Snapshot(new DateTimeOffset(2026, 1, 15, 9, 5, 0, WinterOffset)) };
+
+        // Act & Assert
+        Assert.Null(sut.DescribeIssues(prices));
+    }
+
+    [Fact]
+    public void DescribeIssues_GivenFailingSources_ThenEachFailureIsNamedByItsAgent()
+    {
+        // Arrange
+        var sut = CreateSut(new DateTimeOffset(2026, 1, 15, 18, 0, 0, WinterOffset));
+        var foundDate = new DateTimeOffset(2026, 1, 15, 9, 5, 0, WinterOffset);
+        var prices = new[]
+        {
+            Snapshot(foundDate, agentKey: "ok-agent"),
+            Snapshot(foundDate, AgentHandlingStatus.CouldNotMatch, "matchless-agent"),
+            Snapshot(foundDate, AgentHandlingStatus.CouldNotFetch, "offline-agent"),
+            // A second source running through the same agent, failing the same way.
+            Snapshot(foundDate, AgentHandlingStatus.CouldNotMatch, "matchless-agent"),
+        };
+
+        // Act
+        var description = sut.DescribeIssues(prices);
+
+        // Assert
+        Assert.NotNull(description);
+        var lines = description.Split('\n');
+        Assert.Equal(2, lines.Length);
+        Assert.StartsWith("matchless-agent: ", lines[0], StringComparison.Ordinal);
+        Assert.StartsWith("offline-agent: ", lines[1], StringComparison.Ordinal);
+        Assert.DoesNotContain("ok-agent", description, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void DescribeIssues_GivenStalePricesWithAFailure_ThenStillDescribesTheFailure()
+    {
+        // Arrange
+        // The status reads as Outdated, but the failing source is what the user can act upon.
+        var sut = CreateSut(new DateTimeOffset(2026, 1, 15, 18, 0, 0, WinterOffset));
+        var foundDate = new DateTimeOffset(2026, 1, 10, 9, 5, 0, WinterOffset);
+        var prices = new[] { Snapshot(foundDate, AgentHandlingStatus.InvalidPrice, "broken-agent") };
+
+        // Act & Assert
+        Assert.StartsWith("broken-agent: ", sut.DescribeIssues(prices), StringComparison.Ordinal);
+    }
+
     private static PriceSnapshot Snapshot(DateTimeOffset foundDate,
-        AgentHandlingStatus status = AgentHandlingStatus.Success)
-        => new(status, 100m, foundDate);
+        AgentHandlingStatus status = AgentHandlingStatus.Success, string agentKey = "test-agent")
+        => new(status, agentKey, 100m, foundDate);
 
     private IProductStatusProvider CreateSut(DateTimeOffset now)
     {

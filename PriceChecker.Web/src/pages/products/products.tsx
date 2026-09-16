@@ -64,29 +64,23 @@ const Products: React.FC = () => {
         });
     };
 
-    const dropPrices = (product: ProductOverview): void => {
-        confirmDialog({
-            message: `Are you sure you want to drop the price history of '${product.name}'?`,
-            header: "Prices drop confirmation",
-            icon: "pi pi-exclamation-triangle",
-            accept: () => {
-                dispatch(store.Products.Actions.dropPrices(product.id, () => {
-                    toastService.showSuccess("Prices dropped", `The price history of '${product.name}' has been dropped.`);
-                }));
-            },
-        });
-    };
-
     const statusTemplate = (product: ProductOverview): React.ReactNode => {
         const presentation = getScanStatusPresentation(product.status);
         const elementId = `product-status-${product.id}`;
         // On mobile the badge is reduced to its icon, so the tooltip has to carry the label as well.
+        // `statusText` lists one failing source per line, hence the pre-line tooltip.
         const tooltip = product.statusText != null
-            ? `${presentation.label}: ${product.statusText}`
+            ? `${presentation.label}\n${product.statusText}`
             : presentation.label;
         return (
             <>
-                <Tooltip target={`#${elementId}`} content={tooltip} event="both" position="left" />
+                <Tooltip
+                    target={`#${elementId}`}
+                    content={tooltip}
+                    className={styles.statusTooltip}
+                    event="both"
+                    position="left"
+                />
                 <Tag
                     id={elementId}
                     icon={presentation.icon}
@@ -148,14 +142,6 @@ const Products: React.FC = () => {
                 tooltip="Edit"
                 onClick={() => openEditDialog(product)}
                 data-test_id="Products__Edit_Button"
-            />
-            <Button
-                icon="pi pi-eraser"
-                rounded text
-                severity="warning"
-                tooltip="Drop price history"
-                onClick={() => dropPrices(product)}
-                data-test_id="Products__Drop_Prices_Button"
             />
             <Button
                 icon="pi pi-trash"
@@ -224,7 +210,7 @@ const Products: React.FC = () => {
                     body={(p: ProductOverview) => formatDateFromTicks(p.lastScannedDate)}
                     headerStyle={{ width: "11rem" }}
                 />
-                <Column body={actionsTemplate} headerStyle={{ width: "13rem" }} />
+                <Column body={actionsTemplate} headerStyle={{ width: "10rem" }} />
             </DataTable>
 
             <Dialog

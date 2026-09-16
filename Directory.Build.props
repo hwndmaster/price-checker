@@ -1,7 +1,7 @@
 <Project>
 
   <PropertyGroup>
-    <Version>2.0.1</Version>
+    <Version>2.0.2</Version>
     <Product>Price Checker</Product>
     <Authors>Dima Kravtsov</Authors>
     <Description>A simple price checker</Description>
@@ -10,7 +10,7 @@
     <RootNamespace>Genius.$(MSBuildProjectName)</RootNamespace>
     <AssemblyName>$(RootNamespace)</AssemblyName>
 
-    <AtomPackageVersion>0.2.10</AtomPackageVersion>
+    <AtomPackageVersion>0.2.12</AtomPackageVersion>
     <!-- Local development: use the Atom source checkout directly -->
     <AtomBuildDirectory Condition="Exists('C:\Dev\Src\atom\Atom.Build\build')">C:\Dev\Src\atom\Atom.Build\build</AtomBuildDirectory>
     <!-- CI/Docker fallback: use the restored NuGet package (Windows) -->

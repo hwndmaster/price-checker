@@ -1375,6 +1375,7 @@ export interface ProductOverviewDto {
     category: string | undefined;
     description: string | undefined;
     status: number;
+    statusText: string | undefined;
     lowestPrice: number | undefined;
     lowestFoundDate: number | undefined;
     recentPrice: number | undefined;

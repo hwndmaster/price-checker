@@ -1,12 +1,13 @@
 import React from "react";
 import { createRoot } from "react-dom/client";
 import { setNotificationService } from "@hwndmaster/atom-web-core";
+import { setupAtomTelemetry } from "@hwndmaster/atom-web-telemetry";
 import { toastService } from "@hwndmaster/atom-react-prime";
 import App from "./App";
-import { setupOpenTelemetry } from "./telemetry/setupOpenTelemetry";
 import * as serviceWorker from "./serviceWorker";
 
-setupOpenTelemetry();
+// Before rendering, so a failure during start-up is still reported.
+setupAtomTelemetry({ serviceName: "pricechecker-web", environment: import.meta.env.MODE });
 
 setNotificationService(toastService);
 
