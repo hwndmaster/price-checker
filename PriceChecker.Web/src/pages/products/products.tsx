@@ -13,6 +13,7 @@ import {
     Tag,
     Tooltip,
 } from "@/primereact";
+import type { DataTableSortMeta } from "@/primereact";
 import { ProductScanStatus } from "@/models/enums";
 import ProductOverview from "@/models/productOverview";
 import { ProductRef, productRef } from "@/models/types";
@@ -23,6 +24,20 @@ import { getScanStatusPresentation } from "@/shared/scanStatus";
 import * as store from "@/store";
 import ProductEdit from "@/components/productEdit/productEdit";
 import styles from "@/styles/dataTablePage.module.scss";
+
+// The category leads the sort because PrimeReact only emits one subheader per *consecutive* run of
+// rows sharing the grouping field: sorting by anything else first tears a category into several
+// groups. It stays in front when the user sorts by another column, which then orders the products
+// within their category.
+const productsSortOrder: DataTableSortMeta[] = [
+    { field: "category", order: 1 },
+    { field: "name", order: 1 },
+];
+
+// A value the product has no data for yet renders as an empty string. In the table that is simply an
+// empty cell, but on a card it would be a line stating nothing, so the cell is marked for the card
+// layout to drop.
+const valueCellClass = (formatted: string): string => (formatted === "" ? styles.cardEmptyValue : "");
 
 const Products: React.FC = () => {
     const dispatch = store.useAppDispatch();
@@ -67,7 +82,6 @@ const Products: React.FC = () => {
     const statusTemplate = (product: ProductOverview): React.ReactNode => {
         const presentation = getScanStatusPresentation(product.status);
         const elementId = `product-status-${product.id}`;
-        // On mobile the badge is reduced to its icon, so the tooltip has to carry the label as well.
         // `statusText` lists one failing source per line, hence the pre-line tooltip.
         const tooltip = product.statusText != null
             ? `${presentation.label}\n${product.statusText}`
@@ -86,7 +100,6 @@ const Products: React.FC = () => {
                     icon={presentation.icon}
                     severity={presentation.severity}
                     value={presentation.label}
-                    className={styles.statusTag}
                     // Makes the tag focusable, so that tapping it opens the tooltip on a touch device.
                     tabIndex={0}
                     data-test_id="Products__Status"
@@ -162,30 +175,41 @@ const Products: React.FC = () => {
                 header={header}
                 globalFilter={globalFilter}
                 globalFilterFields={["name", "category", "description"]}
-                sortMode="single"
-                sortField="name"
-                sortOrder={1}
+                sortMode="multiple"
+                multiSortMeta={productsSortOrder}
                 rowGroupMode="subheader"
                 groupRowsBy="category"
                 rowGroupHeaderTemplate={(product: ProductOverview) => (
                     <span className={styles.groupHeader} data-test_id="Products__Category_Group">{product.category ?? "Uncategorized"}</span>
                 )}
                 emptyMessage="No products yet. Add your first product to start tracking prices."
-                className={styles.responsiveTable}
+                className={`${styles.responsiveTable} ${styles.groupedTable}`}
                 responsiveLayout="stack"
                 breakpoint={MobileBreakpoint}
                 data-test_id="Products__Table"
             >
                 {/* The column widths are set on the header cells only: in the stacked layout the body
                     cells span the whole card and must not be constrained. */}
-                <Column body={statusTemplate} header="Status" headerStyle={{ width: "12rem" }} />
-                <Column field="name" header="Name" sortable data-test_id="Products__Name" />
+                <Column
+                    body={statusTemplate}
+                    header="Status"
+                    headerStyle={{ width: "12rem" }}
+                    bodyClassName={styles.cardStatus}
+                />
+                <Column
+                    field="name"
+                    header="Name"
+                    sortable
+                    bodyClassName={styles.cardTitle}
+                    data-test_id="Products__Name"
+                />
                 <Column
                     field="lowestPrice"
                     header="Lowest Price"
                     sortable
                     align="right"
                     body={(p: ProductOverview) => formatPrice(p.lowestPrice)}
+                    bodyClassName={(p: ProductOverview) => valueCellClass(formatPrice(p.lowestPrice))}
                     headerStyle={{ width: "10rem" }}
                 />
                 <Column
@@ -194,6 +218,7 @@ const Products: React.FC = () => {
                     sortable
                     align="right"
                     body={(p: ProductOverview) => formatPrice(p.recentPrice)}
+                    bodyClassName={(p: ProductOverview) => valueCellClass(formatPrice(p.recentPrice))}
                     headerStyle={{ width: "10rem" }}
                 />
                 <Column
@@ -201,6 +226,7 @@ const Products: React.FC = () => {
                     header="Lowest Found On"
                     sortable
                     body={(p: ProductOverview) => formatDateFromTicks(p.lowestFoundDate)}
+                    bodyClassName={(p: ProductOverview) => valueCellClass(formatDateFromTicks(p.lowestFoundDate))}
                     headerStyle={{ width: "11rem" }}
                 />
                 <Column
@@ -208,9 +234,10 @@ const Products: React.FC = () => {
                     header="Last Updated"
                     sortable
                     body={(p: ProductOverview) => formatDateFromTicks(p.lastScannedDate)}
+                    bodyClassName={(p: ProductOverview) => valueCellClass(formatDateFromTicks(p.lastScannedDate))}
                     headerStyle={{ width: "11rem" }}
                 />
-                <Column body={actionsTemplate} headerStyle={{ width: "10rem" }} />
+                <Column body={actionsTemplate} headerStyle={{ width: "10rem" }} bodyClassName={styles.cardActions} />
             </DataTable>
 
             <Dialog

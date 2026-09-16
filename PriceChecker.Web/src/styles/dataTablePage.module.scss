@@ -1,9 +1,14 @@
 // Shared styles of the DataTable-based list pages (Products, Agents).
 //
-// Below `$mobile-breakpoint` those tables run in PrimeReact's stacked layout
-// (`responsiveLayout="stack"`): the column headers are hidden and every cell becomes a full-width
-// "<column header> ... <value>" line. The rules below group those lines into one card per record,
-// so a record stays completely readable without horizontal scrolling.
+// A table opts into two of them through its `className`:
+//   `responsiveTable` - below `$mobile-breakpoint` the table runs in PrimeReact's stacked layout
+//       (`responsiveLayout="stack"`), where the column headers are hidden and every cell becomes a
+//       full-width "<column header> ... <value>" line. The rules at the bottom of this file
+//       rearrange those lines into one card per record, so a record stays completely readable
+//       without horizontal scrolling. The `card*` classes are attached to the cells through the
+//       `bodyClassName` of their column; they name the role a cell plays on a card and do nothing
+//       in the table layout.
+//   `groupedTable` - the table groups its rows under a subheader (`rowGroupMode="subheader"`).
 
 .header {
     display: flex;
@@ -24,10 +29,6 @@
     }
 }
 
-.groupHeader {
-    font-weight: 700;
-}
-
 .rowActions {
     display: flex;
     gap: 0.25rem;
@@ -38,6 +39,62 @@
     :global(.p-tooltip-text) {
         white-space: pre-line;
     }
+}
+
+// The name of a row group, e.g. a product category.
+.groupHeader {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--primary-color);
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+
+    // The bar ties the name to the rail that runs down the left of the group.
+    &::before {
+        content: "";
+        width: 0.2rem;
+        height: 0.9rem;
+        border-radius: 1px;
+        background: currentcolor;
+    }
+}
+
+// The rows of a group keep the card background of the table while its subheader drops to the page
+// background, so a group reads as a block of rows instead of as one more row among them.
+.groupedTable :global(.p-datatable-tbody) {
+    > tr:global(.p-rowgroup-header) {
+        background: var(--surface-ground);
+
+        > td {
+            padding: 1.5rem 0 0.4rem;
+            border: 0 none;
+        }
+
+        // The first group opens right below the table header and needs no air above it.
+        &:first-child > td {
+            padding-top: 0.5rem;
+        }
+    }
+
+    // The rail down the left of a group, which the rows of the group are indented behind. Only the
+    // records belong to a group: the subheaders, the footers and the empty message do not.
+    > tr:not(
+        :global(.p-rowgroup-header),
+        :global(.p-rowgroup-footer),
+        :global(.p-datatable-emptymessage)
+    ) > td:first-child {
+        border-left: 0.2rem solid var(--primary-color);
+        padding-left: 1.25rem;
+    }
+}
+
+// Grouping needs `sortMode="multiple"` with the grouping field leading the sort, which is an
+// implementation detail: numbering the sorted columns would only expose it.
+.groupedTable :global(.p-sortable-column-badge) {
+    display: none;
 }
 
 @media (max-width: $mobile-breakpoint) {
@@ -57,39 +114,55 @@
             > :global(.p-datatable-tbody) {
                 display: block;
 
-                // A record card.
+                // A record card. Its cells are laid out by their `order`, which is why the card can
+                // lead with the name although the status is the first column of the table.
                 > tr {
-                    display: block;
-                    margin-bottom: 0.75rem;
-                    padding: 0.25rem 0;
+                    display: flex;
+                    flex-wrap: wrap;
+                    // The side margin lines the cards up with the header of the table above them.
+                    margin: 0 1rem 0.75rem;
+                    padding: 0.6rem 0.75rem 0.5rem;
                     border: 1px solid var(--surface-border);
                     border-radius: var(--border-radius);
                     background: var(--surface-card);
+                    box-shadow: 0 1px 2px rgb(0 0 0 / 30%);
                 }
 
                 // The group rows delimit the cards, they are not cards themselves. Note that
                 // PrimeReact emits a footer row per group even without a footer template.
                 > tr:global(.p-rowgroup-header),
                 > tr:global(.p-rowgroup-footer) {
+                    display: block;
                     padding: 0;
                     border: 0 none;
                     border-radius: 0;
                     background: none;
+                    box-shadow: none;
                 }
 
                 > tr:global(.p-rowgroup-header) {
-                    margin-bottom: 0.25rem;
+                    margin-bottom: 0.4rem;
+
+                    > td {
+                        padding: 0.85rem 1rem 0.3rem;
+                    }
+
+                    &:first-child > td {
+                        padding-top: 0;
+                    }
                 }
 
                 > tr:global(.p-rowgroup-footer) {
                     margin-bottom: 0;
                 }
 
-                // A single "<column header> ... <value>" line within a card.
+                // A single "<column header> ... <value>" line within a card. The reset also drops
+                // the rail of a grouped table: on a card the border already ties the cells together.
                 > tr > td {
+                    flex: 1 0 100%;
                     gap: 1rem;
                     min-width: 0;
-                    padding: 0.35rem 0.75rem;
+                    padding: 0.2rem 0;
                     border: 0 none;
                     overflow-wrap: anywhere;
                 }
@@ -104,17 +177,44 @@
                 > tr > td > :global(.p-column-title):empty {
                     display: none;
                 }
-            }
-        }
 
-        // Status badges shrink to their icon, their text is reachable through the tooltip.
-        .statusTag {
-            :global(.p-tag-value) {
-                display: none;
-            }
+                // A line whose value is unknown states nothing, e.g. the price of a product that
+                // has never been scanned successfully.
+                > tr > td.cardEmptyValue {
+                    display: none;
+                }
 
-            :global(.p-tag-icon) {
-                margin-right: 0;
+                // The card title and the status below it carry their own meaning, their column
+                // labels would only repeat it.
+                > tr > td.cardTitle,
+                > tr > td.cardStatus {
+                    justify-content: flex-start;
+
+                    > :global(.p-column-title) {
+                        display: none;
+                    }
+                }
+
+                > tr > td.cardTitle {
+                    order: -2;
+                    font-size: 1.05rem;
+                    font-weight: 600;
+                    line-height: 1.35;
+                }
+
+                > tr > td.cardStatus {
+                    order: -1;
+                    padding-bottom: 0.45rem;
+                }
+
+                // The actions close the card, set apart from the values above them.
+                > tr > td.cardActions {
+                    order: 1;
+                    justify-content: flex-end;
+                    margin-top: 0.4rem;
+                    padding-top: 0.35rem;
+                    border-top: 1px solid var(--surface-border);
+                }
             }
         }
     }

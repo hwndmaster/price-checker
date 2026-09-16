@@ -13,6 +13,7 @@ export type {
     DataTableFilterMetaData,
     DataTablePageEvent,
     DataTableRowEvent,
+    DataTableSortMeta,
     DataTableValueArray,
 } from "primereact/datatable";
 export { Dialog } from "primereact/dialog";
