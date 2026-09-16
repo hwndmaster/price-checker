@@ -71,6 +71,24 @@ Whether a run is due is derived from the products' own last scan dates, not from
 overnight shutdown or a restart does not skip a day — the scan happens as soon as the API is up
 again, and never twice for the same day.
 
+### Pacing
+
+A scan does not fetch everything at once. All the sources of a scan — a daily one or a manual one
+from the UI — are regrouped into one queue per domain, resolved from the agent URL, so that a site
+shared by several agents and several products (`amazon.de`, `amazon.de_alt` and `amazon.de_div100`
+all fetch `www.amazon.de`) is reached by one request at a time, while the other sites are scanned in
+parallel. A product is reported as scanned once its last source has been, whichever queue that was.
+
+Configured under `Scanning:Pacing`:
+
+| Key | Default | Meaning |
+| --- | --- | --- |
+| `SameDomainDelay` | `00:00:30` | Pause between two requests to the same domain. The first request to a domain is never delayed; zero leaves only the per-domain serialization. |
+| `SameDomainDelayJitter` | `0.2` | How far a pause may deviate from `SameDomainDelay`, as a fraction of it: `0.2` spreads a 30 second pause over 24–36 seconds, so the requests do not arrive on an exact, machine-like beat. |
+| `MaxParallelDomains` | `8` | How many domains are scanned in parallel, and with that the upper bound of concurrent outgoing requests. |
+
+A scan therefore takes about `SameDomainDelay` × (sources of the busiest domain − 1) at the least.
+
 ## Data
 
 The SQLite database lives in `Data/PriceChecker.db` next to the API binaries and is migrated

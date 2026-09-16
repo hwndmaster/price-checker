@@ -10,7 +10,12 @@ namespace Genius.PriceChecker.Core.Services;
 
 public interface IPriceSeeker
 {
-    Task<PriceSeekResult[]> SeekAsync(ScanProduct product, CancellationToken cancel);
+    /// <summary>
+    ///   Fetches and parses the price of a single product source. Seeking one source at a time is what
+    ///   lets <see cref="IScanSessionRunner"/> spread the sources of a session over their domains; the
+    ///   failures that are not a parsing outcome, such as an unreachable host, are reported by throwing.
+    /// </summary>
+    Task<PriceSeekResult> SeekAsync(ScanSource productSource, CancellationToken cancel);
 }
 
 internal sealed class PriceSeeker : IPriceSeeker
@@ -31,18 +36,10 @@ internal sealed class PriceSeeker : IPriceSeeker
         _logger = logger.NotNull();
     }
 
-    public async Task<PriceSeekResult[]> SeekAsync(ScanProduct product, CancellationToken cancel)
+    public async Task<PriceSeekResult> SeekAsync(ScanSource productSource, CancellationToken cancel)
     {
-        Guard.NotNull(product);
+        Guard.NotNull(productSource);
 
-        var result = product.Sources.AsParallel().Select(async (productSource) =>
-            await SeekAsync(productSource, cancel).ConfigureAwait(false));
-
-        return await Task.WhenAll(result).ConfigureAwait(false);
-    }
-
-    private async Task<PriceSeekResult> SeekAsync(ScanSource productSource, CancellationToken cancel)
-    {
         var agent = productSource.Agent;
         var url = string.Format(CultureInfo.InvariantCulture, agent.Url, productSource.Argument);
         string? content;

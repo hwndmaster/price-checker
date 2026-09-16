@@ -5,14 +5,14 @@ import AppRoutes from "./shared/routes";
 import Layout from "./components/layout/Layout";
 import Products from "./pages/products";
 import Agents from "./pages/agents";
-import Error from "./pages/error";
+import ErrorPage from "./pages/error";
 import NotFound from "./pages/notFound";
 
 const router = createBrowserRouter([
     {
         path: "/",
         element: <Layout />,
-        errorElement: <Error />,
+        errorElement: <ErrorPage />,
         children: [
             {
                 path: AppRoutes.Default.path,

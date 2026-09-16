@@ -34,12 +34,15 @@ Genius.Atom.Web.Module.Configure(builder,
     configureJsonOptions: jsonOptions => JsonSetup.SetupJsonOptions(jsonOptions));
 
 // Bound here rather than inside Core, so that the domain library stays free of configuration concerns.
-// Absent keys keep the defaults declared on ScanScheduleOptions; a malformed value fails fast.
+// Absent keys keep the defaults declared on the options records; a malformed value fails fast.
 var scanScheduleOptions = builder.Configuration
     .GetSection(Genius.PriceChecker.Core.Module.ScanScheduleSection)
     .Get<Genius.PriceChecker.Core.ScanScheduleOptions>() ?? new();
+var scanPacingOptions = builder.Configuration
+    .GetSection(Genius.PriceChecker.Core.Module.ScanPacingSection)
+    .Get<Genius.PriceChecker.Core.ScanPacingOptions>() ?? new();
 
-Genius.PriceChecker.Core.Module.Configure(builder.Services, scanScheduleOptions);
+Genius.PriceChecker.Core.Module.Configure(builder.Services, scanScheduleOptions, scanPacingOptions);
 Genius.PriceChecker.Db.Module.Configure(builder.Services, builder.Configuration);
 Genius.PriceChecker.WebApi.Module.Configure(builder.Services);
 

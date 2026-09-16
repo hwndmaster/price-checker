@@ -31,6 +31,10 @@ internal sealed class PriceCheckerWebApiFactory : WebApplicationFactory<Program>
         {
             // No legacy JSON files there, so the one-time import is skipped.
             ["Database:LegacyImportPath"] = _emptyLegacyDataPath,
+
+            // A scenario that triggers a scan would otherwise pause for the configured half minute
+            // between two sources of the same site.
+            ["Scanning:Pacing:SameDomainDelay"] = "00:00:00",
         }));
         builder.ConfigureTestServices(services =>
         {

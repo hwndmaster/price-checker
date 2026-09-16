@@ -13,13 +13,25 @@ public static class Module
     /// </summary>
     public const string ScanScheduleSection = "Scanning:Schedule";
 
-    public static void Configure(IServiceCollection services, ScanScheduleOptions scanScheduleOptions)
+    /// <summary>
+    ///   The configuration section the <see cref="ScanPacingOptions"/> are bound from by the host.
+    /// </summary>
+    public const string ScanPacingSection = "Scanning:Pacing";
+
+    public static void Configure(IServiceCollection services, ScanScheduleOptions scanScheduleOptions,
+        ScanPacingOptions scanPacingOptions)
     {
-        // Scan schedule
+        Guard.NotNull(scanPacingOptions);
+        scanPacingOptions.Validate();
+
+        // Scan schedule and pacing
         services.AddSingleton<IScanSchedule>(new ScanSchedule(scanScheduleOptions));
+        services.AddSingleton(scanPacingOptions);
 
         // Services
         services.AddTransient<IPriceSeeker, PriceSeeker>();
+        services.AddSingleton<IDelayService, DelayService>();
+        services.AddSingleton<IScanSessionRunner, ScanSessionRunner>();
         services.AddTransient<IProductStatusProvider, ProductStatusProvider>();
 
         // Agent Handlers

@@ -14,19 +14,24 @@ public interface IScanOrchestrator
     Task ScanAsync(IReadOnlyCollection<ProductRef>? productIds = null, CancellationToken cancellationToken = default);
 }
 
-internal sealed class ScanOrchestrator : IScanOrchestrator
+/// <summary>
+///   Drives a scanning session: it collects what is to be scanned, hands it to the
+///   <see cref="IScanSessionRunner"/>, which decides in which order and at which pace the sources are
+///   fetched, and turns what comes back into stored prices and pushed notifications.
+/// </summary>
+internal sealed class ScanOrchestrator : IScanOrchestrator, IScanSessionObserver
 {
-    private const int MaxParallelProductScans = 4;
-
     private readonly IServiceScopeFactory _scopeFactory;
+    private readonly IScanSessionRunner _sessionRunner;
     private readonly IScanContext _scanContext;
     private readonly IScanNotifier _notifier;
     private readonly ILogger<ScanOrchestrator> _logger;
 
-    public ScanOrchestrator(IServiceScopeFactory scopeFactory, IScanContext scanContext,
-        IScanNotifier notifier, ILogger<ScanOrchestrator> logger)
+    public ScanOrchestrator(IServiceScopeFactory scopeFactory, IScanSessionRunner sessionRunner,
+        IScanContext scanContext, IScanNotifier notifier, ILogger<ScanOrchestrator> logger)
     {
         _scopeFactory = scopeFactory.NotNull();
+        _sessionRunner = sessionRunner.NotNull();
         _scanContext = scanContext.NotNull();
         _notifier = notifier.NotNull();
         _logger = logger.NotNull();
@@ -51,38 +56,31 @@ internal sealed class ScanOrchestrator : IScanOrchestrator
         _scanContext.NotifyScanStarted(scanProducts.Length);
         await _notifier.ScanProgressAsync(_scanContext.GetProgress()).ConfigureAwait(false);
 
-        var parallelOptions = new ParallelOptions
-        {
-            MaxDegreeOfParallelism = MaxParallelProductScans,
-            CancellationToken = cancellationToken,
-        };
-        await Parallel.ForEachAsync(scanProducts, parallelOptions,
-            async (product, token) => await ScanSingleProductAsync(product, token).ConfigureAwait(false))
-            .ConfigureAwait(false);
+        await _sessionRunner.RunAsync(scanProducts, this, cancellationToken).ConfigureAwait(false);
     }
 
-    private async Task ScanSingleProductAsync(ScanProduct product, CancellationToken cancellationToken)
+    Task IScanSessionObserver.OnProductStartedAsync(ScanProduct product, CancellationToken cancellationToken)
+        => _notifier.ProductScanStartedAsync(new ProductRef(product.ProductId));
+
+    async Task IScanSessionObserver.OnProductScannedAsync(ScanProduct product, IReadOnlyCollection<PriceSeekResult> results,
+        CancellationToken cancellationToken)
     {
         var productRef = new ProductRef(product.ProductId);
-        await _notifier.ProductScanStartedAsync(productRef).ConfigureAwait(false);
 
         try
         {
-            using var scope = _scopeFactory.CreateScope();
-            var priceSeeker = scope.ServiceProvider.GetRequiredService<IPriceSeeker>();
-            var productsRepo = scope.ServiceProvider.GetRequiredService<IProductsRepository>();
-
-            _logger.LogTrace("Scanning product '{ProductName}'", product.Name);
-
-            var previousOverview = await productsRepo.GetOverviewByIdAsync(productRef, cancellationToken).ConfigureAwait(false);
-            var results = await priceSeeker.SeekAsync(product, cancellationToken).ConfigureAwait(false);
-            if (results.Length == 0)
+            if (results.Count == 0)
             {
                 _logger.LogWarning("Price scanning for '{ProductName}' failed or no results retrieved", product.Name);
                 _scanContext.NotifyProductFinished(hasErrors: true, hasNewLowestPrice: false);
                 await _notifier.ProductScanFailedAsync(productRef, "Scan failed or no results retrieved").ConfigureAwait(false);
                 return;
             }
+
+            using var scope = _scopeFactory.CreateScope();
+            var productsRepo = scope.ServiceProvider.GetRequiredService<IProductsRepository>();
+
+            var previousOverview = await productsRepo.GetOverviewByIdAsync(productRef, cancellationToken).ConfigureAwait(false);
 
             await productsRepo.AddScanResultsAsync(productRef, results, cancellationToken).ConfigureAwait(false);
 
