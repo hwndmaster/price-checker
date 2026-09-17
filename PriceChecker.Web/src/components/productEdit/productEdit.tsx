@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useFieldArray, useForm } from "react-hook-form";
 import { translateErrorsToForm } from "@hwndmaster/atom-react-core";
-import { FormDropdown, FormInputText, FormInputTextarea, toastService } from "@hwndmaster/atom-react-prime";
+import { FormAutoComplete, FormDropdown, FormInputText, FormInputTextarea, toastService } from "@hwndmaster/atom-react-prime";
 import { LoadingSpinner } from "@hwndmaster/atom-react-redux";
 import { Button, confirmDialog, InputText } from "@/primereact";
 import { ProductRef, productRef, agentRef } from "@/models/types";
@@ -23,6 +23,10 @@ const ProductEdit: React.FC<ProductEditProps> = ({ productId, onClose }) => {
     const dispatch = store.useAppDispatch();
     const isAddMode = productId === productRef.default();
     const agents = store.useAppSelector((state) => state.agents.agents);
+    // The categories already in use, so that products keep landing in the same ones instead of drifting
+    // into near-duplicates. Typing past them is what creates a new category.
+    const categories = store.useAppSelector(store.Products.Selectors.selectCategories);
+    const [filteredCategories, setFilteredCategories] = useState<string[]>([]);
     const [product, setProduct] = useState<Product | null>(null);
     const [sourceUrl, setSourceUrl] = useState("");
     const [isRecognizing, setIsRecognizing] = useState(false);
@@ -62,6 +66,14 @@ const ProductEdit: React.FC<ProductEditProps> = ({ productId, onClose }) => {
             });
         }
     }, [product, form, isAddMode]);
+
+    // An empty query lists every category, which is what the dropdown button asks for.
+    const searchCategories = (event: { query: string }): void => {
+        const query = event.query.trim().toLowerCase();
+        setFilteredCategories(query.length === 0
+            ? categories
+            : categories.filter((category) => category.toLowerCase().includes(query)));
+    };
 
     /**
      * Turns a pasted product URL into a source: the API says which agent scans that site and what
@@ -151,9 +163,18 @@ const ProductEdit: React.FC<ProductEditProps> = ({ productId, onClose }) => {
                 return;
             }
 
+            if (isAddMode) {
+                // A product is added in order to be tracked, so it is scanned at once rather than sitting
+                // at "Not scanned" until the next daily run. Progress arrives over the scan hub, as for
+                // any other scan, so the list starts reporting it while this dialog is already closing.
+                dispatch(store.Scans.Actions.scanProduct(savedProductId));
+            }
+
             toastService.showSuccess(
                 isAddMode ? "Product added" : "Product updated",
-                "The product has been successfully " + (isAddMode ? "added." : "updated."));
+                isAddMode
+                    ? "The product has been successfully added, and is being scanned."
+                    : "The product has been successfully updated.");
             onClose();
         }));
     };
@@ -173,7 +194,17 @@ const ProductEdit: React.FC<ProductEditProps> = ({ productId, onClose }) => {
                     <FormInputText name="name" form={form} label="Name" data-test_id="ProductEdit__Name_Input" />
                 </div>
                 <div className={styles.row}>
-                    <FormInputText name="category" form={form} label="Category" data-test_id="ProductEdit__Category_Input" />
+                    <FormAutoComplete
+                        name="category"
+                        form={form}
+                        label="Category"
+                        suggestions={filteredCategories}
+                        completeMethod={searchCategories}
+                        // `dropdown` offers the existing categories without typing; leaving forceSelection
+                        // off is what lets a category that does not exist yet simply be typed in.
+                        inputProps={{ dropdown: true }}
+                        data-test_id="ProductEdit__Category_Input"
+                    />
                 </div>
                 <div className={styles.row}>
                     <FormInputTextarea name="description" form={form} label="Description" data-test_id="ProductEdit__Description_Input" />
