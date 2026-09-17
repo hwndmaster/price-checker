@@ -8,6 +8,7 @@ public sealed record UpdateProductRequest(
     string Name,
     string? Category,
     string? Description,
+    decimal? TargetPrice,
     UpdateProductSourceRequest[] Sources) : IPrimaryId<Guid, ProductRef>, ITimeStamped;
 
 /// <summary>

@@ -7,6 +7,7 @@ const productValidationFieldMap: Partial<Record<string, ProductValidationFieldNa
     Name: "name",
     Category: "category",
     Description: "description",
+    TargetPrice: "targetPrice",
     Sources: "sources",
 };
 

@@ -67,6 +67,7 @@ export function* saveProductSaga(action: ReturnType<typeof productsActions.saveP
                     name: productToSave.name,
                     category: productToSave.category ?? undefined,
                     description: productToSave.description ?? undefined,
+                    targetPrice: productToSave.targetPrice ?? undefined,
                     sources: productToSave.sources.map((s) => ({
                         agentId: s.agentId,
                         agentArgument: s.agentArgument,
@@ -86,6 +87,7 @@ export function* saveProductSaga(action: ReturnType<typeof productsActions.saveP
                     name: productToSave.name,
                     category: productToSave.category ?? undefined,
                     description: productToSave.description ?? undefined,
+                    targetPrice: productToSave.targetPrice ?? undefined,
                     sources: productToSave.sources.map((s) => ({
                         id: s.id ?? undefined,
                         agentId: s.agentId,

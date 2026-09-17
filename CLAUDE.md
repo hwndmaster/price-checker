@@ -70,6 +70,35 @@ importer, and from then on they are edited in the UI. A site that moves its pric
 by editing its agent; keep `Data/Agent.json` in step so a fresh install starts out repaired too, and
 `Data/Product.json` alongside it, since its sources reference agents by key.
 
+## Notifications
+
+`ITelegramNotificationService` (Core, `Services/Telegram/`) mirrors prepper-box's: a typed
+`HttpClient`, `TelegramSettings` bound by the host from the `Telegram` section, HTML parse mode, and
+a send that logs and swallows its failures rather than taking the caller down. Absent settings leave
+it off.
+
+Whether a scan reports outwards is carried by **`ScanTrigger`** (`Manual` / `Scheduled`) on
+`IScanOrchestrator.ScanAsync`, not inferred from the call site — the scan that follows adding a
+product goes through the same endpoint as the Scan button and is `Manual` like it. Only `Scheduled`
+reports.
+
+`ScanSession` (WebApi, its own file) is the `IScanSessionObserver`, one instance per scan, created by
+`ScanOrchestrator` rather than resolved: the alerts belong to that scan alone, so a manual scan
+started while the daily run is under way cannot report the daily run's findings. The session collects
+the alerts and reports them once, after the run, as a single Telegram message. `ScanOrchestrator`
+holds the session's `ILogger<ScanSession>`, built from `ILoggerFactory`, since a scan does all its
+logging from the session.
+
+What is worth reporting is `IPriceChangeEvaluator` (Core): `HasNewLowestPrice` always, since the
+products list marks it either way, and `HasReachedTarget` for a product with a `TargetPrice`.
+`IsWorthReporting` picks between them — a target, once set, replaces lowest-price reporting rather
+than adding to it. The target compares against `RecentPrice`, not `LowestPrice`, and only fires on
+the crossing.
+
+`Product.TargetPrice` is a plain `decimal?`: null is "no target". There is deliberately no separate
+enabled flag, which would make "on, but with no price" representable. The form's
+`targetPriceEnabled` is a form field only, derived on load from `targetPrice != null`.
+
 ## Backend specifics
 
 - **Repository tests** use the local `RepositoryTestContext` (EF in-memory, fresh `Guid` database
@@ -96,8 +125,8 @@ by editing its agent; keep `Data/Agent.json` in step so a fresh install starts o
   of the app works in its own types. Today that is the payloads the scan hub pushes.
 - `productEdit` refetches the agents on every mount rather than only when the list is empty, because
   an agent recognized from a pasted URL has to be in it.
-- **Store slices**: `agents`, `products`, `scans`. There is no `settings` slice — it was dropped in
-  `persistVersion: 2`, along with `products.editedProduct`.
+- **Store slices**: `agents`, `products`, `scans` — there is no `settings` slice, and no
+  `products.editedProduct`; the edit form owns the product it is editing. `persistVersion: 2`.
 - `persistBlacklist: ["common", "scans"]` — scan progress is transient.
 - **SignalR**: `scans/messages.ts` owns the hub connection (`startScanHubConnection`,
   `${ApiUrl}/hubs/scan`) and dispatches store actions from the hub callbacks. This is the only app in

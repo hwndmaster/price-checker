@@ -27,6 +27,12 @@ public sealed class CreateProductRequestValidator : IRequestValidator<CreateProd
             return new ValidationResult("The product name must not be empty.", [nameof(CreateProductRequest.Name)]);
         }
 
+        if (ProductValidationHelper.ValidateTargetPrice(request.TargetPrice, nameof(CreateProductRequest.TargetPrice))
+            is { } targetPriceError)
+        {
+            return targetPriceError;
+        }
+
         return await ProductValidationHelper.ValidateAgentsExistAsync(_agentsRepository,
             request.Sources.Select(x => x.AgentId), cancellationToken).ConfigureAwait(false);
     }
@@ -53,6 +59,12 @@ public sealed class UpdateProductRequestValidator : IRequestValidator<UpdateProd
             return new ValidationResult("The product name must not be empty.", [nameof(UpdateProductRequest.Name)]);
         }
 
+        if (ProductValidationHelper.ValidateTargetPrice(request.TargetPrice, nameof(UpdateProductRequest.TargetPrice))
+            is { } targetPriceError)
+        {
+            return targetPriceError;
+        }
+
         return await ProductValidationHelper.ValidateAgentsExistAsync(_agentsRepository,
             request.Sources.Select(x => x.AgentId), cancellationToken).ConfigureAwait(false);
     }
@@ -60,6 +72,15 @@ public sealed class UpdateProductRequestValidator : IRequestValidator<UpdateProd
 
 internal static class ProductValidationHelper
 {
+    /// <summary>
+    ///   An absent target price means the product tracks none; a present one has to be a price that
+    ///   can actually be reached.
+    /// </summary>
+    public static ValidationResult? ValidateTargetPrice(decimal? targetPrice, string fieldName)
+        => targetPrice is not null && targetPrice <= 0
+            ? new ValidationResult("The target price must be greater than zero.", [fieldName])
+            : null;
+
     public static async Task<ValidationResult?> ValidateAgentsExistAsync(IAgentsRepository agentsRepository,
         IEnumerable<AgentRef> agentIds, CancellationToken cancellationToken)
     {

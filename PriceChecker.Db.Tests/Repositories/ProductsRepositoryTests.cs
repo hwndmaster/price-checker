@@ -22,7 +22,7 @@ public sealed class ProductsRepositoryTests
 
         // Act
         var created = await productsRepository.CreateAsync(
-            new CreateProductRequest("Test Product", "Category", null,
+            new CreateProductRequest("Test Product", "Category", null, TargetPrice: null,
                 [new CreateProductSourceRequest(agentId, "B000123")]),
             cancellationToken: TestContext.Current.CancellationToken);
 
@@ -41,7 +41,7 @@ public sealed class ProductsRepositoryTests
         await using var context = new RepositoryTestContext();
         var (productsRepository, agentId) = await CreateSystemUnderTestAsync(context);
         var created = await productsRepository.CreateAsync(
-            new CreateProductRequest("Test Product", null, null,
+            new CreateProductRequest("Test Product", null, null, TargetPrice: null,
                 [
                     new CreateProductSourceRequest(agentId, "kept-and-updated"),
                     new CreateProductSourceRequest(agentId, "removed"),
@@ -53,7 +53,7 @@ public sealed class ProductsRepositoryTests
         // Act: update one source, remove another one, add a new one
         _dateTime.Advance(TimeSpan.FromMinutes(5));
         await productsRepository.UpdateAsync(
-            new UpdateProductRequest(created.EntityId, created.LastModified, "Test Product", null, null,
+            new UpdateProductRequest(created.EntityId, created.LastModified, "Test Product", null, null, TargetPrice: null,
                 [
                     new UpdateProductSourceRequest(keptSource.Id, agentId, "updated-argument"),
                     new UpdateProductSourceRequest(null, agentId, "added"),
@@ -69,13 +69,44 @@ public sealed class ProductsRepositoryTests
     }
 
     [Fact]
+    public async Task TargetPrice_WhenSetClearedAndRead_ThenItSurvivesTheRoundTrip()
+    {
+        // Arrange
+        await using var context = new RepositoryTestContext();
+        var (productsRepository, agentId) = await CreateSystemUnderTestAsync(context);
+
+        // Act: create with a target
+        var created = await productsRepository.CreateAsync(
+            new CreateProductRequest("Test Product", null, null, TargetPrice: 249.95m,
+                [new CreateProductSourceRequest(agentId, "B000123")]),
+            cancellationToken: TestContext.Current.CancellationToken);
+
+        // Assert: both the edit model and the list read model carry it
+        var product = await productsRepository.GetByIdOrThrowAsync(created.EntityId, TestContext.Current.CancellationToken);
+        Assert.Equal(249.95m, product.TargetPrice);
+        var overview = await productsRepository.GetOverviewByIdAsync(created.EntityId, TestContext.Current.CancellationToken);
+        Assert.NotNull(overview);
+        Assert.Equal(249.95m, overview.TargetPrice);
+
+        // Act & Assert: clearing the target is what switching it off amounts to
+        _dateTime.Advance(TimeSpan.FromMinutes(5));
+        await productsRepository.UpdateAsync(
+            new UpdateProductRequest(created.EntityId, created.LastModified, "Test Product", null, null, TargetPrice: null,
+                [new UpdateProductSourceRequest(product.Sources[0].Id, agentId, "B000123")]),
+            cancellationToken: TestContext.Current.CancellationToken);
+
+        product = await productsRepository.GetByIdOrThrowAsync(created.EntityId, TestContext.Current.CancellationToken);
+        Assert.Null(product.TargetPrice);
+    }
+
+    [Fact]
     public async Task AddScanResultsAsync_GivenSeekResults_WhenAddedAndDropped_ThenOverviewReflectsThePrices()
     {
         // Arrange
         await using var context = new RepositoryTestContext();
         var (productsRepository, agentId) = await CreateSystemUnderTestAsync(context);
         var created = await productsRepository.CreateAsync(
-            new CreateProductRequest("Test Product", null, null,
+            new CreateProductRequest("Test Product", null, null, TargetPrice: null,
                 [new CreateProductSourceRequest(agentId, "B000123")]),
             cancellationToken: TestContext.Current.CancellationToken);
         var product = await productsRepository.GetByIdOrThrowAsync(created.EntityId, TestContext.Current.CancellationToken);
@@ -106,7 +137,7 @@ public sealed class ProductsRepositoryTests
         await using var context = new RepositoryTestContext();
         var (productsRepository, agentId) = await CreateSystemUnderTestAsync(context);
         var created = await productsRepository.CreateAsync(
-            new CreateProductRequest("Test Product", null, null,
+            new CreateProductRequest("Test Product", null, null, TargetPrice: null,
                 [new CreateProductSourceRequest(agentId, "B000123")]),
             cancellationToken: TestContext.Current.CancellationToken);
 
@@ -129,7 +160,7 @@ public sealed class ProductsRepositoryTests
         await using var context = new RepositoryTestContext();
         var (productsRepository, agentId) = await CreateSystemUnderTestAsync(context);
         var created = await productsRepository.CreateAsync(
-            new CreateProductRequest("Test Product", null, null,
+            new CreateProductRequest("Test Product", null, null, TargetPrice: null,
                 [new CreateProductSourceRequest(agentId, "B000123")]),
             cancellationToken: TestContext.Current.CancellationToken);
         var product = await productsRepository.GetByIdOrThrowAsync(created.EntityId, TestContext.Current.CancellationToken);
@@ -165,7 +196,7 @@ public sealed class ProductsRepositoryTests
         var otherAgent = await agentsRepository.CreateAsync(
             new CreateAgentRequest("another-agent", "https://other.example/p/{0}?full=1", "pattern", "SimpleRegex", ".", null), TestContext.Current.CancellationToken);
         var created = await productsRepository.CreateAsync(
-            new CreateProductRequest("Test Product", null, null,
+            new CreateProductRequest("Test Product", null, null, TargetPrice: null,
                 [
                     new CreateProductSourceRequest(agentId, "B000123"),
                     new CreateProductSourceRequest(otherAgent.EntityId, "XYZ"),

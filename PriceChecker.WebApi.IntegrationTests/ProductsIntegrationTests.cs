@@ -10,9 +10,9 @@ public sealed class ProductsIntegrationTests
     {
         /* Scenario Summary:
            1. Create an agent to be used by the product sources.
-           2. Create a product with a source over the API.
+           2. Create a product with a source and a target price over the API.
            3. Fetch the product overview and find the created product with the NotScanned status.
-           4. Fetch the single product and verify its source.
+           4. Fetch the single product and verify its source and target price.
            5. Create a product referencing an unknown agent and expect a validation problem.
            6. Verify the scan progress endpoint responds with the initial (finished) state. */
 
@@ -29,6 +29,7 @@ public sealed class ProductsIntegrationTests
             name = "Roomba",
             category = "Household",
             description = (string?)null,
+            targetPrice = 249.95m,
             sources = new[] { new { agentId, agentArgument = "B000123" } },
         });
         Assert.Equal(HttpStatusCode.OK, productStatus);
@@ -39,12 +40,14 @@ public sealed class ProductsIntegrationTests
         var overview = Assert.Single(overviews.EnumerateArray());
         Assert.Equal("Roomba", overview.GetProperty("name").GetString());
         Assert.Equal(0, overview.GetProperty("status").GetInt32());  // NotScanned
+        Assert.Equal(249.95m, overview.GetProperty("targetPrice").GetDecimal());
 
         // 4. Fetch the single product
         var product = await httpClient.GetJsonAsync($"/api/v1/Products/{productId}");
         var source = Assert.Single(product.GetProperty("sources").EnumerateArray());
         Assert.Equal(agentId, source.GetProperty("agentId").GetString());
         Assert.Equal("B000123", source.GetProperty("agentArgument").GetString());
+        Assert.Equal(249.95m, product.GetProperty("targetPrice").GetDecimal());
 
         // 5. Create a product with an unknown agent
         var (invalidStatus, _) = await httpClient.PostJsonAsync("/api/v1/Products", new
@@ -52,6 +55,7 @@ public sealed class ProductsIntegrationTests
             name = "Invalid",
             category = (string?)null,
             description = (string?)null,
+            targetPrice = (decimal?)null,
             sources = new[] { new { agentId = Guid.NewGuid().ToString(), agentArgument = "X" } },
         });
         Assert.Equal(HttpStatusCode.BadRequest, invalidStatus);

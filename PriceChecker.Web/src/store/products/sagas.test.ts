@@ -24,6 +24,7 @@ it("fetchProductSaga: resolves the fetched product through the callback instead 
         name: product.name,
         category: product.category ?? undefined,
         description: product.description ?? undefined,
+        targetPrice: product.targetPrice ?? undefined,
         sources: [],
         dateCreated: 1,
         lastModified: product.lastModified,

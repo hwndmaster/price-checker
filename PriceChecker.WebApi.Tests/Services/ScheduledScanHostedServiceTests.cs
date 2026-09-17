@@ -87,6 +87,7 @@ public sealed class ScheduledScanHostedServiceTests
             LowestPrice: null,
             LowestFoundDate: null,
             RecentPrice: null,
+            TargetPrice: null,
             lastScannedDate,
             LastModified: Trigger);
 }

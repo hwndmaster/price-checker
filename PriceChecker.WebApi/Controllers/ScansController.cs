@@ -25,7 +25,7 @@ public sealed class ScansController : BaseController
     [ProducesResponseType(StatusCodes.Status202Accepted)]
     public IActionResult ScanAll()
     {
-        _scanOrchestrator.ScanAsync().RunAndForget();
+        _scanOrchestrator.ScanAsync(trigger: ScanTrigger.Manual).RunAndForget();
         return Accepted();
     }
 
@@ -33,7 +33,7 @@ public sealed class ScansController : BaseController
     [ProducesResponseType(StatusCodes.Status202Accepted)]
     public IActionResult ScanProduct([FromRoute] Guid productId)
     {
-        _scanOrchestrator.ScanAsync([productId]).RunAndForget();
+        _scanOrchestrator.ScanAsync([productId], ScanTrigger.Manual).RunAndForget();
         return Accepted();
     }
 

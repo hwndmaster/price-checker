@@ -6,6 +6,7 @@ public sealed record CreateProductRequest(
     string Name,
     string? Category,
     string? Description,
+    decimal? TargetPrice,
     CreateProductSourceRequest[] Sources);
 
 public sealed record CreateProductSourceRequest(

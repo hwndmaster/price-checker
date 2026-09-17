@@ -30,6 +30,9 @@ services:
     ports:
       - "5080:8031"                       # Host port 5080 → container port 8031
     environment:
+      # Absent, the Telegram price alerts of the daily scan simply stay off.
+      Telegram__BotToken: ${TELEGRAM_BOT_TOKEN:-}
+      Telegram__ChatId: ${TELEGRAM_CHAT_ID:-}
       OTEL_EXPORTER_OTLP_ENDPOINT: http://pricechecker-apphost:21180
       OTEL_EXPORTER_OTLP_PROTOCOL: grpc
       OTEL_EXPORTER_OTLP_INSECURE: "true"

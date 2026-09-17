@@ -15,6 +15,7 @@ export function convertProductApiToModel(apiProduct: api.ProductDto): Product {
         name: apiProduct.name,
         category: apiProduct.category ?? null,
         description: apiProduct.description ?? null,
+        targetPrice: apiProduct.targetPrice ?? null,
         sources: apiProduct.sources.map((s) => ({
             id: s.id,
             agentId: s.agentId,
@@ -44,6 +45,7 @@ export function convertProductOverviewApiToModel(apiOverview: api.ProductOvervie
         lowestPrice: apiOverview.lowestPrice ?? null,
         lowestFoundDate: apiOverview.lowestFoundDate ?? null,
         recentPrice: apiOverview.recentPrice ?? null,
+        targetPrice: apiOverview.targetPrice ?? null,
         lastScannedDate: apiOverview.lastScannedDate ?? null,
         lastModified: apiOverview.lastModified,
     };

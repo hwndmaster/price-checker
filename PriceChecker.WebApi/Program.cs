@@ -44,7 +44,7 @@ var scanPacingOptions = builder.Configuration
 
 Genius.PriceChecker.Core.Module.Configure(builder.Services, scanScheduleOptions, scanPacingOptions);
 Genius.PriceChecker.Db.Module.Configure(builder.Services, builder.Configuration);
-Genius.PriceChecker.WebApi.Module.Configure(builder.Services);
+Genius.PriceChecker.WebApi.Module.Configure(builder.Services, builder.Configuration);
 
 builder.Services.AddSignalR()
     .AddJsonProtocol(options =>
@@ -80,6 +80,8 @@ app.MapHub<ScanHub>("/hubs/scan");
 
 app.LogAtomStartupSummary(summary => summary
     .AddFile("Database", dbPath)
-    .Add("Legacy import path", legacyDataPath));
+    .Add("Legacy import path", legacyDataPath)
+    // Whether the integration is wired up, never the token itself.
+    .Add("Telegram configured", !string.IsNullOrWhiteSpace(builder.Configuration["Telegram:BotToken"])));
 
 await app.RunAsync().ConfigureAwait(false);

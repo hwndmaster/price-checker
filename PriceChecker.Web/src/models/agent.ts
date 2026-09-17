@@ -1,4 +1,4 @@
-import { AgentRef } from "./types";
+import { AgentRef, TimeStamp } from "./types";
 
 interface Agent {
     id: AgentRef;
@@ -9,7 +9,7 @@ interface Agent {
     decimalDelimiter: string;
     /** A regular expression matching the product URLs of the agent's site, or null when it has none. */
     urlPattern: string | null;
-    lastModified: number;
+    lastModified: TimeStamp;
 }
 
 export default Agent;

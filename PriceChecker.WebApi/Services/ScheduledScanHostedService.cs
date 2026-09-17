@@ -110,6 +110,6 @@ internal sealed class ScheduledScanHostedService : BackgroundService
         _logger.LogInformation("The scheduled price scan of {ProductCount} product(s) started, for the run due at {Trigger:u}.",
             productIds.Length, trigger);
 
-        await _scanOrchestrator.ScanAsync(productIds, cancellationToken).ConfigureAwait(false);
+        await _scanOrchestrator.ScanAsync(productIds, ScanTrigger.Scheduled, cancellationToken).ConfigureAwait(false);
     }
 }

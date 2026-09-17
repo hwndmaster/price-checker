@@ -1,5 +1,5 @@
 import { ProductScanStatus } from "./enums";
-import { ProductRef } from "./types";
+import { ProductRef, TimeStamp } from "./types";
 
 /**
  * One of the pages a product's price is read from, as the list offers it for opening.
@@ -24,10 +24,12 @@ interface ProductOverview {
     /** Why the last scan did not fully succeed, per failing source; one line each. */
     statusText: string | null;
     lowestPrice: number | null;
-    lowestFoundDate: number | null;
+    lowestFoundDate: TimeStamp | null;
     recentPrice: number | null;
-    lastScannedDate: number | null;
-    lastModified: number;
+    /** The price at or below which the product is worth buying, or `null` when it tracks none. */
+    targetPrice: number | null;
+    lastScannedDate: TimeStamp | null;
+    lastModified: TimeStamp;
 }
 
 export default ProductOverview;

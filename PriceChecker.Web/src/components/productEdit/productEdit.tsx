@@ -2,9 +2,9 @@ import React, { useEffect, useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useFieldArray, useForm } from "react-hook-form";
 import { translateErrorsToForm } from "@hwndmaster/atom-react-core";
-import { FormAutoComplete, FormDropdown, FormInputText, FormInputTextarea, toastService } from "@hwndmaster/atom-react-prime";
+import { FormAutoComplete, FormDropdown, FormInputNumber, FormInputText, FormInputTextarea, toastService } from "@hwndmaster/atom-react-prime";
 import { LoadingSpinner } from "@hwndmaster/atom-react-redux";
-import { Button, confirmDialog, InputText } from "@/primereact";
+import { Button, Checkbox, confirmDialog, InputText } from "@/primereact";
 import { ProductRef, productRef, agentRef } from "@/models/types";
 import Product, { ProductSource } from "@/models/product";
 import RecognizedSource from "@/models/recognizedSource";
@@ -37,10 +37,13 @@ const ProductEdit: React.FC<ProductEditProps> = ({ productId, onClose }) => {
             name: "",
             category: null,
             description: null,
+            targetPriceEnabled: false,
+            targetPrice: null,
             sources: [],
         }
     });
     const sourcesField = useFieldArray({ control: form.control, name: "sources" });
+    const isTargetPriceEnabled = form.watch("targetPriceEnabled");
 
     useEffect(() => {
         // Refetched rather than taken from the persisted list: an agent recognized from a pasted URL
@@ -58,6 +61,9 @@ const ProductEdit: React.FC<ProductEditProps> = ({ productId, onClose }) => {
                 name: product.name,
                 category: product.category,
                 description: product.description,
+                // A stored target is what "switched on" amounts to: there is no separate flag to load.
+                targetPriceEnabled: product.targetPrice != null,
+                targetPrice: product.targetPrice,
                 sources: product.sources.map((s) => ({
                     id: s.id,
                     agentId: s.agentId,
@@ -66,6 +72,15 @@ const ProductEdit: React.FC<ProductEditProps> = ({ productId, onClose }) => {
             });
         }
     }, [product, form, isAddMode]);
+
+    const toggleTargetPrice = (enabled: boolean): void => {
+        form.setValue("targetPriceEnabled", enabled, { shouldDirty: true });
+        if (!enabled) {
+            // The value stays in the (now disabled) field so that it is still readable, but it is no
+            // longer validated, and saving drops it.
+            form.clearErrors("targetPrice");
+        }
+    };
 
     // An empty query lists every category, which is what the dropdown button asks for.
     const searchCategories = (event: { query: string }): void => {
@@ -152,6 +167,8 @@ const ProductEdit: React.FC<ProductEditProps> = ({ productId, onClose }) => {
             name: data.name,
             category: data.category != null && data.category.length > 0 ? data.category : null,
             description: data.description != null && data.description.length > 0 ? data.description : null,
+            // Switching the tracking off is what clears the target: only the price is stored.
+            targetPrice: data.targetPriceEnabled ? data.targetPrice : null,
             sources,
         };
 
@@ -209,6 +226,35 @@ const ProductEdit: React.FC<ProductEditProps> = ({ productId, onClose }) => {
                 <div className={styles.row}>
                     <FormInputTextarea name="description" form={form} label="Description" data-test_id="ProductEdit__Description_Input" />
                 </div>
+                <div className={`${styles.row} ${styles.targetPriceRow}`}>
+                    <div className={styles.targetPriceToggle}>
+                        <Checkbox
+                            inputId="targetPriceEnabled"
+                            checked={isTargetPriceEnabled}
+                            onChange={(e) => toggleTargetPrice(e.checked === true)}
+                            data-test_id="ProductEdit__Target_Price_Enabled_Checkbox"
+                        />
+                        <label htmlFor="targetPriceEnabled">Notify at a target price</label>
+                    </div>
+                    <FormInputNumber
+                        name="targetPrice"
+                        form={form}
+                        label="Target price"
+                        allowDecimals
+                        inputProps={{
+                            disabled: !isTargetPriceEnabled,
+                            min: 0,
+                            maxFractionDigits: 2,
+                            prefix: "€ ",
+                        }}
+                        data-test_id="ProductEdit__Target_Price_Input"
+                    />
+                </div>
+                <small className={styles.targetPriceHint}>
+                    {isTargetPriceEnabled
+                        ? "You are notified once the price reaches this amount, instead of every time the product beats its own lowest price."
+                        : "Without a target price, you are notified whenever the product beats its own lowest price."}
+                </small>
 
                 <h4 className={styles.sourcesHeader}>Sources</h4>
                 <div className={`${styles.row} ${styles.sourceRow}`}>

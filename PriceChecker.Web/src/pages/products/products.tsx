@@ -281,6 +281,15 @@ const Products: React.FC = () => {
                     headerStyle={{ width: "10rem" }}
                 />
                 <Column
+                    field="targetPrice"
+                    header="Target Price"
+                    sortable
+                    align="right"
+                    body={(p: ProductOverview) => formatPrice(p.targetPrice)}
+                    bodyClassName={(p: ProductOverview) => valueCellClass(formatPrice(p.targetPrice))}
+                    headerStyle={{ width: "10rem" }}
+                />
+                <Column
                     field="lowestFoundDate"
                     header="Lowest Found On"
                     sortable

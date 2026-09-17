@@ -1,5 +1,25 @@
 @use "../../styles/forms.scss";
 
+// The checkbox and the amount belong together, so the row keeps them on one line where it fits.
+.targetPriceRow {
+    align-items: center;
+}
+
+.targetPriceToggle {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+
+    > label {
+        cursor: pointer;
+    }
+}
+
+.targetPriceHint {
+    margin-top: -1rem;
+    opacity: 0.7;
+}
+
 .sourcesHeader {
     margin: 1rem 0 0.5rem;
 }

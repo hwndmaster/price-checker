@@ -1,5 +1,6 @@
 import moment from "moment";
 import { ticksToDate } from "@hwndmaster/atom-web-core";
+import { TimeStamp } from "@/models/types";
 
 /**
  * Formats a price in euro, e.g. `€ 1,234.56`.
@@ -15,11 +16,11 @@ export function formatPrice(price: number | null | undefined): string {
 }
 
 /**
- * Formats a .NET ticks timestamp as a humanized date, e.g. `2 days ago`.
- * @param ticks The timestamp in .NET ticks.
+ * Formats a timestamp as a humanized date, e.g. `2 days ago`.
+ * @param ticks The timestamp.
  * @returns The humanized date, or an empty string when the timestamp is unknown.
  */
-export function formatDateFromTicks(ticks: number | null | undefined): string {
+export function formatDateFromTicks(ticks: TimeStamp | null | undefined): string {
     if (ticks == null || ticks === 0) {
         return "";
     }
@@ -28,11 +29,11 @@ export function formatDateFromTicks(ticks: number | null | undefined): string {
 }
 
 /**
- * Formats a .NET ticks timestamp as an exact date and time.
- * @param ticks The timestamp in .NET ticks.
+ * Formats a timestamp as an exact date and time.
+ * @param ticks The timestamp.
  * @returns The formatted date, or an empty string when the timestamp is unknown.
  */
-export function formatExactDateFromTicks(ticks: number | null | undefined): string {
+export function formatExactDateFromTicks(ticks: TimeStamp | null | undefined): string {
     if (ticks == null || ticks === 0) {
         return "";
     }

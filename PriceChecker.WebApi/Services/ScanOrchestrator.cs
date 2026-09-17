@@ -1,43 +1,71 @@
 using Genius.PriceChecker.Core.Models;
 using Genius.PriceChecker.Core.Services;
 using Genius.PriceChecker.Db.Repositories;
-using Genius.PriceChecker.Dto;
 using Genius.PriceChecker.Dto.References;
 
 namespace Genius.PriceChecker.WebApi.Services;
+
+/// <summary>
+///   What started a scanning session. Only an automatic scan reports its price alerts outwards: a
+///   scan the user started is one they are watching in the app, where the outcome is already in
+///   front of them, notification included.
+/// </summary>
+public enum ScanTrigger
+{
+    /// <summary>
+    ///   A scan the user asked for — the Scan buttons of the products list, and the scan that follows
+    ///   adding a product.
+    /// </summary>
+    Manual,
+
+    /// <summary>
+    ///   The daily scan run by <see cref="ScheduledScanHostedService"/>.
+    /// </summary>
+    Scheduled,
+}
 
 public interface IScanOrchestrator
 {
     /// <summary>
     ///   Scans the specified products, or all products when <paramref name="productIds"/> is null.
     /// </summary>
-    Task ScanAsync(IReadOnlyCollection<ProductRef>? productIds = null, CancellationToken cancellationToken = default);
+    Task ScanAsync(IReadOnlyCollection<ProductRef>? productIds = null,
+        ScanTrigger trigger = ScanTrigger.Manual, CancellationToken cancellationToken = default);
 }
 
 /// <summary>
 ///   Drives a scanning session: it collects what is to be scanned, hands it to the
 ///   <see cref="IScanSessionRunner"/>, which decides in which order and at which pace the sources are
-///   fetched, and turns what comes back into stored prices and pushed notifications.
+///   fetched, and lets a <see cref="ScanSession"/> turn what comes back into stored prices, pushed
+///   notifications and, for an automatic scan, one reported set of price alerts.
 /// </summary>
-internal sealed class ScanOrchestrator : IScanOrchestrator, IScanSessionObserver
+internal sealed class ScanOrchestrator : IScanOrchestrator
 {
     private readonly IServiceScopeFactory _scopeFactory;
     private readonly IScanSessionRunner _sessionRunner;
     private readonly IScanContext _scanContext;
     private readonly IScanNotifier _notifier;
-    private readonly ILogger<ScanOrchestrator> _logger;
+    private readonly IPriceChangeEvaluator _priceChangeEvaluator;
+
+    // Everything a scan has to say is said by the session it creates, so the logger this class holds is
+    // the session's own. Built from the factory rather than injected as ILogger<ScanSession>, so that
+    // the sessions still log under their own name without this class asking for another type's logger.
+    private readonly ILogger<ScanSession> _sessionLogger;
 
     public ScanOrchestrator(IServiceScopeFactory scopeFactory, IScanSessionRunner sessionRunner,
-        IScanContext scanContext, IScanNotifier notifier, ILogger<ScanOrchestrator> logger)
+        IScanContext scanContext, IScanNotifier notifier, IPriceChangeEvaluator priceChangeEvaluator,
+        ILoggerFactory loggerFactory)
     {
         _scopeFactory = scopeFactory.NotNull();
         _sessionRunner = sessionRunner.NotNull();
         _scanContext = scanContext.NotNull();
         _notifier = notifier.NotNull();
-        _logger = logger.NotNull();
+        _priceChangeEvaluator = priceChangeEvaluator.NotNull();
+        _sessionLogger = loggerFactory.NotNull().CreateLogger<ScanSession>();
     }
 
-    public async Task ScanAsync(IReadOnlyCollection<ProductRef>? productIds = null, CancellationToken cancellationToken = default)
+    public async Task ScanAsync(IReadOnlyCollection<ProductRef>? productIds = null,
+        ScanTrigger trigger = ScanTrigger.Manual, CancellationToken cancellationToken = default)
     {
         ScanProduct[] scanProducts;
         using (var scope = _scopeFactory.CreateScope())
@@ -56,63 +84,8 @@ internal sealed class ScanOrchestrator : IScanOrchestrator, IScanSessionObserver
         _scanContext.NotifyScanStarted(scanProducts.Length);
         await _notifier.ScanProgressAsync(_scanContext.GetProgress()).ConfigureAwait(false);
 
-        await _sessionRunner.RunAsync(scanProducts, this, cancellationToken).ConfigureAwait(false);
-    }
-
-    Task IScanSessionObserver.OnProductStartedAsync(ScanProduct product, CancellationToken cancellationToken)
-        => _notifier.ProductScanStartedAsync(new ProductRef(product.ProductId));
-
-    async Task IScanSessionObserver.OnProductScannedAsync(ScanProduct product, IReadOnlyCollection<PriceSeekResult> results,
-        CancellationToken cancellationToken)
-    {
-        var productRef = new ProductRef(product.ProductId);
-
-        try
-        {
-            if (results.Count == 0)
-            {
-                _logger.LogWarning("Price scanning for '{ProductName}' failed or no results retrieved", product.Name);
-                _scanContext.NotifyProductFinished(hasErrors: true, hasNewLowestPrice: false);
-                await _notifier.ProductScanFailedAsync(productRef, "Scan failed or no results retrieved").ConfigureAwait(false);
-                return;
-            }
-
-            using var scope = _scopeFactory.CreateScope();
-            var productsRepo = scope.ServiceProvider.GetRequiredService<IProductsRepository>();
-
-            var previousOverview = await productsRepo.GetOverviewByIdAsync(productRef, cancellationToken).ConfigureAwait(false);
-
-            await productsRepo.AddScanResultsAsync(productRef, results, cancellationToken).ConfigureAwait(false);
-
-            var overview = await productsRepo.GetOverviewByIdAsync(productRef, cancellationToken).ConfigureAwait(false)
-                ?? throw new InvalidOperationException($"Product with ID '{productRef}' unexpectedly disappeared during the scan.");
-
-            var hasNewLowestPrice = previousOverview?.LowestPrice is not null
-                && overview.LowestPrice is not null
-                && overview.LowestPrice < previousOverview.LowestPrice;
-            var hasErrors = results.Any(r => r.Status != AgentHandlingStatus.Success);
-
-            if (hasNewLowestPrice)
-            {
-                overview = overview with { Status = ProductScanStatus.ScannedNewLowest };
-            }
-
-            _scanContext.NotifyProductFinished(hasErrors, hasNewLowestPrice);
-            await _notifier.ProductScanFinishedAsync(overview).ConfigureAwait(false);
-        }
-        catch (OperationCanceledException)
-        {
-            throw;
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Price scanning for '{ProductName}' failed", product.Name);
-            _scanContext.NotifyProductFinished(hasErrors: true, hasNewLowestPrice: false);
-            await _notifier.ProductScanFailedAsync(productRef, ex.Message).ConfigureAwait(false);
-        }
-        finally
-        {
-            await _notifier.ScanProgressAsync(_scanContext.GetProgress()).ConfigureAwait(false);
-        }
+        var session = new ScanSession(trigger, _scopeFactory, _scanContext, _notifier, _priceChangeEvaluator, _sessionLogger);
+        await _sessionRunner.RunAsync(scanProducts, session, cancellationToken).ConfigureAwait(false);
+        await session.ReportAlertsAsync(cancellationToken).ConfigureAwait(false);
     }
 }

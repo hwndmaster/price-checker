@@ -38,6 +38,7 @@ namespace Genius.PriceChecker.Db.Migrations
                     Name = table.Column<string>(type: "TEXT", nullable: false),
                     Category = table.Column<string>(type: "TEXT", nullable: true),
                     Description = table.Column<string>(type: "TEXT", nullable: true),
+                    TargetPrice = table.Column<decimal>(type: "TEXT", nullable: true),
                     DateCreated = table.Column<long>(type: "INTEGER", nullable: false),
                     LastModified = table.Column<long>(type: "INTEGER", nullable: false)
                 },

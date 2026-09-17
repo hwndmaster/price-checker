@@ -107,6 +107,35 @@ Configured under `Scanning:Pacing`:
 
 A scan therefore takes about `SameDomainDelay` × (sources of the busiest domain − 1) at the least.
 
+## Telegram notifications
+
+A daily scan that finds a better price reports it to a Telegram chat — one message per scan,
+listing everything it found, rather than one per product. Only the automatic daily scan reports:
+a scan started from the UI is one you are watching, where the result is already in front of you.
+
+What counts as "better" is per product:
+
+- A product **without** a target price is reported when it beats its own lowest price ever.
+- A product **with** a target price is reported when the price currently available reaches that
+  target, and only on the crossing — a product parked below its target is not reported again by
+  every following scan. The comparison is against the current price rather than the all-time
+  lowest, which may date from months ago and no longer be available.
+
+The target price is set per product in the product form, behind the "Notify at a target price"
+checkbox. Clearing it is what switches the product back to lowest-price notifications.
+
+Configured under `Telegram` in the API's `appsettings.json`, and left empty the integration is
+simply off — nothing is sent and nothing fails:
+
+| Key | Meaning |
+| --- | --- |
+| `BotToken` | The Telegram Bot API token. |
+| `ChatId` | The chat the notifications are sent to. |
+
+In Docker they come from the environment instead, so the token stays out of the repository —
+set `TELEGRAM_BOT_TOKEN` and `TELEGRAM_CHAT_ID` in `.env` next to `ATOM_PKG_ACCESS_TOKEN`. The
+startup summary line reports whether the integration is wired up, never the token itself.
+
 ## Data
 
 The SQLite database lives in `Data/PriceChecker.db` next to the API binaries and is migrated

@@ -1416,6 +1416,7 @@ export interface CreateProductRequest {
     name: string;
     category: string | undefined;
     description: string | undefined;
+    targetPrice: number | undefined;
     sources: CreateProductSourceRequest[];
 }
 
@@ -1438,6 +1439,7 @@ export interface ProductDto {
     name: string;
     category: string | undefined;
     description: string | undefined;
+    targetPrice: number | undefined;
     sources: ProductSourceDto[];
     dateCreated: number;
     lastModified: number;
@@ -1454,6 +1456,7 @@ export interface ProductOverviewDto {
     lowestPrice: number | undefined;
     lowestFoundDate: number | undefined;
     recentPrice: number | undefined;
+    targetPrice: number | undefined;
     lastScannedDate: number | undefined;
     lastModified: number;
 }
@@ -1523,6 +1526,7 @@ export interface UpdateProductRequest {
     name: string;
     category: string | undefined;
     description: string | undefined;
+    targetPrice: number | undefined;
     sources: UpdateProductSourceRequest[];
 }
 

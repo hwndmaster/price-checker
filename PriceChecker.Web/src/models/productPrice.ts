@@ -1,12 +1,12 @@
 import { AgentHandlingStatus } from "./enums";
-import { ProductPriceRef, ProductSourceRef } from "./types";
+import { ProductPriceRef, ProductSourceRef, TimeStamp } from "./types";
 
 interface ProductPrice {
     id: ProductPriceRef;
     productSourceId: ProductSourceRef;
     status: AgentHandlingStatus;
     price: number | null;
-    foundDate: number;
+    foundDate: TimeStamp;
 }
 
 export default ProductPrice;

@@ -22,5 +22,9 @@ public sealed record ProductOverviewDto(
     decimal? LowestPrice,
     DateTimeOffset? LowestFoundDate,
     decimal? RecentPrice,
+    /// <summary>
+    ///   The price at or below which the product is worth buying, or <c>null</c> when it tracks none.
+    /// </summary>
+    decimal? TargetPrice,
     DateTimeOffset? LastScannedDate,
     DateTimeOffset LastModified);

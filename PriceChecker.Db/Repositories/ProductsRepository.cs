@@ -34,13 +34,13 @@ internal sealed class ProductsRepository
     }
 
     protected override Expression<Func<Product, ProductDto>> ProjectToGetDto { get; }
-        = p => new ProductDto(p.Id, p.Name, p.Category, p.Description,
+        = p => new ProductDto(p.Id, p.Name, p.Category, p.Description, p.TargetPrice,
             p.Sources.Select(s => new ProductSourceDto(s.Id, s.AgentId, s.AgentArgument)).ToArray(),
             p.DateCreated, p.LastModified);
 
     protected override Product MapCreateDto(CreateProductRequest dto)
     {
-        var product = Product.CreateWithNoLinking(dto.Name, dto.Category, dto.Description);
+        var product = Product.CreateWithNoLinking(dto.Name, dto.Category, dto.Description, dto.TargetPrice);
         foreach (var source in dto.Sources)
         {
             product.Sources.Add(ProductSource.CreateWithNoLinking(product.Id, source.AgentId, source.AgentArgument));
@@ -55,6 +55,7 @@ internal sealed class ProductsRepository
             Name = dto.Name,
             Category = dto.Category,
             Description = dto.Description,
+            TargetPrice = dto.TargetPrice,
         };
 
     protected override async Task AfterUpdateAsync(UpdateProductRequest updateRequest, Product updatedEntity, CancellationToken cancellationToken)
@@ -243,6 +244,7 @@ internal sealed class ProductsRepository
             lowest?.Price,
             lowest?.FoundDate,
             recentPrice,
+            product.TargetPrice,
             allPrices.Length == 0 ? null : allPrices.Max(p => p.FoundDate),
             product.LastModified);
     }

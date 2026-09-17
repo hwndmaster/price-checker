@@ -1,6 +1,7 @@
 using System.Diagnostics.CodeAnalysis;
 using Genius.PriceChecker.Core.AgentHandlers;
 using Genius.PriceChecker.Core.Services;
+using Genius.PriceChecker.Core.Services.Telegram;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Genius.PriceChecker.Core;
@@ -33,7 +34,11 @@ public static class Module
         services.AddSingleton<IDelayService, DelayService>();
         services.AddSingleton<IScanSessionRunner, ScanSessionRunner>();
         services.AddTransient<IProductStatusProvider, ProductStatusProvider>();
+        services.AddTransient<IPriceChangeEvaluator, PriceChangeEvaluator>();
         services.AddTransient<ISourceUrlRecognizer, SourceUrlRecognizer>();
+
+        // Notifications. The settings are bound by the host, which is where the configuration lives.
+        services.AddHttpClient<ITelegramNotificationService, TelegramNotificationService>();
 
         // Agent Handlers
         services.AddSingleton<IAgentHandlersProvider, AgentHandlersProvider>();

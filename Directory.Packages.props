@@ -11,6 +11,10 @@
          Mvc.Testing tracks Atom's FrameworkPackageVersion so the test host matches the
          ASP.NET Core version Atom builds against. -->
     <PackageVersion Include="Microsoft.AspNetCore.Mvc.Testing" Version="$(FrameworkPackageVersion)" />
+    <!-- The Telegram notification service lives in Core, a plain class library that does not get
+         these from a framework reference the way the WebApi does. -->
+    <PackageVersion Include="Microsoft.Extensions.Http" Version="$(FrameworkPackageVersion)" />
+    <PackageVersion Include="Microsoft.Extensions.Options" Version="$(FrameworkPackageVersion)" />
 
     <!-- Test coverage -->
     <PackageVersion Include="coverlet.msbuild" Version="10.0.1" />
