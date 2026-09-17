@@ -9,7 +9,6 @@ Data-Local/
 
 # The legacy JSON data files are imported through the mounted Data volume, not the image
 Data/
-settings.json
 
 # Build and test artifacts
 **/bin/

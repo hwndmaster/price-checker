@@ -1,6 +1,5 @@
 using System.Net;
 using System.Net.Http.Json;
-using System.Text.Json;
 using Genius.PriceChecker.WebApi.IntegrationTests.Infrastructure;
 
 namespace Genius.PriceChecker.WebApi.IntegrationTests;
@@ -23,22 +22,21 @@ public sealed class AgentsIntegrationTests
         using var httpClient = factory.CreateClient();
 
         // 1. Create an agent
-        var createResponse = await httpClient.PostAsJsonAsync("/api/v1/Agents", new
+        var (createStatus, created) = await httpClient.PostJsonAsync("/api/v1/Agents", new
         {
             key = "amazon.de",
             url = "https://www.amazon.de/gp/product/{0}",
             pricePattern = "some-pattern",
             handler = "SimpleRegex",
             decimalDelimiter = ".",
-        }, TestContext.Current.CancellationToken);
-        Assert.Equal(HttpStatusCode.OK, createResponse.StatusCode);
-        var created = JsonDocument.Parse(await createResponse.Content.ReadAsStringAsync(TestContext.Current.CancellationToken)).RootElement;
+        });
+        Assert.Equal(HttpStatusCode.OK, createStatus);
         var agentId = created.GetProperty("entityId").GetString();
         var lastModified = created.GetProperty("lastModified").GetInt64();
         Assert.NotNull(agentId);
 
         // 2. Fetch all agents
-        var agents = JsonDocument.Parse(await httpClient.GetStringAsync("/api/v1/Agents", TestContext.Current.CancellationToken)).RootElement;
+        var agents = await httpClient.GetJsonAsync("/api/v1/Agents");
         var agent = Assert.Single(agents.EnumerateArray());
         Assert.Equal("amazon.de", agent.GetProperty("key").GetString());
 
@@ -67,24 +65,24 @@ public sealed class AgentsIntegrationTests
             decimalDelimiter = ",",
         }, TestContext.Current.CancellationToken);
         Assert.Equal(HttpStatusCode.Conflict, conflictResponse.StatusCode);
-        var conflict = JsonDocument.Parse(await conflictResponse.Content.ReadAsStringAsync(TestContext.Current.CancellationToken)).RootElement;
+        var conflict = await conflictResponse.ReadJsonAsync();
         Assert.Equal("Version conflict", conflict.GetProperty("title").GetString());
 
         // 5. Create an agent with a duplicate key
-        var duplicateResponse = await httpClient.PostAsJsonAsync("/api/v1/Agents", new
+        var (duplicateStatus, _) = await httpClient.PostJsonAsync("/api/v1/Agents", new
         {
             key = "amazon.nl",
             url = "https://www.amazon.nl/gp/product/{0}",
             pricePattern = "some-pattern",
             handler = "SimpleRegex",
             decimalDelimiter = ".",
-        }, TestContext.Current.CancellationToken);
-        Assert.Equal(HttpStatusCode.BadRequest, duplicateResponse.StatusCode);
+        });
+        Assert.Equal(HttpStatusCode.BadRequest, duplicateStatus);
 
         // 6. Delete the agent
         var deleteResponse = await httpClient.DeleteAsync($"/api/v1/Agents/{agentId}", TestContext.Current.CancellationToken);
         Assert.Equal(HttpStatusCode.OK, deleteResponse.StatusCode);
-        agents = JsonDocument.Parse(await httpClient.GetStringAsync("/api/v1/Agents", TestContext.Current.CancellationToken)).RootElement;
+        agents = await httpClient.GetJsonAsync("/api/v1/Agents");
         Assert.Empty(agents.EnumerateArray());
     }
 }

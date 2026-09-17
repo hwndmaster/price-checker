@@ -4,9 +4,10 @@ import { useFieldArray, useForm } from "react-hook-form";
 import { translateErrorsToForm } from "@hwndmaster/atom-react-core";
 import { FormDropdown, FormInputText, FormInputTextarea, toastService } from "@hwndmaster/atom-react-prime";
 import { LoadingSpinner } from "@hwndmaster/atom-react-redux";
-import { Button, confirmDialog } from "@/primereact";
+import { Button, confirmDialog, InputText } from "@/primereact";
 import { ProductRef, productRef, agentRef } from "@/models/types";
 import Product, { ProductSource } from "@/models/product";
+import RecognizedSource from "@/models/recognizedSource";
 import { productSchema, ProductSchemaData } from "@/schemas/productSchema";
 import * as store from "@/store";
 import LoadingTargets from "@/shared/loadingTargets";
@@ -23,6 +24,8 @@ const ProductEdit: React.FC<ProductEditProps> = ({ productId, onClose }) => {
     const isAddMode = productId === productRef.default();
     const agents = store.useAppSelector((state) => state.agents.agents);
     const [product, setProduct] = useState<Product | null>(null);
+    const [sourceUrl, setSourceUrl] = useState("");
+    const [isRecognizing, setIsRecognizing] = useState(false);
 
     const form = useForm<ProductSchemaData>({
         resolver: zodResolver(productSchema),
@@ -36,14 +39,14 @@ const ProductEdit: React.FC<ProductEditProps> = ({ productId, onClose }) => {
     const sourcesField = useFieldArray({ control: form.control, name: "sources" });
 
     useEffect(() => {
-        if (agents.length === 0) {
-            dispatch(store.Agents.Actions.fetchAgents());
-        }
+        // Refetched rather than taken from the persisted list: an agent recognized from a pasted URL
+        // has to be in it, and the source rows label their dropdown from it.
+        dispatch(store.Agents.Actions.fetchAgents());
         if (!isAddMode) {
             // The resolve callback is typed as possibly undefined, whereas "no product" is null here.
             dispatch(store.Products.Actions.fetchProduct(productId, (fetched) => setProduct(fetched ?? null)));
         }
-    }, [dispatch, isAddMode, productId, agents.length]);
+    }, [dispatch, isAddMode, productId]);
 
     useEffect(() => {
         if (!isAddMode && product != null) {
@@ -52,12 +55,59 @@ const ProductEdit: React.FC<ProductEditProps> = ({ productId, onClose }) => {
                 category: product.category,
                 description: product.description,
                 sources: product.sources.map((s) => ({
+                    id: s.id,
                     agentId: s.agentId,
                     agentArgument: s.agentArgument,
                 })),
             });
         }
     }, [product, form, isAddMode]);
+
+    /**
+     * Turns a pasted product URL into a source: the API says which agent scans that site and what
+     * the agent argument is, so that neither has to be worked out by hand.
+     */
+    const addSourceFromUrl = (): void => {
+        const url = sourceUrl.trim();
+        if (url.length === 0) {
+            return;
+        }
+
+        setIsRecognizing(true);
+        dispatch(store.Agents.Actions.recognizeSourceUrl(url,
+            (matches?: RecognizedSource[]) => {
+                setIsRecognizing(false);
+                if (matches == null || matches.length === 0) {
+                    toastService.showError("Not recognized",
+                        "No agent can scan this URL. Add an agent for the site, or fill the source in by hand.");
+                    return;
+                }
+
+                // The first match is the most specific one; the agent stays editable either way.
+                const [match] = matches;
+                const isAlreadyAdded = sourcesField.fields.some((_, index) =>
+                    form.getValues(`sources.${index}.agentId`) === match.agentId
+                    && form.getValues(`sources.${index}.agentArgument`) === match.agentArgument);
+                if (isAlreadyAdded) {
+                    toastService.showWarn("Already added", `'${match.agentKey}' already scans this product page.`);
+                    return;
+                }
+
+                sourcesField.append({ id: null, agentId: match.agentId, agentArgument: match.agentArgument });
+                setSourceUrl("");
+
+                if (matches.length > 1) {
+                    toastService.showInfo("Source added",
+                        `${matches.length} agents can scan this URL; '${match.agentKey}' was picked. Change it below if you meant another.`);
+                } else {
+                    toastService.showSuccess("Source added", `Recognized as '${match.agentKey}'.`);
+                }
+            },
+            () => {
+                setIsRecognizing(false);
+                toastService.showError("Not recognized", "An error occurred while recognizing the URL.");
+            }));
+    };
 
     const dropPrices = (): void => {
         if (product == null) {
@@ -77,10 +127,10 @@ const ProductEdit: React.FC<ProductEditProps> = ({ productId, onClose }) => {
     };
 
     const onSubmit = (data: ProductSchemaData): void => {
-        // Preserve the existing source ids by their position, so that the price history
-        // of the unchanged sources survives the update.
-        const sources: ProductSource[] = data.sources.map((s, index) => ({
-            id: product?.sources[index]?.id ?? null,
+        // Each row carries the id of the source it was loaded from, so that removing or reordering
+        // the rows cannot attach one source's price history to another.
+        const sources: ProductSource[] = data.sources.map((s) => ({
+            id: s.id,
             agentId: s.agentId,
             agentArgument: s.agentArgument,
         }));
@@ -130,6 +180,31 @@ const ProductEdit: React.FC<ProductEditProps> = ({ productId, onClose }) => {
                 </div>
 
                 <h4 className={styles.sourcesHeader}>Sources</h4>
+                <div className={`${styles.row} ${styles.sourceRow}`}>
+                    <InputText
+                        value={sourceUrl}
+                        onChange={(e) => setSourceUrl(e.target.value)}
+                        onKeyDown={(e) => {
+                            if (e.key === "Enter") {
+                                // The form would otherwise be submitted by the Enter of a single-line input.
+                                e.preventDefault();
+                                addSourceFromUrl();
+                            }
+                        }}
+                        placeholder="Paste a product URL to add a source"
+                        className={styles.sourceUrl}
+                        data-test_id="ProductEdit__Source_Url_Input"
+                    />
+                    <Button
+                        type="button"
+                        label="Add from URL"
+                        icon="pi pi-link"
+                        loading={isRecognizing}
+                        disabled={sourceUrl.trim().length === 0}
+                        onClick={addSourceFromUrl}
+                        data-test_id="ProductEdit__Add_Source_From_Url_Button"
+                    />
+                </div>
                 {sourcesField.fields.map((field, index) => (
                     <div key={field.id} className={`${styles.row} ${styles.sourceRow}`}>
                         <FormDropdown
@@ -165,7 +240,7 @@ const ProductEdit: React.FC<ProductEditProps> = ({ productId, onClose }) => {
                         icon="pi pi-plus"
                         severity="secondary"
                         outlined
-                        onClick={() => sourcesField.append({ agentId: agentRef.default(), agentArgument: "" })}
+                        onClick={() => sourcesField.append({ id: null, agentId: agentRef.default(), agentArgument: "" })}
                         data-test_id="ProductEdit__Add_Source_Button"
                     />
                 </div>

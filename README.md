@@ -55,6 +55,25 @@ After changing the API surface, regenerate the TypeScript client (with the API r
 pnpm --dir PriceChecker.Web nswag
 ```
 
+## Agents
+
+An agent is one recipe for reading a price off one site. It carries a URL template with a `{0}`
+placeholder for the source's argument, a price pattern whose `price` group captures the amount,
+the decimal delimiter that amount uses, and the handler that applies them.
+
+It may also carry a **URL pattern**: a regular expression matching the product URLs that site serves,
+capturing the argument in a group named `arg`. That is what lets a source be added by pasting a
+product URL into the product form — the API answers which agents can scan that URL and what their
+argument would be, and the first, most specific match is filled in. An agent without a URL pattern
+still takes part: its URL template is matched in reverse, which covers the sites whose product URL
+is exactly what the template builds, but not the ones that serve a product under several URLs
+(Amazon puts an arbitrary product slug in front of the ASIN). An explicit URL pattern always wins
+over a reverse-matched template.
+
+Agents are data, not code. `Data/Agent.json` seeds a fresh install (see [Data](#data) below), and
+from then on they are edited in the UI — a site that moves its price markup is repaired by fixing
+its agent, not by releasing the scanning code.
+
 ## Automatic price scans
 
 All products are re-scanned once a day, configured under `Scanning:Schedule` in the API's
@@ -75,9 +94,8 @@ again, and never twice for the same day.
 
 A scan does not fetch everything at once. All the sources of a scan — a daily one or a manual one
 from the UI — are regrouped into one queue per domain, resolved from the agent URL, so that a site
-shared by several agents and several products (`amazon.de`, `amazon.de_alt` and `amazon.de_div100`
-all fetch `www.amazon.de`) is reached by one request at a time, while the other sites are scanned in
-parallel. A product is reported as scanned once its last source has been, whichever queue that was.
+shared by several agents and several products is reached by one request at a time, while the other
+sites are scanned in parallel. A product is reported as scanned once its last source has been, whichever queue that was.
 
 Configured under `Scanning:Pacing`:
 

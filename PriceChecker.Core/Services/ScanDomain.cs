@@ -5,8 +5,8 @@ namespace Genius.PriceChecker.Core.Services;
 
 /// <summary>
 ///   Resolves the domain a product source is fetched from. The domain, not the agent, is the unit a
-///   scanning session throttles by: several agents routinely point at the same site (amazon.de,
-///   amazon.de_alt and amazon.de_div100 all fetch www.amazon.de), and it is the site that rate-limits.
+///   scanning session throttles by: several agents may point at the same site (one per price layout,
+///   say, or one per locale of the same shop), and it is the site that rate-limits.
 /// </summary>
 public static class ScanDomain
 {
@@ -38,15 +38,7 @@ public static class ScanDomain
 
         // The argument is a part of the URL and may in principle carry the host itself, so the
         // template is resolved before the host is read off it.
-        string url;
-        try
-        {
-            url = string.Format(CultureInfo.InvariantCulture, urlTemplate, argument);
-        }
-        catch (FormatException)
-        {
-            url = urlTemplate;
-        }
+        var url = SourceUrl.Resolve(urlTemplate, argument);
 
         if (!Uri.TryCreate(url, UriKind.Absolute, out var uri) || string.IsNullOrEmpty(uri.Host))
         {

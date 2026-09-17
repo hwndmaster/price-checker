@@ -9,6 +9,7 @@ const agentValidationFieldMap: Partial<Record<string, AgentValidationFieldName>>
     PricePattern: "pricePattern",
     Handler: "handler",
     DecimalDelimiter: "decimalDelimiter",
+    UrlPattern: "urlPattern",
 };
 
 /**

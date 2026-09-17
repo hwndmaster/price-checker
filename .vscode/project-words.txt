@@ -6,6 +6,7 @@ nswag
 otlp
 persistor
 pricechecker
+pricetopay
 primeicons
 primereact
 reduxjs
@@ -13,6 +14,7 @@ Roomba
 Serilog
 signalr
 Sqlite
+strftime
 toastify
 validatable
 vitest

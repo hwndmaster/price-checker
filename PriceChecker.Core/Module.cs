@@ -33,6 +33,7 @@ public static class Module
         services.AddSingleton<IDelayService, DelayService>();
         services.AddSingleton<IScanSessionRunner, ScanSessionRunner>();
         services.AddTransient<IProductStatusProvider, ProductStatusProvider>();
+        services.AddTransient<ISourceUrlRecognizer, SourceUrlRecognizer>();
 
         // Agent Handlers
         services.AddSingleton<IAgentHandlersProvider, AgentHandlersProvider>();

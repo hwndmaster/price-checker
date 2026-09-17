@@ -10,7 +10,6 @@ import Agent from "@/models/agent";
 import { agentSchema, AgentSchemaData } from "@/schemas/agentSchema";
 import * as store from "@/store";
 import LoadingTargets from "@/shared/loadingTargets";
-import { fetchAgentHandlers } from "@/store/agents/messages";
 import styles from "./agentEdit.module.scss";
 
 interface AgentEditProps {
@@ -32,17 +31,18 @@ const AgentEdit: React.FC<AgentEditProps> = ({ agentId, onClose }) => {
             pricePattern: "",
             handler: "",
             decimalDelimiter: ".",
+            urlPattern: null,
         }
     });
 
     useEffect(() => {
-        void fetchAgentHandlers().then((fetchedHandlers) => {
-            setHandlers(fetchedHandlers);
-            if (isAddMode && fetchedHandlers.length > 0) {
+        dispatch(store.Agents.Actions.fetchAgentHandlers(undefined, (fetchedHandlers) => {
+            setHandlers(fetchedHandlers ?? []);
+            if (isAddMode && fetchedHandlers != null && fetchedHandlers.length > 0) {
                 form.resetField("handler", { defaultValue: fetchedHandlers[0] });
             }
-        });
-    }, [form, isAddMode]);
+        }));
+    }, [dispatch, form, isAddMode]);
 
     useEffect(() => {
         if (!isAddMode && agent !== undefined) {
@@ -52,6 +52,7 @@ const AgentEdit: React.FC<AgentEditProps> = ({ agentId, onClose }) => {
                 pricePattern: agent.pricePattern,
                 handler: agent.handler,
                 decimalDelimiter: agent.decimalDelimiter,
+                urlPattern: agent.urlPattern,
             });
         }
     }, [agent, form, isAddMode]);
@@ -65,6 +66,7 @@ const AgentEdit: React.FC<AgentEditProps> = ({ agentId, onClose }) => {
             pricePattern: data.pricePattern,
             handler: data.handler,
             decimalDelimiter: data.decimalDelimiter,
+            urlPattern: data.urlPattern != null && data.urlPattern.length > 0 ? data.urlPattern : null,
         };
 
         form.clearErrors();
@@ -109,6 +111,14 @@ const AgentEdit: React.FC<AgentEditProps> = ({ agentId, onClose }) => {
                 </div>
                 <div className={styles.row}>
                     <FormInputText name="decimalDelimiter" form={form} label="Decimal Delimiter" data-test_id="AgentEdit__Decimal_Delimiter_Input" />
+                </div>
+                <div className={`${styles.row} ${styles.patternRow}`}>
+                    <FormInputText name="urlPattern" form={form} label="URL Pattern" data-test_id="AgentEdit__Url_Pattern_Input" />
+                    <small className={styles.hint}>
+                        Optional. Matches the product URLs of this site when a source is added by pasting one,
+                        capturing the argument in a group named <code>arg</code>. Left empty, the URL above is
+                        matched in reverse instead.
+                    </small>
                 </div>
 
                 <div className={styles.actions}>

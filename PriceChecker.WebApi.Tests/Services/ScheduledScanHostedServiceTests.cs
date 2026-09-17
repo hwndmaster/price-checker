@@ -1,4 +1,3 @@
-using Genius.PriceChecker.Core.Models;
 using Genius.PriceChecker.Dto;
 using Genius.PriceChecker.Dto.References;
 using Genius.PriceChecker.WebApi.Services;
@@ -82,6 +81,7 @@ public sealed class ScheduledScanHostedServiceTests
             "Test Product",
             Category: null,
             Description: null,
+            Sources: [],
             ProductScanStatus.ScannedOk,
             StatusText: null,
             LowestPrice: null,

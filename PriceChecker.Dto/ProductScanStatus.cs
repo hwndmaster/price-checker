@@ -1,4 +1,4 @@
-namespace Genius.PriceChecker.Core.Models;
+namespace Genius.PriceChecker.Dto;
 
 public enum ProductScanStatus
 {

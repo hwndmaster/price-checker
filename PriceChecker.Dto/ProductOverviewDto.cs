@@ -1,5 +1,4 @@
-﻿using Genius.PriceChecker.Core.Models;
-using Genius.PriceChecker.Dto.References;
+﻿using Genius.PriceChecker.Dto.References;
 
 namespace Genius.PriceChecker.Dto;
 
@@ -12,6 +11,12 @@ public sealed record ProductOverviewDto(
     string Name,
     string? Category,
     string? Description,
+    /// <summary>
+    ///   The pages this product's price is read from, ordered by agent key. Carried by the list itself
+    ///   rather than fetched when a name is clicked: the click opens a window, and a browser only allows
+    ///   that while it is still handling the gesture, which an intervening request would outlast.
+    /// </summary>
+    IReadOnlyList<ProductSourceLinkDto> Sources,
     ProductScanStatus Status,
     string? StatusText,
     decimal? LowestPrice,

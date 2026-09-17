@@ -27,6 +27,7 @@ export function createAgent(overrides?: Partial<Agent>): Agent {
         pricePattern: "`(?<price>[\\d.]+)`",
         handler: "SimpleRegex",
         decimalDelimiter: ".",
+        urlPattern: null,
         lastModified: 1,
         ...overrides,
     };
@@ -52,6 +53,7 @@ export function createProductOverview(overrides?: Partial<ProductOverview>): Pro
         name: "Test Product",
         category: "Test Category",
         description: null,
+        sources: [],
         status: ProductScanStatus.NotScanned,
         statusText: null,
         lowestPrice: null,

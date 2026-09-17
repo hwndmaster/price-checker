@@ -34,6 +34,33 @@
     gap: 0.25rem;
 }
 
+// The product name doubles as the way into the pages the product's price is read from. A button
+// rather than an anchor, because with several sources there is no single href to point at and the
+// click opens a menu instead - but it still has to read and behave as the name it replaces.
+.linkedName {
+    padding: 0;
+    border: 0 none;
+    background: none;
+    color: inherit;
+    font: inherit;
+    text-align: left;
+    cursor: pointer;
+
+    &:hover,
+    &:focus-visible {
+        color: var(--primary-color);
+        text-decoration: underline;
+    }
+
+    // Tells the two behaviours apart before the click: a caret opens a list, an arrow leaves the app.
+    > .linkedNameIcon {
+        margin-left: 0.35rem;
+        font-size: 0.75rem;
+        opacity: 0.6;
+        vertical-align: baseline;
+    }
+}
+
 // The scan status tooltip puts every failing source on a line of its own.
 .statusTooltip {
     :global(.p-tooltip-text) {

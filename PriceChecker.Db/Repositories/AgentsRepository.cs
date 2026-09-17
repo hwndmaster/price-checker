@@ -22,10 +22,11 @@ internal sealed class AgentsRepository
 
     protected override Expression<Func<Agent, AgentDto>> ProjectToGetDto { get; }
         = a => new AgentDto(a.Id, a.Key, a.Url, a.PricePattern, a.Handler, a.DecimalDelimiter.ToString(),
-            a.DateCreated, a.LastModified);
+            a.UrlPattern, a.DateCreated, a.LastModified);
 
     protected override Agent MapCreateDto(CreateAgentRequest dto)
-        => Agent.CreateWithNoLinking(dto.Key, dto.Url, dto.PricePattern, dto.Handler, ToDelimiterChar(dto.DecimalDelimiter));
+        => Agent.CreateWithNoLinking(dto.Key, dto.Url, dto.PricePattern, dto.Handler,
+            ToDelimiterChar(dto.DecimalDelimiter), NullIfBlank(dto.UrlPattern));
 
     protected override Agent MapUpdateDto(UpdateAgentRequest dto, Agent existingEntity)
         => existingEntity with
@@ -35,6 +36,7 @@ internal sealed class AgentsRepository
             PricePattern = dto.PricePattern,
             Handler = dto.Handler,
             DecimalDelimiter = ToDelimiterChar(dto.DecimalDelimiter),
+            UrlPattern = NullIfBlank(dto.UrlPattern),
         };
 
     public async Task<bool> ExistsWithKeyAsync(string key, AgentRef? excludedAgentId = null, CancellationToken cancellationToken = default)
@@ -47,6 +49,9 @@ internal sealed class AgentsRepository
 
         return await agents.AnyAsync(cancellationToken).ConfigureAwait(false);
     }
+
+    private static string? NullIfBlank(string? value)
+        => string.IsNullOrWhiteSpace(value) ? null : value.Trim();
 
     private static char ToDelimiterChar(string decimalDelimiter)
         => string.IsNullOrEmpty(decimalDelimiter) ? '.' : decimalDelimiter[0];

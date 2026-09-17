@@ -35,6 +35,10 @@ export function convertProductOverviewApiToModel(apiOverview: api.ProductOvervie
         name: apiOverview.name,
         category: apiOverview.category ?? null,
         description: apiOverview.description ?? null,
+        sources: apiOverview.sources.map((s) => ({
+            agentKey: s.agentKey,
+            url: s.url,
+        })),
         status: apiOverview.status as ProductScanStatus,
         statusText: apiOverview.statusText ?? null,
         lowestPrice: apiOverview.lowestPrice ?? null,

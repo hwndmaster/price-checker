@@ -127,7 +127,7 @@
                             "cwd": "${workspaceFolder}",
                             "reveal": true
                         },
-                        "icon": "server-process"
+                        "icon": "debug-start"
                     },
                     "EF: List migrations": {
                         "command": "commands.runInTerminal",
@@ -153,35 +153,6 @@
             },
             "PriceChecker (Docker)": {
                 "nestedItems": {
-                    "Compose up (build)": {
-                        "command": "commands.runInTerminal",
-                        "args": {
-                            "text": "docker compose up --build -d",
-                            "cwd": "${workspaceFolder}",
-                            "reveal": true
-                        },
-                        "icon": "debug-start"
-                    },
-                    "Compose logs": {
-                        "command": "commands.runInTerminal",
-                        "args": {
-                            "text": "docker compose logs -f",
-                            "cwd": "${workspaceFolder}",
-                            "reveal": true
-                        },
-                        "icon": "output",
-                        "iconColor": "editorBracketHighlight.foreground2"
-                    },
-                    "Compose down": {
-                        "command": "commands.runInTerminal",
-                        "args": {
-                            "text": "docker compose down",
-                            "cwd": "${workspaceFolder}",
-                            "reveal": true
-                        },
-                        "icon": "debug-stop",
-                        "iconColor": "terminal.ansiRed"
-                    },
                     "Publish images": {
                         "command": "commands.runInTerminal",
                         "args": {

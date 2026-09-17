@@ -1,5 +1,10 @@
 using Genius.PriceChecker.AppHost;
 
+// The port the Vite dev server runs on locally. Named in two more places that have to agree with it:
+// `server.port` in vite.config.ts, for when the dev server is started on its own, and VITE_BASE_URL in
+// PriceChecker.Web/.env.
+const int WebDevServerPort = 5081;
+
 var builder = DistributedApplication.CreateBuilder(args);
 
 // ── Modes ────────────────────────────────────────────────────────────────────────────────────
@@ -37,9 +42,36 @@ static void ConfigureLocalDevelopment(IDistributedApplicationBuilder builder)
     var web = builder.AddViteApp("web", "../PriceChecker.Web", "start:aspire")
         .WithPnpm()
         .WithReference(api)
+        // AddViteApp leaves the endpoint's ports unset, so Aspire allocates a fresh pair on every run:
+        // one for its proxy and one it passes to vite as --port. The dev server then moved every time,
+        // and two different ports served the SPA at once.
+        //
+        // Unproxied on purpose. Proxying would still hand vite a random port of its own, and the point
+        // here is that the dev server sits where vite.config.ts and .env already say it does - the same
+        // address as a plain `pnpm start`, with vite's HMR socket reaching it without a hop in between.
+        .WithEndpoint("http", endpoint =>
+        {
+            endpoint.Port = WebDevServerPort;
+            endpoint.TargetPort = WebDevServerPort;
+            endpoint.IsProxied = false;
+        })
         .WithEnvironment("VITE_API_URL", api.GetEndpoint("http"))
         .WithExternalHttpEndpoints()
         .WaitFor(api);
+
+    // The browser's OTLP exporter always posts to <origin>/otlp. In the published image nginx carries
+    // that on to the dashboard; the dev server has to make the same hop, so it is told where to.
+    //
+    // Passed explicitly rather than derived from the OTEL_* variables Aspire injects into the node
+    // process: those address the gRPC endpoint, and a browser exporter can only speak OTLP/HTTP.
+    //
+    // Left unset — an app host started without this launch profile — vite.config.ts configures no proxy
+    // and the SPA leaves telemetry off, rather than posting into a dev server that has no such route.
+    var otlpHttpEndpoint = builder.Configuration["ASPIRE_DASHBOARD_OTLP_HTTP_ENDPOINT_URL"];
+    if (!string.IsNullOrWhiteSpace(otlpHttpEndpoint))
+    {
+        web.WithEnvironment("VITE_OTLP_UPSTREAM", otlpHttpEndpoint);
+    }
 
     api.WithEnvironment("Cors__Origins__0", web.GetEndpoint("http"));
 }

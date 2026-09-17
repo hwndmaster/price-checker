@@ -1,1 +1,11 @@
 @use "../../styles/forms.scss";
+
+// `.row` lays its children out as grid columns; the hint belongs under its field, not beside it.
+.patternRow {
+    grid-template-columns: 1fr;
+}
+
+.hint {
+    display: block;
+    color: var(--text-color-secondary);
+}

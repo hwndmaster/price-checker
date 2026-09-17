@@ -17,7 +17,12 @@ public sealed class ScansController : BaseController
         _scanContext = scanContext.NotNull();
     }
 
+    // Both scans hand the work to RunAndForget and answer 202, so the status has to be declared:
+    // an undeclared one is documented as 200, and the generated client rejects every status it was not
+    // told about — which turned an accepted scan into "An unexpected server error occurred." in the UI
+    // while the scan itself ran on happily.
     [HttpPost("all")]
+    [ProducesResponseType(StatusCodes.Status202Accepted)]
     public IActionResult ScanAll()
     {
         _scanOrchestrator.ScanAsync().RunAndForget();
@@ -25,6 +30,7 @@ public sealed class ScansController : BaseController
     }
 
     [HttpPost("product/{productId}")]
+    [ProducesResponseType(StatusCodes.Status202Accepted)]
     public IActionResult ScanProduct([FromRoute] Guid productId)
     {
         _scanOrchestrator.ScanAsync([productId]).RunAndForget();

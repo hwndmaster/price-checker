@@ -10,14 +10,15 @@ import {
     IconField,
     InputIcon,
     InputText,
+    Menu,
     Tag,
     Tooltip,
 } from "@/primereact";
-import type { DataTableSortMeta } from "@/primereact";
+import type { DataTableSortMeta, MenuItem } from "@/primereact";
 import { ProductScanStatus } from "@/models/enums";
 import ProductOverview from "@/models/productOverview";
 import { ProductRef, productRef } from "@/models/types";
-import { MobileBreakpoint } from "@/shared/constants";
+import { MobileBreakpoint, RowActionTooltipOptions } from "@/shared/constants";
 import LoadingTargets from "@/shared/loadingTargets";
 import { formatDateFromTicks, formatPrice } from "@/shared/formatters";
 import { getScanStatusPresentation } from "@/shared/scanStatus";
@@ -48,6 +49,11 @@ const Products: React.FC = () => {
     const [editedProductId, setEditedProductId] = useState<ProductRef | null>(null);
     const [isEditDialogVisible, setEditDialogVisible] = useState(false);
 
+    // One menu for the whole table rather than one per row: only ever one is open, and a popup menu
+    // per record would mount an overlay for every product in the list.
+    const sourcesMenuRef = useRef<Menu>(null);
+    const [sourcesMenuItems, setSourcesMenuItems] = useState<MenuItem[]>([]);
+
     const hasFetched = useRef(false);
     useEffect(() => {
         if (hasFetched.current) return;
@@ -66,6 +72,21 @@ const Products: React.FC = () => {
         setEditDialogVisible(true);
     };
 
+    // Opened straight from the click handler, never after an await: a browser only honours window.open
+    // while it is still handling the gesture that led to it, and blocks it once anything has awaited.
+    const openSource = (url: string): void => {
+        window.open(url, "_blank", "noopener,noreferrer");
+    };
+
+    const openSourcesMenu = (product: ProductOverview, event: React.MouseEvent<HTMLElement>): void => {
+        setSourcesMenuItems(product.sources.map((source) => ({
+            label: source.agentKey,
+            icon: "pi pi-external-link",
+            command: (): void => openSource(source.url),
+        })));
+        sourcesMenuRef.current?.toggle(event);
+    };
+
     const deleteProduct = (product: ProductOverview): void => {
         confirmDialog({
             message: `Are you sure you want to delete the '${product.name}' product?`,
@@ -77,6 +98,32 @@ const Products: React.FC = () => {
                 }));
             },
         });
+    };
+
+    // The name leads to the pages the product is tracked on: straight there when there is only one,
+    // through a menu of the sites when there are several. A product without sources is not yet tracked
+    // anywhere, so its name stays plain text rather than offering a click that could do nothing.
+    const nameTemplate = (product: ProductOverview): React.ReactNode => {
+        if (product.sources.length === 0) {
+            return product.name;
+        }
+
+        const isSingle = product.sources.length === 1;
+        return (
+            <button
+                type="button"
+                className={styles.linkedName}
+                title={isSingle
+                    ? `Open on ${product.sources[0].agentKey}`
+                    : `Open on one of ${product.sources.length} sites`}
+                aria-haspopup={isSingle ? undefined : true}
+                onClick={(e) => isSingle ? openSource(product.sources[0].url) : openSourcesMenu(product, e)}
+                data-test_id="Products__Name_Link"
+            >
+                {product.name}
+                <i className={`${styles.linkedNameIcon} pi ${isSingle ? "pi-external-link" : "pi-angle-down"}`} />
+            </button>
+        );
     };
 
     const statusTemplate = (product: ProductOverview): React.ReactNode => {
@@ -145,6 +192,7 @@ const Products: React.FC = () => {
                 rounded text
                 severity="help"
                 tooltip="Scan prices"
+                tooltipOptions={RowActionTooltipOptions}
                 disabled={product.status === ProductScanStatus.Scanning}
                 onClick={() => dispatch(store.Scans.Actions.scanProduct(product.id))}
                 data-test_id="Products__Scan_Button"
@@ -153,6 +201,7 @@ const Products: React.FC = () => {
                 icon="pi pi-pencil"
                 rounded text
                 tooltip="Edit"
+                tooltipOptions={RowActionTooltipOptions}
                 onClick={() => openEditDialog(product)}
                 data-test_id="Products__Edit_Button"
             />
@@ -161,6 +210,7 @@ const Products: React.FC = () => {
                 rounded text
                 severity="danger"
                 tooltip="Delete"
+                tooltipOptions={RowActionTooltipOptions}
                 onClick={() => deleteProduct(product)}
                 data-test_id="Products__Delete_Button"
             />
@@ -169,6 +219,14 @@ const Products: React.FC = () => {
 
     return (
         <LoadingSpinner target={LoadingTargets.Products}>
+            {/* Shared by every row; `popup` keeps it closed until a name with several sources is
+                clicked, and PrimeReact closes it again as soon as an item is chosen. */}
+            <Menu
+                model={sourcesMenuItems}
+                popup
+                ref={sourcesMenuRef}
+                data-test_id="Products__Sources_Menu"
+            />
             <DataTable
                 value={overviews}
                 dataKey="id"
@@ -200,6 +258,7 @@ const Products: React.FC = () => {
                     field="name"
                     header="Name"
                     sortable
+                    body={nameTemplate}
                     bodyClassName={styles.cardTitle}
                     data-test_id="Products__Name"
                 />

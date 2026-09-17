@@ -1,12 +1,12 @@
-[
+﻿[
   {
     "Category": "Car",
     "Name": "Koch Chemie ReactiveWheelCleaner",
-    "Description": "\u0421\u0440\u0435\u0434\u0441\u0442\u0432\u043E \u0434\u043B\u044F \u0447\u0438\u0441\u0442\u043A\u0438 \u043A\u043E\u043B\u0451\u0441\u043D\u044B\u0445 \u0434\u0438\u0441\u043A\u043E\u0432",
+    "Description": "Средство для чистки колёсных дисков",
     "Sources": [
       {
         "Id": "60b9ceed-b34c-45ad-a142-af0ec5491d91",
-        "AgentKey": "amazon.de_alt",
+        "AgentKey": "amazon.de",
         "AgentArgument": "B0047AKFDG"
       }
     ],
@@ -25,40 +25,11 @@
   },
   {
     "Category": "Household",
-    "Name": "IROBOT Roomba i7\u002B (i7558)",
+    "Name": "IROBOT Roomba i7+ (i7558)",
     "Description": null,
-    "Sources": [
-      {
-        "Id": "4753f887-5b20-41de-a06b-3c159262a273",
-        "AgentKey": "tweakers.net",
-        "AgentArgument": "1617418/irobot-roomba-i7\u002B-zilver-zwart.html"
-      },
-      {
-        "Id": "ebeaa98d-aedb-4bb8-b539-1de7e1ee25cc",
-        "AgentKey": "tweakers.net",
-        "AgentArgument": "1274693/irobot-roomba-i7\u002B-zwart.html"
-      }
-    ],
-    "Lowest": {
-      "ProductSourceId": "ebeaa98d-aedb-4bb8-b539-1de7e1ee25cc",
-      "Status": 1,
-      "Price": 699,
-      "FoundDate": "2022-01-17T22:11:30.3167162+01:00"
-    },
-    "Recent": [
-      {
-        "ProductSourceId": "4753f887-5b20-41de-a06b-3c159262a273",
-        "Status": 1,
-        "Price": 749,
-        "FoundDate": "2022-01-17T22:11:30.3167121+01:00"
-      },
-      {
-        "ProductSourceId": "ebeaa98d-aedb-4bb8-b539-1de7e1ee25cc",
-        "Status": 1,
-        "Price": 699,
-        "FoundDate": "2022-01-17T22:11:30.3167162+01:00"
-      }
-    ],
+    "Sources": [],
+    "Lowest": null,
+    "Recent": [],
     "Id": "5486193d-b417-4936-b71c-be250317dc81",
     "DateCreated": "0001-01-01T00:00:00+00:00",
     "LastModified": "0001-01-01T00:00:00+00:00"
@@ -75,7 +46,7 @@
       },
       {
         "Id": "d786a796-b93c-468b-8fda-a2892d72802a",
-        "AgentKey": "amazon.de_alt",
+        "AgentKey": "amazon.de",
         "AgentArgument": "B07SR4R8K1"
       },
       {
@@ -126,7 +97,7 @@
       },
       {
         "Id": "923b83ed-3fcb-43ca-80b0-0e9e717ec9c6",
-        "AgentKey": "amazon.de_alt",
+        "AgentKey": "amazon.de",
         "AgentArgument": "B00BMKLVJ6"
       }
     ],
@@ -161,7 +132,7 @@
     "Sources": [
       {
         "Id": "e593c859-0dff-491d-a9ad-1a2f74a7f6f6",
-        "AgentKey": "amazon.de_alt",
+        "AgentKey": "amazon.de",
         "AgentArgument": "B07RJMK2GV"
       }
     ],
@@ -211,27 +182,9 @@
     "Category": "Car",
     "Name": "SEVERIN KB 2922 Electric cool box",
     "Description": "Coolbox",
-    "Sources": [
-      {
-        "Id": "ebac9915-2f1f-4dc2-affa-d6d16eeb9fbc",
-        "AgentKey": "amazon.de_alt",
-        "AgentArgument": "B00TZXVBPG"
-      }
-    ],
-    "Lowest": {
-      "ProductSourceId": "ebac9915-2f1f-4dc2-affa-d6d16eeb9fbc",
-      "Status": 1,
-      "Price": 79.99,
-      "FoundDate": "2022-01-17T22:11:34.1555861+01:00"
-    },
-    "Recent": [
-      {
-        "ProductSourceId": "ebac9915-2f1f-4dc2-affa-d6d16eeb9fbc",
-        "Status": 1,
-        "Price": 79.99,
-        "FoundDate": "2022-01-17T22:11:34.1555861+01:00"
-      }
-    ],
+    "Sources": [],
+    "Lowest": null,
+    "Recent": [],
     "Id": "3ce265ce-4edc-49d1-ace5-7733ba8430ee",
     "DateCreated": "0001-01-01T00:00:00+00:00",
     "LastModified": "0001-01-01T00:00:00+00:00"
@@ -242,13 +195,8 @@
     "Description": null,
     "Sources": [
       {
-        "Id": "511e7ef2-ba34-444d-b8d5-35ab3ccb7e67",
-        "AgentKey": "bol.com",
-        "AgentArgument": "lego-mindstorms-robot-uitvinder-51515/9300000000485466"
-      },
-      {
         "Id": "f1c56af5-3385-4337-991d-c39bbcc4e529",
-        "AgentKey": "amazon.de_alt",
+        "AgentKey": "amazon.de",
         "AgentArgument": "B082WD5YV9"
       }
     ],
@@ -259,12 +207,6 @@
       "FoundDate": "2022-01-17T22:15:29.2184901+01:00"
     },
     "Recent": [
-      {
-        "ProductSourceId": "511e7ef2-ba34-444d-b8d5-35ab3ccb7e67",
-        "Status": 3,
-        "Price": null,
-        "FoundDate": "2022-01-17T22:15:29.2184846+01:00"
-      },
       {
         "ProductSourceId": "f1c56af5-3385-4337-991d-c39bbcc4e529",
         "Status": 1,

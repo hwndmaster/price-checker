@@ -225,11 +225,19 @@ internal sealed class ProductsRepository
 
         var status = _statusProvider.DetermineStatus(snapshots);
 
+        // Ordered by agent key so that the list offers a product's sites in a stable order, rather than
+        // in whatever order the sources happen to come back in.
+        var sources = product.Sources
+            .Select(s => new ProductSourceLinkDto(s.Agent.Key, SourceUrl.Resolve(s.Agent.Url, s.AgentArgument)))
+            .OrderBy(s => s.AgentKey, StringComparer.OrdinalIgnoreCase)
+            .ToArray();
+
         return new ProductOverviewDto(
             product.Id,
             product.Name,
             product.Category,
             product.Description,
+            sources,
             status,
             _statusProvider.DescribeIssues(snapshots),
             lowest?.Price,

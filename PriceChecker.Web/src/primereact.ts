@@ -26,6 +26,7 @@ export { InputIcon } from "primereact/inputicon";
 export { InputNumber } from "primereact/inputnumber";
 export { InputSwitch } from "primereact/inputswitch";
 export { InputText } from "primereact/inputtext";
+export { Menu } from "primereact/menu";
 export { Menubar } from "primereact/menubar";
 export type { MenuItem } from "primereact/menuitem";
 export { Message } from "primereact/message";

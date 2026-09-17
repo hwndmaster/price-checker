@@ -15,7 +15,7 @@ namespace Genius.PriceChecker.Db.Migrations
         protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
-            modelBuilder.HasAnnotation("ProductVersion", "10.0.9");
+            modelBuilder.HasAnnotation("ProductVersion", "10.0.11");
 
             modelBuilder.Entity("Genius.PriceChecker.Db.Models.Agent", b =>
                 {
@@ -45,6 +45,9 @@ namespace Genius.PriceChecker.Db.Migrations
 
                     b.Property<string>("Url")
                         .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("UrlPattern")
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");

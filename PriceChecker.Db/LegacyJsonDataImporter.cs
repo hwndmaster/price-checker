@@ -1,6 +1,6 @@
 using System.Text.Json;
-using Genius.PriceChecker.Core.Models;
 using Genius.PriceChecker.Db.Models;
+using Genius.PriceChecker.Dto;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
@@ -65,6 +65,7 @@ internal static class LegacyJsonDataImporter
                 legacyAgent.PricePattern,
                 string.IsNullOrEmpty(legacyAgent.Handler) ? "SimpleRegex" : legacyAgent.Handler,
                 string.IsNullOrEmpty(legacyAgent.DecimalDelimiter) ? '.' : legacyAgent.DecimalDelimiter[0],
+                urlPattern: string.IsNullOrWhiteSpace(legacyAgent.UrlPattern) ? null : legacyAgent.UrlPattern,
                 id: legacyAgent.Id);
             await context.Agents.AddAsync(agent).ConfigureAwait(false);
             agentsByKey[agent.Key] = agent;
@@ -141,7 +142,8 @@ internal static class LegacyJsonDataImporter
         return await JsonSerializer.DeserializeAsync<T>(stream, JsonOptions).ConfigureAwait(false);
     }
 
-    private sealed record LegacyAgent(Guid Id, string Key, string Url, string PricePattern, string? Handler, string? DecimalDelimiter);
+    private sealed record LegacyAgent(Guid Id, string Key, string Url, string PricePattern, string? Handler,
+        string? DecimalDelimiter, string? UrlPattern);
     private sealed record LegacyProductSource(Guid Id, string AgentKey, string AgentArgument);
     private sealed record LegacyProductPrice(Guid ProductSourceId, int Status, decimal? Price, DateTimeOffset FoundDate);
     private sealed record LegacyProduct(Guid Id, string Name, string? Category, string? Description,

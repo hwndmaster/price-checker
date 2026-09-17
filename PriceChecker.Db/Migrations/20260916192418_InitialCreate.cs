@@ -21,6 +21,7 @@ namespace Genius.PriceChecker.Db.Migrations
                     PricePattern = table.Column<string>(type: "TEXT", nullable: false),
                     Handler = table.Column<string>(type: "TEXT", nullable: false),
                     DecimalDelimiter = table.Column<char>(type: "TEXT", nullable: false),
+                    UrlPattern = table.Column<string>(type: "TEXT", nullable: true),
                     DateCreated = table.Column<long>(type: "INTEGER", nullable: false),
                     LastModified = table.Column<long>(type: "INTEGER", nullable: false)
                 },

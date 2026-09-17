@@ -11,14 +11,14 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Genius.PriceChecker.Db.Migrations
 {
     [DbContext(typeof(PriceCheckerDbContext))]
-    [Migration("20260812170152_InitialCreate")]
+    [Migration("20260916192418_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
-            modelBuilder.HasAnnotation("ProductVersion", "10.0.9");
+            modelBuilder.HasAnnotation("ProductVersion", "10.0.11");
 
             modelBuilder.Entity("Genius.PriceChecker.Db.Models.Agent", b =>
                 {
@@ -48,6 +48,9 @@ namespace Genius.PriceChecker.Db.Migrations
 
                     b.Property<string>("Url")
                         .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("UrlPattern")
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");

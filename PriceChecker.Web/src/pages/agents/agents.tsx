@@ -13,7 +13,7 @@ import {
 } from "@/primereact";
 import Agent from "@/models/agent";
 import { AgentRef } from "@/models/types";
-import { MobileBreakpoint } from "@/shared/constants";
+import { MobileBreakpoint, RowActionTooltipOptions } from "@/shared/constants";
 import LoadingTargets from "@/shared/loadingTargets";
 import * as store from "@/store";
 import AgentEdit from "@/components/agentEdit/agentEdit";
@@ -86,6 +86,7 @@ const Agents: React.FC = () => {
                 icon="pi pi-pencil"
                 rounded text
                 tooltip="Edit"
+                tooltipOptions={RowActionTooltipOptions}
                 onClick={() => openEditDialog(agent)}
                 data-test_id="Agents__Edit_Button"
             />
@@ -94,6 +95,7 @@ const Agents: React.FC = () => {
                 rounded text
                 severity="danger"
                 tooltip="Delete"
+                tooltipOptions={RowActionTooltipOptions}
                 onClick={() => deleteAgent(agent)}
                 data-test_id="Agents__Delete_Button"
             />

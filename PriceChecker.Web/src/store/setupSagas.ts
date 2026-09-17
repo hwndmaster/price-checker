@@ -8,6 +8,9 @@ import * as scans from "./scans";
 
 const agentsWatchers: SagaWatcher[] = [
     { handlingType: SagaHandlingType.TakeLatest, action: agents.Actions.fetchAgents, saga: agentsSagas.fetchAgentsSaga },
+    { handlingType: SagaHandlingType.TakeLatest, action: agents.Actions.fetchAgentHandlers, saga: agentsSagas.fetchAgentHandlersSaga },
+    // TakeEvery: each paste is its own question, and dropping an earlier answer would leave its caller hanging.
+    { handlingType: SagaHandlingType.TakeEvery, action: agents.Actions.recognizeSourceUrl, saga: agentsSagas.recognizeSourceUrlSaga },
     { handlingType: SagaHandlingType.TakeLatest, action: agents.Actions.saveAgent, saga: agentsSagas.saveAgentSaga },
     { handlingType: SagaHandlingType.TakeLatest, action: agents.Actions.deleteAgent, saga: agentsSagas.deleteAgentSaga },
 ];

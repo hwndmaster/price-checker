@@ -36,6 +36,19 @@ body {
     z-index: 2000;
 }
 
+/* PrimeReact's theme sets `white-space: pre-line; word-break: break-word` on a tooltip, so one that
+   lands near the edge of the viewport breaks its label mid-word - the row actions of the last column
+   rendered "Edit" as "Edi" / "t". A label belongs on one line. The tooltip is sized before it is
+   placed, so PrimeReact still flips it to whichever side has the room.
+
+   Deliberately a single class: a tooltip that does want several lines overrides this from its own
+   `className`, which is one class more specific (see `statusTooltip` in dataTablePage.module.scss).
+   The rule beats the theme's despite being less specific, because the theme ships inside
+   `@layer primereact` and unlayered declarations outrank layered ones. */
+.p-tooltip-text {
+    white-space: nowrap;
+}
+
 @media (max-width: 768px) {
     .p-toast {
         top: 0.75rem !important;

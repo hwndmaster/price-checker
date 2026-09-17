@@ -1,4 +1,5 @@
 using Genius.PriceChecker.Core.Models;
+using Genius.PriceChecker.Dto;
 using Microsoft.Extensions.Logging;
 
 namespace Genius.PriceChecker.Core.Services;

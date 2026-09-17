@@ -1,8 +1,10 @@
 import { z } from "zod";
 import { requiredGuidRef } from "@hwndmaster/atom-react-core";
-import { AgentRef } from "@/models/types";
+import { AgentRef, ProductSourceRef } from "@/models/types";
 
 export const productSourceSchema = z.object({
+    /** The source this row was loaded from, or null for a row the user has just added. */
+    id: z.custom<ProductSourceRef>().nullable(),
     agentId: requiredGuidRef<AgentRef>("Agent is required"),
     agentArgument: z.string().min(1, "Argument is required"),
 });

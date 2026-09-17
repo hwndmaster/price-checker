@@ -7,6 +7,8 @@ interface Agent {
     pricePattern: string;
     handler: string;
     decimalDelimiter: string;
+    /** A regular expression matching the product URLs of the agent's site, or null when it has none. */
+    urlPattern: string | null;
     lastModified: number;
 }
 

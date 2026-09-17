@@ -34,7 +34,7 @@ This file carries only what is specific to *this* app.
 | `PriceChecker.AppHost` | Aspire host — dashboard and orchestration |
 | `PriceChecker.Core` | The scanning domain — agent handlers, `PriceSeeker` |
 | `PriceChecker.Db` | EF Core context, entities, migrations, repositories, the legacy JSON importer |
-| `PriceChecker.Dto` | DTOs, references and request messages |
+| `PriceChecker.Dto` | The contracts every other project shares: DTOs, references, request messages and the enums that travel with them. It references nothing of ours — `Core` references **it**, not the other way round, so that a type Core states on its own boundary can be a `ProductRef` rather than a `Guid`. |
 | `PriceChecker.WebApi` | ASP.NET Core API |
 | `PriceChecker.Web` | React SPA |
 | `PriceChecker.Core.Tests` | Scanning domain: agent handlers (`SimpleRegex`), `PriceSeeker` |
@@ -56,6 +56,20 @@ strings.
 | WebApi (local) | 5080 |
 | Web dev server | 5081 |
 
+## Agents
+
+An agent carries an optional **`UrlPattern`** besides its `Url` template: a regex matching the
+product URLs of its site, capturing the argument in a group named `arg`. `ISourceUrlRecognizer`
+(Core) matches a pasted URL against it, falling back to a reverse-matched `Url` template for the
+agents that have none, and `POST api/v1/Agents/recognize` exposes it to the product form's
+"Add from URL". Explicit patterns rank before reverse-matched templates, then by how much of the
+URL was matched besides the argument.
+
+The shipped agents are data, not code: `Data/Agent.json` seeds a fresh install through the legacy
+importer, and from then on they are edited in the UI. A site that moves its price markup is repaired
+by editing its agent; keep `Data/Agent.json` in step so a fresh install starts out repaired too, and
+`Data/Product.json` alongside it, since its sources reference agents by key.
+
 ## Backend specifics
 
 - **Repository tests** use the local `RepositoryTestContext` (EF in-memory, fresh `Guid` database
@@ -75,13 +89,19 @@ strings.
 
 `PriceChecker.Web`, dev server on 5081. `pnpm nswag` needs the API running on 5080.
 
+- **Every query is a saga**, the ones that keep nothing in the redux store included. Such a saga
+  resolves the caller's callback with the type the caller wants: `fetchAgentHandlers` with `string[]`,
+  `recognizeSourceUrl` with `RecognizedSource[]`.
+- **`messages.ts` holds the representations of the API types that are not models**, so that the rest
+  of the app works in its own types. Today that is the payloads the scan hub pushes.
+- `productEdit` refetches the agents on every mount rather than only when the list is empty, because
+  an agent recognized from a pasted URL has to be in it.
 - **Store slices**: `agents`, `products`, `scans`. There is no `settings` slice — it was dropped in
   `persistVersion: 2`, along with `products.editedProduct`.
 - `persistBlacklist: ["common", "scans"]` — scan progress is transient.
 - **SignalR**: `scans/messages.ts` owns the hub connection (`startScanHubConnection`,
   `${ApiUrl}/hubs/scan`) and dispatches store actions from the hub callbacks. This is the only app in
-  the set with live push.
-- `agents/messages.ts` exposes a plain fetch for static data. `products` has no `messages.ts`.
+  the set with live push, and the only slice with a `messages.ts`.
 - `fakeAxios` lives at `@/store/testUtils/sagas`; shared model factories are in
   `utils/tests/testModels.ts` (`createAgent`, `createProduct`, `createProductOverview`,
   `createProductPrice`, `createScanProgress`).

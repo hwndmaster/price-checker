@@ -1,4 +1,3 @@
-using Genius.PriceChecker.Core.Models;
 using Genius.PriceChecker.Dto.References;
 
 namespace Genius.PriceChecker.Dto;

@@ -9,4 +9,5 @@ public sealed record UpdateAgentRequest(
     string Url,
     string PricePattern,
     string Handler,
-    string DecimalDelimiter) : IPrimaryId<Guid, AgentRef>, ITimeStamped;
+    string DecimalDelimiter,
+    string? UrlPattern) : IPrimaryId<Guid, AgentRef>, ITimeStamped;

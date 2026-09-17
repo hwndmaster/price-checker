@@ -1,6 +1,7 @@
 ﻿using Genius.Atom.Infrastructure.TestingUtil;
 using Genius.PriceChecker.Core.Models;
 using Genius.PriceChecker.Core.Services;
+using Genius.PriceChecker.Dto;
 
 namespace Genius.PriceChecker.Core.Tests.Services;
 

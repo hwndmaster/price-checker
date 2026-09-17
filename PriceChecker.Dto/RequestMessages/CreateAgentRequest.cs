@@ -5,4 +5,5 @@ public sealed record CreateAgentRequest(
     string Url,
     string PricePattern,
     string Handler,
-    string DecimalDelimiter);
+    string DecimalDelimiter,
+    string? UrlPattern);

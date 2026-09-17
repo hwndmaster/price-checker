@@ -6,6 +6,7 @@ export const agentSchema = z.object({
     pricePattern: z.string().min(1, "Price pattern is required"),
     handler: z.string().min(1, "Handler is required"),
     decimalDelimiter: z.string().length(1, "The decimal delimiter must be a single character"),
+    urlPattern: z.string().nullable(),
 });
 
 export type AgentSchemaData = z.infer<typeof agentSchema>;

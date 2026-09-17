@@ -2,6 +2,7 @@ using Genius.Atom.Infrastructure.TestingUtil;
 using Genius.PriceChecker.Core.Models;
 using Genius.PriceChecker.Core.Services;
 using Genius.PriceChecker.Db.Repositories;
+using Genius.PriceChecker.Dto;
 using Genius.PriceChecker.Dto.References;
 using Genius.PriceChecker.Dto.RequestMessages;
 
@@ -153,11 +154,47 @@ public sealed class ProductsRepositoryTests
         Assert.Equal(AgentHandlingStatus.CouldNotMatch, snapshot.Status);
     }
 
+    [Fact]
+    public async Task GetOverviewByIdAsync_GivenSeveralSources_ThenLinksAreResolvedAndOrderedByAgentKey()
+    {
+        // Arrange
+        await using var context = new RepositoryTestContext();
+        var (productsRepository, agentId) = await CreateSystemUnderTestAsync(context);
+        var agentsRepository = new AgentsRepository(_dateTime, context);
+        // Created second but sorts first, so the assertion below tells ordering apart from insertion order.
+        var otherAgent = await agentsRepository.CreateAsync(
+            new CreateAgentRequest("another-agent", "https://other.example/p/{0}?full=1", "pattern", "SimpleRegex", ".", null), TestContext.Current.CancellationToken);
+        var created = await productsRepository.CreateAsync(
+            new CreateProductRequest("Test Product", null, null,
+                [
+                    new CreateProductSourceRequest(agentId, "B000123"),
+                    new CreateProductSourceRequest(otherAgent.EntityId, "XYZ"),
+                ]),
+            cancellationToken: TestContext.Current.CancellationToken);
+
+        // Act
+        var overview = await productsRepository.GetOverviewByIdAsync(created.EntityId, TestContext.Current.CancellationToken);
+
+        // Assert
+        Assert.NotNull(overview);
+        Assert.Collection(overview.Sources,
+            first =>
+            {
+                Assert.Equal("another-agent", first.AgentKey);
+                Assert.Equal("https://other.example/p/XYZ?full=1", first.Url);
+            },
+            second =>
+            {
+                Assert.Equal("test-agent", second.AgentKey);
+                Assert.Equal("https://example.com/B000123", second.Url);
+            });
+    }
+
     private async Task<(ProductsRepository ProductsRepository, AgentRef AgentId)> CreateSystemUnderTestAsync(RepositoryTestContext context)
     {
         var agentsRepository = new AgentsRepository(_dateTime, context);
         var createdAgent = await agentsRepository.CreateAsync(
-            new CreateAgentRequest("test-agent", "https://example.com/{0}", "pattern", "SimpleRegex", "."));
+            new CreateAgentRequest("test-agent", "https://example.com/{0}", "pattern", "SimpleRegex", ".", null));
 
         var productsRepository = new ProductsRepository(_dateTime, context, _statusProviderMock);
         return (productsRepository, createdAgent.EntityId);

@@ -2,6 +2,7 @@ using System.Collections.Concurrent;
 using Genius.Atom.Infrastructure.TestingUtil;
 using Genius.PriceChecker.Core.Models;
 using Genius.PriceChecker.Core.Services;
+using Genius.PriceChecker.Dto;
 using Microsoft.Extensions.Logging;
 
 namespace Genius.PriceChecker.Core.Tests.Services;

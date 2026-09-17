@@ -30,6 +30,7 @@ export class AgentsClient extends ApiClientBase {
     static operations = {
 
         handlers: "api/v1/Agents/handlers",
+        recognize: "api/v1/Agents/recognize",
         agentsGET: "api/v1/Agents/{id}",
         agentsDELETE: "api/v1/Agents/{id}",
         agentsAll: "api/v1/Agents",
@@ -41,6 +42,10 @@ export class AgentsClient extends ApiClientBase {
     static operationParams = {
 
         handlers: {} as {
+        },
+
+        recognize: {} as {
+            body: Partial<RecognizeSourceUrlRequest>;
         },
 
         agentsGET: {} as {
@@ -121,6 +126,73 @@ export class AgentsClient extends ApiClientBase {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
         }
         return Promise.resolve<ApiResponse<string[]>>(new ApiResponse(status, _headers, null as any));
+    }
+
+    /**
+     * @return OK
+     */
+    recognize(body: RecognizeSourceUrlRequest, cancelToken?: CancelToken): Promise<ApiResponse<RecognizedSourceDto[]>> {
+        let url_ = this.baseUrl + "/api/v1/Agents/recognize";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_: AxiosRequestConfig = {
+            data: content_,
+            method: "POST",
+            url: url_,
+            headers: {
+                "Content-Type": "application/json",
+                "Accept": "application/json"
+            },
+            cancelToken
+        };
+
+        return this.transformOptions(options_).then(transformedOptions_ => {
+            return this.instance.request(transformedOptions_);
+        }).catch((_error: any) => {
+            if (isAxiosError(_error) && _error.response) {
+                return _error.response;
+            } else {
+                throw _error;
+            }
+        }).then((_response: AxiosResponse) => {
+            return this.processRecognize(_response);
+        });
+    }
+
+    protected processRecognize(response: AxiosResponse): Promise<ApiResponse<RecognizedSourceDto[]>> {
+        const status = response.status;
+        let _headers: any = {};
+        if (response.headers && typeof response.headers === "object") {
+            for (const k in response.headers) {
+                if (response.headers.hasOwnProperty(k)) {
+                    _headers[k] = response.headers[k];
+                }
+            }
+        }
+        if (status === 200) {
+            const _responseText = response.data;
+            let result200: any = null;
+            let resultData200  = _responseText;
+            result200 = typeof(resultData200) === "object" ? resultData200 : JSON.parse(resultData200);
+            return Promise.resolve<ApiResponse<RecognizedSourceDto[]>>(new ApiResponse<RecognizedSourceDto[]>(status, _headers, result200));
+
+        } else if (status === 400) {
+            const _responseText = response.data;
+            let result400: any = null;
+            let resultData400  = _responseText;
+            result400 = typeof(resultData400) === "object" ? resultData400 : JSON.parse(resultData400);
+            return throwException("Bad Request", status, _responseText, _headers, result400);
+
+        } else if (status === 404) {
+            return throwException("NotFound: " + response.config.url, status, response.data, _headers, null);
+        }
+        else if (status !== 200 && status !== 204) {
+            const _responseText = response.data;
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Promise.resolve<ApiResponse<RecognizedSourceDto[]>>(new ApiResponse(status, _headers, null as any));
     }
 
     /**
@@ -1146,7 +1218,7 @@ export class ScansClient extends ApiClientBase {
     }
 
     /**
-     * @return OK
+     * @return Accepted
      */
     all( cancelToken?: CancelToken): Promise<ApiResponse<void>> {
         let url_ = this.baseUrl + "/api/v1/Scans/all";
@@ -1183,7 +1255,7 @@ export class ScansClient extends ApiClientBase {
                 }
             }
         }
-        if (status === 200) {
+        if (status === 202) {
             const _responseText = response.data;
             return Promise.resolve<ApiResponse<void>>(new ApiResponse<void>(status, _headers, null as any));
 
@@ -1198,7 +1270,7 @@ export class ScansClient extends ApiClientBase {
     }
 
     /**
-     * @return OK
+     * @return Accepted
      */
     product(productId: string, cancelToken?: CancelToken): Promise<ApiResponse<void>> {
         let url_ = this.baseUrl + "/api/v1/Scans/product/{productId}";
@@ -1238,7 +1310,7 @@ export class ScansClient extends ApiClientBase {
                 }
             }
         }
-        if (status === 200) {
+        if (status === 202) {
             const _responseText = response.data;
             return Promise.resolve<ApiResponse<void>>(new ApiResponse<void>(status, _headers, null as any));
 
@@ -1316,6 +1388,7 @@ export interface AgentDto {
     pricePattern: string;
     handler: string;
     decimalDelimiter: string;
+    urlPattern: string | undefined;
     dateCreated: number;
     lastModified: number;
 }
@@ -1326,6 +1399,7 @@ export interface CreateAgentRequest {
     pricePattern: string;
     handler: string;
     decimalDelimiter: string;
+    urlPattern: string | undefined;
 }
 
 export interface CreatedEntityDtoOfGuidAndAgentRef {
@@ -1374,6 +1448,7 @@ export interface ProductOverviewDto {
     name: string;
     category: string | undefined;
     description: string | undefined;
+    sources: ProductSourceLinkDto[];
     status: number;
     statusText: string | undefined;
     lowestPrice: number | undefined;
@@ -1397,6 +1472,22 @@ export interface ProductSourceDto {
     agentArgument: string;
 }
 
+export interface ProductSourceLinkDto {
+    agentKey: string;
+    url: string;
+}
+
+export interface RecognizedSourceDto {
+    agentId: AgentRef;
+    agentKey: string;
+    agentArgument: string;
+    matchKind: number;
+}
+
+export interface RecognizeSourceUrlRequest {
+    url: string;
+}
+
 export interface ScanProgressDto {
     finished: number;
     total: number;
@@ -1413,6 +1504,7 @@ export interface UpdateAgentRequest {
     pricePattern: string;
     handler: string;
     decimalDelimiter: string;
+    urlPattern: string | undefined;
 }
 
 export interface UpdatedEntityDtoOfGuidAndAgentRef {

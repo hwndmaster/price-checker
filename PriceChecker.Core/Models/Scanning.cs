@@ -1,4 +1,6 @@
-﻿namespace Genius.PriceChecker.Core.Models;
+﻿using Genius.PriceChecker.Dto;
+
+namespace Genius.PriceChecker.Core.Models;
 
 /// <summary>
 ///   The scanning agent definition, detached from any persistence concerns.

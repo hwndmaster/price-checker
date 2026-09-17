@@ -16,21 +16,24 @@ public sealed class AgentsRepositoryTests
 
         // Act & Assert: Create
         var created = await repository.CreateAsync(
-            new CreateAgentRequest("amazon.de", "https://amazon.de/{0}", "pattern", "SimpleRegex", "."),
+            new CreateAgentRequest("amazon.de", "https://amazon.de/{0}", "pattern", "SimpleRegex", ".", "amazon/(?<arg>.+)"),
             cancellationToken: TestContext.Current.CancellationToken);
         var fetched = await repository.GetByIdOrThrowAsync(created.EntityId, TestContext.Current.CancellationToken);
         Assert.Equal("amazon.de", fetched.Key);
         Assert.Equal(".", fetched.DecimalDelimiter);
+        Assert.Equal("amazon/(?<arg>.+)", fetched.UrlPattern);
 
         // Act & Assert: Update
         dateTime.Advance(TimeSpan.FromMinutes(5));
         var updated = await repository.UpdateAsync(
-            new UpdateAgentRequest(created.EntityId, created.LastModified, "amazon.nl", "https://amazon.nl/{0}", "pattern2", "SimpleRegexDivideBy100", ","),
+            new UpdateAgentRequest(created.EntityId, created.LastModified, "amazon.nl", "https://amazon.nl/{0}", "pattern2", "SimpleRegexDivideBy100", ",", "   "),
             cancellationToken: TestContext.Current.CancellationToken);
         Assert.NotEqual(created.LastModified, updated.LastModified);
         fetched = await repository.GetByIdOrThrowAsync(created.EntityId, TestContext.Current.CancellationToken);
         Assert.Equal("amazon.nl", fetched.Key);
         Assert.Equal(",", fetched.DecimalDelimiter);
+        // A blank URL pattern is stored as "absent" so that the recognition falls back to the URL template.
+        Assert.Null(fetched.UrlPattern);
 
         // Act & Assert: Delete
         await repository.DeleteAsync(created.EntityId, TestContext.Current.CancellationToken);
@@ -44,7 +47,7 @@ public sealed class AgentsRepositoryTests
         await using var context = new RepositoryTestContext();
         var repository = new AgentsRepository(new FakeDateTime(), context);
         var created = await repository.CreateAsync(
-            new CreateAgentRequest("bol.com", "https://bol.com/{0}", "pattern", "SimpleRegex", ","),
+            new CreateAgentRequest("bol.com", "https://bol.com/{0}", "pattern", "SimpleRegex", ",", null),
             cancellationToken: TestContext.Current.CancellationToken);
 
         // Act & Assert

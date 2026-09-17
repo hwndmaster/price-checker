@@ -9,5 +9,6 @@ public sealed record AgentDto(
     string PricePattern,
     string Handler,
     string DecimalDelimiter,
+    string? UrlPattern,
     DateTimeOffset DateCreated,
     DateTimeOffset LastModified) : IEntity<Guid, AgentRef>;
