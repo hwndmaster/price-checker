@@ -45,12 +45,18 @@ services:
       # OTLP/HTTP port published below. /api/ needs no override: both managed containers share DCP's
       # network and resolve each other by name.
       Deployment__WebOtlpUpstream: ${PRICECHECKER_OTLP_UPSTREAM:-http://host.docker.internal:21181}
-      # Always keeps the deployment current, but the daemon must be logged in to the registry when the
-      # app host creates the containers. Missing reuses images already on the host (offline / local test).
-      Deployment__ImagePullPolicy: ${PRICECHECKER_IMAGE_PULL_POLICY:-Always}
+      # Missing: DCP creates the containers from the images update.ps1 pulled on the host, with your login.
+      # Always makes DCP pull for itself, and it runs the docker CLI in THIS container, where that login
+      # does not exist - so the pull goes out anonymous and a private registry answers
+      # "error from registry: unauthorized". The socket mount grants the daemon, not the credentials.
+      Deployment__ImagePullPolicy: ${PRICECHECKER_IMAGE_PULL_POLICY:-Missing}
       # DCP publishes its own endpoints on 127.0.0.1 with no way to override it, so the app host adds a
       # second, reachable publish at this address. 127.0.0.1 here makes the app local-only.
       Deployment__BindAddress: ${PRICECHECKER_BIND_ADDRESS:-0.0.0.0}
+      # Host the dashboard's resource links are shown under - the address browsers reach this machine by,
+      # which the app host cannot find out from inside its container. Deliberately no default here:
+      # DeploymentSettings holds the only one (localhost), so the two cannot disagree.
+      Deployment__PublicHost: ${PRICECHECKER_PUBLIC_HOST:-}
       Deployment__ApiPort: "${PRICECHECKER_API_PORT:-5080}"
       Deployment__WebPort: "${PRICECHECKER_WEB_PORT:-5081}"
 

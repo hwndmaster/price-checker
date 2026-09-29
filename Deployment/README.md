@@ -163,8 +163,10 @@ leave the app reachable only from the machine itself, so the app host adds the s
 as an explicit container runtime argument. `PRICECHECKER_BIND_ADDRESS` controls its address; set it to
 `127.0.0.1` if you want the app reachable only locally.
 
-A consequence: the URLs shown on the Resources page are DCP's loopback ones (`http://localhost:8031`),
-not the published ones. They work from the server itself; from another machine use the ports above.
+The Resources page does not show DCP's loopback URL (`http://localhost:8031`) for these endpoints: the app
+host replaces it with the reachable publish, under the host named by `PRICECHECKER_PUBLIC_HOST`. Set
+that to the address browsers reach the server by. The app host runs in a container and cannot find
+it out itself, so left unset the links say `localhost` and work only from the server.
 
 ## Networking, and why there is no shared network setting
 

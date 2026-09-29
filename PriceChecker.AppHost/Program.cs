@@ -1,8 +1,7 @@
 using Genius.PriceChecker.AppHost;
 
-// The port the Vite dev server runs on locally. Named in two more places that have to agree with it:
-// `server.port` in vite.config.ts, for when the dev server is started on its own, and VITE_BASE_URL in
-// PriceChecker.Web/.env.
+// The port the Vite dev server runs on locally. Named in one more place that has to agree with it:
+// `server.port` in vite.config.ts, for when the dev server is started on its own.
 const int WebDevServerPort = 5081;
 
 var builder = DistributedApplication.CreateBuilder(args);
@@ -104,6 +103,9 @@ static void ConfigureDeployed(IDistributedApplicationBuilder builder)
         // that), which on a server would leave the app reachable only from the machine itself.
         .WithHttpEndpoint(targetPort: DeploymentSettings.ApiContainerPort, isProxied: false)
         .WithContainerRuntimeArgs("-p", $"{settings.BindAddress}:{settings.ApiPort}:{DeploymentSettings.ApiContainerPort}")
+        // The endpoint's own URL is DCP's 127.0.0.1 publish, which only works from this machine, so the
+        // dashboard is given the reachable publish above instead. Display only: nothing connects by it.
+        .WithUrlForEndpoint("http", url => url.Url = settings.PublicUrl(settings.ApiPort))
         // Deliberately runtime arguments rather than WithBindMount. WithBindMount normalises the path
         // with the APP HOST's OS conventions, but this app host runs in a Linux container while the
         // daemon resolving the mount is the Windows host's. A "C:/..." path is not absolute to Linux, so
@@ -136,6 +138,7 @@ static void ConfigureDeployed(IDistributedApplicationBuilder builder)
         .WithLifetime(ContainerLifetime.Persistent)
         .WithHttpEndpoint(targetPort: DeploymentSettings.WebContainerPort, isProxied: false)
         .WithContainerRuntimeArgs("-p", $"{settings.BindAddress}:{settings.WebPort}:{DeploymentSettings.WebContainerPort}")
+        .WithUrlForEndpoint("http", url => url.Url = settings.PublicUrl(settings.WebPort))
         .WithExternalHttpEndpoints()
         .WithContainerRuntimeArgs("--add-host", "host.docker.internal:host-gateway")
         .WithContainerRuntimeArgs("--label", $"com.docker.compose.project={settings.ComposeProject}")

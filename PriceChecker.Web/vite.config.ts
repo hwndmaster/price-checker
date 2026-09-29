@@ -79,6 +79,9 @@ export default defineConfig(({ mode }) => {
     }
 
     return {
+        // A path, never an absolute URL: the build bakes it into every asset link in index.html, and the
+        // published image is opened under whatever address its server has. "http://localhost:<port>"
+        // here works on the machine that built it and nowhere else.
         base: env.VITE_BASE_URL || "/",
         css: {
             preprocessorOptions: {

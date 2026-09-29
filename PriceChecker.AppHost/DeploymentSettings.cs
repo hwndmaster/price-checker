@@ -62,6 +62,16 @@ internal sealed record DeploymentSettings
     /// </summary>
     public required string BindAddress { get; init; }
 
+    /// <summary>
+    /// Host the dashboard's resource links are shown under: the address browsers reach this machine by.
+    /// The app host runs in a container and cannot find that out for itself, so it has to be told; left
+    /// unset, the links say localhost and only work from the machine itself.
+    /// </summary>
+    public required string PublicHost { get; init; }
+
+    /// <summary>The URL a browser reaches a published HTTP port by, for the dashboard's resource links.</summary>
+    public string PublicUrl(int port) => $"http://{PublicHost}:{port}";
+
     public static DeploymentSettings From(IConfiguration configuration)
     {
         ArgumentNullException.ThrowIfNull(configuration);
@@ -87,6 +97,7 @@ internal sealed record DeploymentSettings
             WebPort = ReadPort(configuration, "WebPort", 5081),
             ImagePullPolicy = ReadPullPolicy(configuration),
             BindAddress = Read(configuration, "BindAddress", "0.0.0.0"),
+            PublicHost = Read(configuration, "PublicHost", "localhost"),
         };
     }
 
