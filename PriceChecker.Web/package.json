@@ -9,7 +9,6 @@
     },
     "scripts": {
         "start": "vite --port 5081 --open",
-        "start:aspire": "vite",
         "build": "vite build",
         "serve": "vite preview --open",
         "test": "vitest --silent=false",

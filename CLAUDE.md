@@ -31,7 +31,6 @@ This file carries only what is specific to *this* app.
 
 | Project | Scope |
 |---------|-------|
-| `PriceChecker.AppHost` | Aspire host — dashboard and orchestration |
 | `PriceChecker.Core` | The scanning domain — agent handlers, `PriceSeeker` |
 | `PriceChecker.Db` | EF Core context, entities, migrations, repositories, the legacy JSON importer |
 | `PriceChecker.Dto` | The contracts every other project shares: DTOs, references, request messages and the enums that travel with them. It references nothing of ours — `Core` references **it**, not the other way round, so that a type Core states on its own boundary can be a `ProductRef` rather than a `Guid`. |
@@ -55,6 +54,15 @@ strings.
 |------|------|
 | WebApi (local) | 5080 |
 | Web dev server | 5081 |
+| Shared app host dashboard | 15100 |
+| OTLP gRPC / HTTP ingest (shared app host) | 21100 / 21101 |
+
+Local development runs the WebApi and `pnpm start` side by side (the "API + Web" launch compound); there
+is no AppHost project. On the server the app runs under the shared app host
+([hwndmaster/app-host](https://github.com/hwndmaster/app-host)); `Deployment/` is its folder there, with
+`app.json` describing the containers. The Telegram settings reach the server's api container through
+`api.environment` in `Deployment/app.json`, from `Deployment/.env`. The dev server sends browser telemetry
+only when `VITE_OTLP_UPSTREAM` is set.
 
 ## Agents
 

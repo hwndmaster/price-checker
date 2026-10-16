@@ -111,15 +111,6 @@
                         "icon": "debug-restart",
                         "iconColor": "errorForeground"
                     },
-                    "Run AppHost (API + Web + Dashboard)": {
-                        "command": "commands.runInTerminal",
-                        "args": {
-                            "text": "dotnet run --project PriceChecker.AppHost",
-                            "cwd": "${workspaceFolder}",
-                            "reveal": true
-                        },
-                        "icon": "debug-start"
-                    },
                     "Run WebApi": {
                         "command": "commands.runInTerminal",
                         "args": {

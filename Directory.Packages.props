@@ -2,10 +2,6 @@
   <Import Project="$(AtomBuildDirectory)/PackageVersions.props" />
 
   <ItemGroup>
-    <!-- Aspire -->
-    <PackageVersion Include="Aspire.Hosting.AppHost" Version="13.4.6" />
-    <PackageVersion Include="Aspire.Hosting.JavaScript" Version="13.4.6" />
-
     <!-- Microsoft ASP.NET dependencies. Versions that Atom's own packages depend on are
          inherited from Atom's PackageVersions.props; only app-only packages are pinned here.
          Mvc.Testing tracks Atom's FrameworkPackageVersion so the test host matches the

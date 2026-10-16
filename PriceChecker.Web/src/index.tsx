@@ -7,8 +7,8 @@ import App from "./App";
 import * as serviceWorker from "./serviceWorker";
 
 // The exporter posts to <origin>/otlp, which the published image's nginx always proxies on to the
-// dashboard. In development that route exists only when the app host started the dev server and handed
-// it the upstream to proxy to; without it every export would land on a 404 and be retried forever.
+// dashboard. In development that route exists only when VITE_OTLP_UPSTREAM gives the dev server an
+// upstream to proxy to (see vite.config.ts); without it every export would land on a 404 and be retried forever.
 //
 // Before rendering, so a failure during start-up is still reported.
 const otlpUpstream: unknown = import.meta.env.VITE_OTLP_UPSTREAM;

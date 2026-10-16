@@ -29,9 +29,10 @@ COPY nginx.conf /etc/nginx/templates/default.conf.template
 # Restricts envsubst to our own variables so nginx's $uri, $host, $upstream and $1 are left alone.
 ENV NGINX_ENVSUBST_FILTER=^PRICECHECKER_
 
-# Defaults match the compose-owned deployment, where every container shares one network and resolves
-# these names. The app host overrides them when DCP owns the containers and sits on its own network.
+# Defaults for the repo-root docker-compose.yml, where both containers share one network and resolve each
+# other by name, and telemetry goes to the shared app host if one runs on this machine. On the server the
+# app host sets both.
 ENV PRICECHECKER_API_UPSTREAM=http://pricechecker-api:8031
-ENV PRICECHECKER_OTLP_UPSTREAM=http://pricechecker-apphost:21181
+ENV PRICECHECKER_OTLP_UPSTREAM=http://host.docker.internal:21101
 
 EXPOSE 8032

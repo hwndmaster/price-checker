@@ -1,7 +1,4 @@
 <Solution>
-  <Folder Name="/PriceChecker.AppHost/">
-    <Project Path="PriceChecker.AppHost\PriceChecker.AppHost.csproj" />
-  </Folder>
   <Folder Name="/PriceChecker.Core/">
     <Project Path="PriceChecker.Core\PriceChecker.Core.csproj" />
   </Folder>

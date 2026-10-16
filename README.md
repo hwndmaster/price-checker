@@ -14,7 +14,6 @@ _CI Status:_<br/>
 | `PriceChecker.Db` | SQLite persistence: EF Core entities, migrations, repositories, the one-time legacy JSON import. |
 | `PriceChecker.WebApi` | ASP.NET Core API: CRUD controllers, scan orchestration, SignalR scan hub, scheduled scan background service. |
 | `PriceChecker.Web` | React + TypeScript frontend (Vite, PrimeReact, redux-saga), talking to the API via an NSwag-generated client and live scan updates over SignalR. |
-| `PriceChecker.AppHost` | .NET Aspire orchestration for local development and the telemetry dashboard in Docker. |
 
 Built on top of the [Atom framework](https://github.com/hwndmaster/atom). The old WPF frontend is preserved on the `archive-wpf-frontend` branch.
 
@@ -29,13 +28,8 @@ they require the [`usernamehw.commands`](https://marketplace.visualstudio.com/it
 extension. `F5` offers the launch configurations, and `Ctrl+Shift+B` / `Ctrl+Shift+P → Run Test Task`
 run the build and coverage tasks.
 
-The single F5 target is the Aspire AppHost, which starts the API, the Vite dev server, and the dashboard:
-
-```bash
-dotnet run --project PriceChecker.AppHost
-```
-
-Or run the parts individually:
+The "API + Web" launch compound starts the API and the Vite dev server together. Or run them
+individually:
 
 ```bash
 dotnet run --project PriceChecker.WebApi     # API on http://localhost:5080
@@ -158,6 +152,20 @@ docker compose up --build -d
 | --- | --- |
 | Web UI | http://localhost:5081 |
 | API | http://localhost:5080 |
-| Aspire dashboard (telemetry) | http://localhost:15180 |
+
+The API sends its telemetry to a shared app host on this machine when one runs (port 21100); without
+one it runs the same and the telemetry is dropped.
 
 Publishing the images to a registry: `./publish-docker.ps1` (see the parameters inside).
+
+## Server deployment
+
+On the server PriceChecker runs under the shared app host
+([hwndmaster/app-host](https://github.com/hwndmaster/app-host)). It creates and supervises the
+containers, and its one dashboard (port 15100) shows every application's resources, logs, traces and
+metrics.
+
+[`Deployment/`](Deployment/README.md) is this application's folder for it. Copy it to
+`C:\Docker\PriceChecker` on the server, create `.env` from `.env.example` (data and logs paths, plus the
+optional Telegram settings for the price alerts), register the folder in the app host's `apps.json`, and
+run `.\update.ps1`. The same script updates it later, while the other applications keep running.

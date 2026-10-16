@@ -8,12 +8,12 @@ const ENV_PREFIX = ["VITE_", "SERVER_"];
 /** Base path the browser's OTLP exporter posts to, mirroring the `location /otlp/` block in nginx.conf. */
 const OTLP_BASE_PATH = "/otlp";
 
-/** Where the dev server forwards {@link OTLP_BASE_PATH} to. Set by the app host; see the proxy below. */
+/** Where the dev server forwards {@link OTLP_BASE_PATH} to. Unset by default; see the proxy below. */
 const OTLP_UPSTREAM_VAR = "VITE_OTLP_UPSTREAM";
 
 /**
- * Headers the OTLP endpoint expects, read from the standard `key=value,key=value` variable Aspire injects
- * into this process. Locally the dashboard ingests under an api key and rejects an unauthenticated export
+ * Headers the OTLP endpoint expects, read from the standard `key=value,key=value` variable
+ * OTEL_EXPORTER_OTLP_HEADERS, for an endpoint that ingests under an api key and rejects an unauthenticated export
  * with a 401, so the dev server has to present it — server-side, rather than shipping a credential to
  * every browser that loads the app. Empty wherever the endpoint takes anonymous exports, as the published
  * image's does.
@@ -47,9 +47,11 @@ export default defineConfig(({ mode }) => {
 
     // Loaded on its own rather than out of `env` above, so that it is found whatever ENV_PREFIX a repo
     // happens to use, and resolved the same way the browser resolves import.meta.env — from the
-    // environment as well as from .env. The app host is what sets it, so a dev server started on its own
+    // environment as well as from .env. It is unset by default, so the dev server
     // gets no proxy and, with the variable equally absent from the bundle, an SPA that never starts the
     // exporter. One variable drives both ends, so the browser cannot export into a route that is not there.
+    // To see the SPA's telemetry, set it in .env.local to an OTLP/HTTP endpoint, such as the shared app host's
+    // http://localhost:21101 when it runs on this machine.
     const otlpUpstream = loadEnv(mode, process.cwd(), OTLP_UPSTREAM_VAR)[OTLP_UPSTREAM_VAR]?.trim();
 
     const plugins = [
