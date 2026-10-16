@@ -8,9 +8,9 @@ Guidance for Claude Code when working in this repository.
 A .NET solution on the **Genius.Atom** framework plus a React SPA on the `@hwndmaster/atom-*`
 packages. Repository: <https://github.com/hwndmaster/price-checker>.
 
-Root namespace prefix is `Genius.PriceChecker.*`. Compose service prefix is **`pricechecker`**
-(no hyphen) — note it differs from the repo directory name, which is what Docker Compose uses as the
-project name.
+Root namespace prefix is `Genius.PriceChecker.*`. Compose service prefix is **`price-checker`**,
+the repository name. It also names the published images, the containers and the app's folder on the
+server; `.env` variables use `PRICE_CHECKER_`.
 
 ## Stack conventions live in plugins
 

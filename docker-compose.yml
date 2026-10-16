@@ -1,13 +1,13 @@
 # Builds the images (publish-docker.ps1) and can run them locally. On the server the shared app host runs
 # them instead, from Deployment/app.json.
 services:
-  pricechecker-api:
+  price-checker-api:
     build:
       context: .                          # Root, so all projects are in scope
       dockerfile: PriceChecker.WebApi/Dockerfile
       secrets:
         - atom_pkg_access_token
-    container_name: pricechecker-api
+    container_name: price-checker-api
     ports:
       - "5080:8031"                       # Host port 5080 → container port 8031
     environment:
@@ -19,7 +19,7 @@ services:
       OTEL_EXPORTER_OTLP_ENDPOINT: http://host.docker.internal:21100
       OTEL_EXPORTER_OTLP_PROTOCOL: grpc
       OTEL_EXPORTER_OTLP_INSECURE: "true"
-      OTEL_SERVICE_NAME: pricechecker-api
+      OTEL_SERVICE_NAME: price-checker-api
     extra_hosts:
       - "host.docker.internal:host-gateway"   # Docker Desktop resolves it by itself; a Linux daemon does not
     volumes:
@@ -27,17 +27,17 @@ services:
       - ./Data-Local/Logs:/app/Logs      # Persist API error logs
     restart: unless-stopped
 
-  pricechecker-web:
+  price-checker-web:
     build:
       context: ./PriceChecker.Web
       dockerfile: Dockerfile
       secrets:
         - atom_pkg_access_token
-    container_name: pricechecker-web
+    container_name: price-checker-web
     ports:
       - "5081:8032"                         # Host port 5081 → container port 8032
     depends_on:
-      - pricechecker-api
+      - price-checker-api
     restart: unless-stopped
 
 secrets:

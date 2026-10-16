@@ -1,26 +1,26 @@
 {
   "$schema": "../app-host/app.schema.json",
-  "name": "pricechecker",
+  "name": "price-checker",
   "displayName": "PriceChecker",
   "type": "atom-webapp",
-  "registry": "${PRICECHECKER_REGISTRY:-ghcr.io/hwndmaster}",
-  "imageTag": "${PRICECHECKER_IMAGE_TAG:-latest}",
+  "registry": "${PRICE_CHECKER_REGISTRY:-ghcr.io/hwndmaster}",
+  "imageTag": "${PRICE_CHECKER_IMAGE_TAG:-latest}",
   "api": {
     "containerPort": 8031,
-    "hostPort": "${PRICECHECKER_API_PORT:-5080}",
-    "memory": "${PRICECHECKER_API_MEMORY_LIMIT:-384m}",
+    "hostPort": "${PRICE_CHECKER_API_PORT:-5080}",
+    "memory": "${PRICE_CHECKER_API_MEMORY_LIMIT:-384m}",
     "volumes": [
-      { "host": "${PRICECHECKER_DATA_PATH}", "container": "/app/Data" },
-      { "host": "${PRICECHECKER_LOGS_PATH}", "container": "/app/Logs" }
+      { "host": "${PRICE_CHECKER_DATA_PATH}", "container": "/app/Data" },
+      { "host": "${PRICE_CHECKER_LOGS_PATH}", "container": "/app/Logs" }
     ],
     "environment": {
-      "Telegram__BotToken": "${PRICECHECKER_TELEGRAM_BOT_TOKEN:-}",
-      "Telegram__ChatId": "${PRICECHECKER_TELEGRAM_CHAT_ID:-}"
+      "Telegram__BotToken": "${PRICE_CHECKER_TELEGRAM_BOT_TOKEN:-}",
+      "Telegram__ChatId": "${PRICE_CHECKER_TELEGRAM_CHAT_ID:-}"
     }
   },
   "web": {
     "containerPort": 8032,
-    "hostPort": "${PRICECHECKER_WEB_PORT:-5081}",
-    "memory": "${PRICECHECKER_WEB_MEMORY_LIMIT:-64m}"
+    "hostPort": "${PRICE_CHECKER_WEB_PORT:-5081}",
+    "memory": "${PRICE_CHECKER_WEB_MEMORY_LIMIT:-64m}"
   }
 }

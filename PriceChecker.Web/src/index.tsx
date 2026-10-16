@@ -16,7 +16,7 @@ const isTelemetrySinkReachable = import.meta.env.PROD === true
     || (typeof otlpUpstream === "string" && otlpUpstream.length > 0);
 
 if (isTelemetrySinkReachable) {
-    setupAtomTelemetry({ serviceName: "pricechecker-web", environment: import.meta.env.MODE });
+    setupAtomTelemetry({ serviceName: "price-checker-web", environment: import.meta.env.MODE });
 }
 
 setNotificationService(toastService);

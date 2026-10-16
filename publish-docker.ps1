@@ -103,8 +103,8 @@ if ([string]::IsNullOrWhiteSpace($AtomPkgAccessToken)) {
 
 Ensure-DockerReady
 
-$apiImage = "$Registry/$DockerUser/pricechecker-api:latest"
-$webImage = "$Registry/$DockerUser/pricechecker-web:latest"
+$apiImage = "$Registry/$DockerUser/price-checker-api:latest"
+$webImage = "$Registry/$DockerUser/price-checker-web:latest"
 $previousAtomPkgAccessToken = $env:ATOM_PKG_ACCESS_TOKEN
 $hadPreviousAtomPkgAccessToken = $null -ne $previousAtomPkgAccessToken
 $previousComposeParallelLimit = $env:COMPOSE_PARALLEL_LIMIT
@@ -119,16 +119,16 @@ try {
     }
 
     Invoke-Step "Build Docker compose images" {
-        docker compose --progress=plain build pricechecker-api
-        docker compose --progress=plain build pricechecker-web
+        docker compose --progress=plain build price-checker-api
+        docker compose --progress=plain build price-checker-web
     }
 
     Invoke-Step "Tag API image" {
-        docker tag price-checker-pricechecker-api $apiImage
+        docker tag price-checker-price-checker-api $apiImage
     }
 
     Invoke-Step "Tag Web image" {
-        docker tag price-checker-pricechecker-web $webImage
+        docker tag price-checker-price-checker-web $webImage
     }
 
     Invoke-Step "Push API image" {

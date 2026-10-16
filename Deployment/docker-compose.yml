@@ -5,15 +5,15 @@
 # does not exist. This file starts nothing. The app host creates the containers from app.json, and both
 # services sit under the "pull" profile, so `docker compose up` here does nothing.
 #
-# The project name differs from the label the app host puts on the containers (pricechecker), so this
+# The project name differs from the label the app host puts on the containers (price-checker), so this
 # file can never take them for its own.
-name: pricechecker-images
+name: price-checker-images
 
 services:
-  pricechecker-api:
+  price-checker-api:
     profiles: ["pull"]
-    image: ${PRICECHECKER_REGISTRY:-ghcr.io/hwndmaster}/pricechecker-api:${PRICECHECKER_IMAGE_TAG:-latest}
+    image: ${PRICE_CHECKER_REGISTRY:-ghcr.io/hwndmaster}/price-checker-api:${PRICE_CHECKER_IMAGE_TAG:-latest}
 
-  pricechecker-web:
+  price-checker-web:
     profiles: ["pull"]
-    image: ${PRICECHECKER_REGISTRY:-ghcr.io/hwndmaster}/pricechecker-web:${PRICECHECKER_IMAGE_TAG:-latest}
+    image: ${PRICE_CHECKER_REGISTRY:-ghcr.io/hwndmaster}/price-checker-web:${PRICE_CHECKER_IMAGE_TAG:-latest}

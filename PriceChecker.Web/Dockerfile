@@ -9,7 +9,7 @@ COPY package.json pnpm-lock.yaml pnpm-workspace.yaml .npmrc ./
 # pnpm >=11.9 ignores env-var credentials in the project .npmrc, so the token goes
 # into the user-level ~/.npmrc; written and removed within one RUN so it never
 # persists in an image layer.
-RUN --mount=type=cache,id=pricechecker-web-pnpm-store,target=/pnpm/store \
+RUN --mount=type=cache,id=price-checker-web-pnpm-store,target=/pnpm/store \
     --mount=type=secret,id=atom_pkg_access_token \
     sh -eu -c 'token="$(cat /run/secrets/atom_pkg_access_token)"; [ -n "$token" ] || { echo "ATOM_PKG_ACCESS_TOKEN is required." >&2; exit 1; }; printf "//npm.pkg.github.com/:_authToken=%s\n" "$token" > "$HOME/.npmrc"; corepack enable; pnpm config set store-dir "$PNPM_STORE_PATH"; pnpm fetch --frozen-lockfile; pnpm install --frozen-lockfile --offline --prod=false; rm -f "$HOME/.npmrc"'
 
@@ -27,12 +27,12 @@ COPY --from=build /app/build /usr/share/nginx/html
 COPY nginx.conf /etc/nginx/templates/default.conf.template
 
 # Restricts envsubst to our own variables so nginx's $uri, $host, $upstream and $1 are left alone.
-ENV NGINX_ENVSUBST_FILTER=^PRICECHECKER_
+ENV NGINX_ENVSUBST_FILTER=^PRICE_CHECKER_
 
 # Defaults for the repo-root docker-compose.yml, where both containers share one network and resolve each
 # other by name, and telemetry goes to the shared app host if one runs on this machine. On the server the
 # app host sets both.
-ENV PRICECHECKER_API_UPSTREAM=http://pricechecker-api:8031
-ENV PRICECHECKER_OTLP_UPSTREAM=http://host.docker.internal:21101
+ENV PRICE_CHECKER_API_UPSTREAM=http://price-checker-api:8031
+ENV PRICE_CHECKER_OTLP_UPSTREAM=http://host.docker.internal:21101
 
 EXPOSE 8032

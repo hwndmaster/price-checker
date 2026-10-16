@@ -2,8 +2,8 @@
 param(
     [string]$Owner = "hwndmaster",
     [string[]]$Packages = @(
-        "pricechecker-web",
-        "pricechecker-api"
+        "price-checker-web",
+        "price-checker-api"
     ),
     [switch]$DryRun
 )

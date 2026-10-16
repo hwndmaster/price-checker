@@ -12,7 +12,7 @@
       2. Stop the app host. The other applications keep running: their containers are persistent and do
          not depend on it.
 
-      3. Remove pricechecker-api and pricechecker-web. On start-up the app host attaches to any
+      3. Remove price-checker-api and price-checker-web. On start-up the app host attaches to any
          container it finds without checking which image it runs, so removing them is the only way to get
          the new images in.
 
@@ -44,7 +44,7 @@ $ErrorActionPreference = "Stop"
 
 $LockName = "Global\AppHostUpdate"
 $AppHost = "app-host"
-$Containers = @("pricechecker-api", "pricechecker-web")
+$Containers = @("price-checker-api", "price-checker-web")
 
 function Invoke-Step {
     param(

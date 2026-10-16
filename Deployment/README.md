@@ -2,7 +2,7 @@
 
 PriceChecker runs under the shared **app host** ([hwndmaster/app-host](https://github.com/hwndmaster/app-host)),
 which creates and supervises its containers and shows them, with their logs, traces and metrics, on its
-dashboard. This folder goes to `C:\Docker\PriceChecker` on the server, next to `C:\Docker\app-host`;
+dashboard. This folder goes to `C:\Docker\price-checker` on the server, next to `C:\Docker\app-host`;
 the data and logs folders sit inside it by default.
 
 | File | What it is |
@@ -15,15 +15,15 @@ the data and logs folders sit inside it by default.
 ## Install
 
 1. Install the app host first (its `Deployment\README.md`).
-2. Copy this folder to `C:\Docker\PriceChecker`, then:
+2. Copy this folder to `C:\Docker\price-checker`, then:
    ```powershell
    Copy-Item .env.example .env   # and fill it in
    ```
    Create the data and logs folders it names.
-3. Register PriceChecker in `C:\Docker\app-host\apps.json`. `path` is the folder inside the apps root,
-   `C:\Docker`:
+3. Register PriceChecker in `C:\Docker\app-host\apps.json` by its folder inside the apps root,
+   `C:\Docker` (use whatever the folder is called):
    ```json
-   { "name": "pricechecker", "path": "PriceChecker" }
+   { "path": "price-checker" }
    ```
 4. Run `.\update.ps1`. The first run is the installation.
 
@@ -34,7 +34,7 @@ the data and logs folders sit inside it by default.
 .\update.ps1 -SkipPull    # after changing app.json or .env, or after a local build
 ```
 
-It pulls the images, stops the app host, removes `pricechecker-api` and `pricechecker-web`, and
+It pulls the images, stops the app host, removes `price-checker-api` and `price-checker-web`, and
 starts the app host again, which recreates them. Only PriceChecker is down meanwhile, usually for
 under a minute; the dashboard is unavailable for about 20 seconds.
 
@@ -47,5 +47,5 @@ running while the dashboard reports it healthy.
 - **`update.ps1` times out.** Open the dashboard's Resources page. PriceChecker shows there with
   "Configuration error" and the reason when its `app.json` or `.env` is wrong, and is missing entirely
   when `apps.json` does not register it.
-- **A container keeps restarting.** `docker inspect pricechecker-api --format "{{.State.OOMKilled}}"`;
+- **A container keeps restarting.** `docker inspect price-checker-api --format "{{.State.OOMKilled}}"`;
   if `true`, raise its memory limit in `.env` and run `.\update.ps1 -SkipPull`.
