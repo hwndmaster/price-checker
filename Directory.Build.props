@@ -1,7 +1,7 @@
 <Project>
 
   <PropertyGroup>
-    <Version>2.1.0</Version>
+    <Version>2.1.1</Version>
     <Product>Price Checker</Product>
     <Authors>Dima Kravtsov</Authors>
     <Description>A simple price checker</Description>
@@ -18,6 +18,13 @@
     <!-- CI/Docker fallback: use the restored NuGet package (Linux) -->
     <AtomBuildDirectory Condition="'$(AtomBuildDirectory)' == '' And '$(HOME)' != ''">$(HOME)/.nuget/packages/genius.atom.build/$(AtomPackageVersion)/build</AtomBuildDirectory>
     <AtomLocation>..\..\</AtomLocation>
+  </PropertyGroup>
+
+  <!-- Build for the SDK's own platform unless a RID is given (Docker publishes with -r linux-x64).
+       A RID-agnostic build copies native assets of every platform into bin/.../runtimes/. -->
+  <PropertyGroup Condition="'$(RuntimeIdentifier)' == ''">
+    <UseCurrentRuntimeIdentifier>true</UseCurrentRuntimeIdentifier>
+    <AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>
   </PropertyGroup>
 
   <Import Project="$(AtomBuildDirectory)/Genius.Atom.Build.props" Condition="Exists('$(AtomBuildDirectory)/Genius.Atom.Build.props')" />

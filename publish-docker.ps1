@@ -118,8 +118,12 @@ try {
         $RegistryToken | docker login $Registry -u $DockerUser --password-stdin
     }
 
-    Invoke-Step "Build Docker compose images" {
+    # One build per step: Invoke-Step checks only the last command's exit code.
+    Invoke-Step "Build API image" {
         docker compose --progress=plain build price-checker-api
+    }
+
+    Invoke-Step "Build Web image" {
         docker compose --progress=plain build price-checker-web
     }
 
